@@ -23,6 +23,10 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    # Internal Docker resolver so Nginx resolves upstream dynamically at runtime
+    resolver 127.0.0.11 valid=10s ipv6=off;
+    set $backend "http://api:8000";
+
     # Gzip / Brotli compression
     gzip on;
     gzip_types text/plain text/css application/json application/javascript text/xml image/svg+xml;
@@ -33,7 +37,7 @@ server {
 
     # Proxy API calls directly to Fastify backend on the 'coolify' network
     location /api/ {
-        proxy_pass http://nook-api:8000/api/;
+        proxy_pass $backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -42,7 +46,7 @@ server {
 
     # Proxy Scalar documentation
     location /docs {
-        proxy_pass http://nook-api:8000/docs;
+        proxy_pass $backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -51,7 +55,7 @@ server {
 
     # Proxy Janus operational golden endpoints to backend
     location ~ ^/(healthz|readyz|version|openapi.json) {
-        proxy_pass http://nook-api:8000;
+        proxy_pass $backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

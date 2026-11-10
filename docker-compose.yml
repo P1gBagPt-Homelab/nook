@@ -20,7 +20,10 @@ services:
       - S3_SECRET_KEY=${S3_SECRET_KEY}
       - SENTRY_DSN=${SENTRY_DSN}
     networks:
-      - coolify
+      coolify:
+        aliases:
+          - nook-api
+          - api
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       interval: 30s
@@ -35,8 +38,13 @@ services:
     restart: unless-stopped
     expose:
       - "80"
+    depends_on:
+      - api
     networks:
-      - coolify
+      coolify:
+        aliases:
+          - nook-web
+          - web
 
 networks:
   coolify:
