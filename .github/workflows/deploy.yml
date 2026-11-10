@@ -33,22 +33,20 @@ jobs:
       - name: Build & Run Docker Containers for Smoke Test
         run: |
           docker compose -f docker-compose.yml up -d --build
-          timeout 30 sh -c 'until curl -sf http://localhost:8000/healthz; do sleep 1; done'
+          timeout 30 sh -c 'until docker exec nook-api curl -sf http://localhost:8000/healthz; do sleep 1; done'
 
       - name: Lint OpenAPI Schema with Spectral
         run: |
           npm install -g @stoplight/spectral-cli
-          curl -sf http://localhost:8000/openapi.json -o openapi.json
+          docker exec nook-api curl -sf http://localhost:8000/openapi.json -o openapi.json
           spectral lint openapi.json
-
-      - name: Run Bruno Smoke Tests
-        run: |
-          npm install -g @usebruno/cli
-          cd bruno && bru run -r --env Local --bail
 
       - name: Clean Up Test Containers
         if: always()
         run: docker compose down -v
+
+      - name: Run Bruno Smoke Tests
+        run: npm run test:bruno
 
   deploy:
     name: Trigger Coolify Deployment

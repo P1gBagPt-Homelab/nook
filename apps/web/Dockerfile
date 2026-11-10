@@ -43,6 +43,19 @@ server {
     # Proxy Scalar documentation
     location /docs {
         proxy_pass http://nook-api:8000/docs;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Proxy Janus operational golden endpoints to backend
+    location ~ ^/(healthz|readyz|version|openapi.json) {
+        proxy_pass http://nook-api:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 EOF
