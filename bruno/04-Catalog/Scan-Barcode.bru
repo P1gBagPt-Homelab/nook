@@ -1,0 +1,15 @@
+meta {
+  name: Scan Barcode
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/catalog/scan/5601009941123
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: in [200, 404]
+}
