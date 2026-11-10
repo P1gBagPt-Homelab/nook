@@ -5,8 +5,7 @@ import { eq, and } from "drizzle-orm";
 
 export const stockRoutes: FastifyPluginAsync = async (fastify) => {
   // 1. List Home Stock
-  fastify.get(
-    "/",
+  fastify.get("",
     {
       preHandler: fastify.authenticate,
       schema: {
@@ -60,8 +59,7 @@ export const stockRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // 2. Add Stock Item Manually
-  fastify.post(
-    "/",
+  fastify.post("",
     {
       preHandler: fastify.authenticate,
       schema: {

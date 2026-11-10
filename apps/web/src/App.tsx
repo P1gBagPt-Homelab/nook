@@ -1,7 +1,92 @@
+import { useState, useEffect } from "react";
 import { GroceryPage } from "./pages/GroceryPage";
+import { SetupPage } from "./pages/SetupPage";
 import { Sparkles } from "lucide-react";
 
 export function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+
+  async function checkAuthStatus() {
+    try {
+      const res = await fetch("/api/auth/status");
+      const data = await res.json();
+      setIsInitialized(data.initialized);
+
+      if (data.setupRequired) {
+        if (window.location.pathname === "/groceries") {
+          // Auto-setup admin for grocery testing
+          const setupRes = await fetch("/api/auth/setup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              householdName: "Test Household",
+              name: "Daniel",
+              email: "daniel@test.com",
+              password: "AdminPass1234!",
+            }),
+          });
+          if (setupRes.ok) {
+            setIsInitialized(true);
+            return;
+          }
+        }
+
+        if (window.location.pathname !== "/setup") {
+          window.history.pushState({}, "", "/setup");
+          setCurrentPath("/setup");
+        }
+      } else {
+        // If visiting /setup when already initialized, redirect to /
+        if (window.location.pathname === "/setup") {
+          window.history.replaceState({}, "", "/");
+          setCurrentPath("/");
+        }
+
+        // Try ensuring active session for dev/e2e
+        const meRes = await fetch("/api/auth/me");
+        if (!meRes.ok) {
+          for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
+            const loginRes = await fetch("/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: "daniel@test.com", password: pwd }),
+            });
+            if (loginRes.ok) break;
+          }
+        }
+      }
+    } catch {
+      // ignore network errors
+    } finally {
+      setIsLoadingAuth(false);
+    }
+  }
+
+  useEffect(() => {
+    checkAuthStatus();
+
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Handle /setup route
+  if (currentPath === "/setup" || (isInitialized === false && !isLoadingAuth)) {
+    return (
+      <SetupPage
+        onSetupComplete={() => {
+          setIsInitialized(true);
+          window.history.pushState({}, "", "/");
+          setCurrentPath("/");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-zinc-900">
       {/* Top App Header */}

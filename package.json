@@ -15,14 +15,16 @@
     "db:generate": "npm run db:generate --workspace=@nook/api",
     "db:migrate": "npm run db:migrate --workspace=@nook/api",
     "test": "npm run test --workspaces --if-present",
-    "lint:spectral": "spectral lint http://localhost:8000/openapi.json",
-    "test:bruno": "cd bruno && bru run -r --env Local --bail",
+    "lint:spectral": "tsx scripts/lint-spectral.js",
+    "test:bruno": "tsx scripts/run-bruno.js",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@stoplight/spectral-cli": "^6.14.0",
     "@usebruno/cli": "^1.39.0",
     "prettier": "^3.4.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
 }

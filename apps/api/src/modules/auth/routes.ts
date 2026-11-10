@@ -20,6 +20,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Check if system is initialized or first-run setup is required",
         tags: ["Auth"],
+        operationId: "getAuthStatus",
         response: {
           200: {
             type: "object",
@@ -51,6 +52,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "First-run initial setup. Creates primary household and initial admin user.",
         tags: ["Auth"],
+        operationId: "setupAdmin",
       },
     },
     async (request, reply) => {
@@ -128,6 +130,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Authenticate with email and password",
         tags: ["Auth"],
+        operationId: "loginUser",
       },
     },
     async (request, reply) => {
@@ -198,6 +201,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Admin invites a new household member",
         tags: ["Auth"],
+        operationId: "inviteUser",
       },
     },
     async (request, reply) => {
@@ -260,6 +264,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Invited user sets initial password with activation token",
         tags: ["Auth"],
+        operationId: "setPassword",
       },
     },
     async (request, reply) => {
@@ -326,6 +331,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Get authenticated user profile",
         tags: ["Auth"],
+        operationId: "getCurrentUser",
       },
     },
     async (request) => {
@@ -340,6 +346,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: "Log out and invalidate current session cookie",
         tags: ["Auth"],
+        operationId: "logoutUser",
       },
     },
     async (request, reply) => {
