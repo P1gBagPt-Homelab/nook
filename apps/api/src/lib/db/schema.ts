@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, boolean, numeric, integer, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, boolean, numeric, integer, index, uniqueIndex } from "drizzle-orm/pg-core";
 
 // 1. Households & Multi-User Identity
 export const households = pgTable("households", {
@@ -51,7 +51,7 @@ export const productCatalog = pgTable("product_catalog", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [
-  index("idx_catalog_barcode").on(t.householdId, t.barcode),
+  uniqueIndex("idx_catalog_barcode").on(t.householdId, t.barcode),
   index("idx_catalog_category").on(t.householdId, t.category),
 ]);
 

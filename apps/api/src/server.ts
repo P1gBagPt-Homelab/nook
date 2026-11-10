@@ -11,6 +11,7 @@ import { authGuardPlugin } from "./plugins/auth-guard";
 import { s3Plugin } from "./plugins/s3";
 import { authRoutes } from "./modules/auth";
 import { uploadRoutes } from "./modules/uploads";
+import { catalogRoutes } from "./modules/catalog";
 
 for (const envPath of [
   path.resolve(process.cwd(), ".env"),
@@ -55,6 +56,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
         { name: "System", description: "Operational and health check endpoints" },
         { name: "Auth", description: "Authentication and session management" },
         { name: "Uploads", description: "Direct S3 presigned upload operations" },
+        { name: "Catalog", description: "Product catalog and barcode scanner operations" },
       ],
     },
   });
@@ -78,6 +80,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   // Register Feature Routes
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(uploadRoutes, { prefix: "/api/uploads" });
+  await app.register(catalogRoutes, { prefix: "/api/catalog" });
 
   app.get(
     "/healthz",

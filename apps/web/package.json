@@ -12,6 +12,8 @@
     "@nook/shared": "*",
     "@tailwindcss/vite": "^4.0.0",
     "@tanstack/react-query": "^5.66.0",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.23.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.0",
     "lucide-react": "^0.475.0",
