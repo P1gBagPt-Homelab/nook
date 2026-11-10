@@ -8,7 +8,9 @@ import path from "path";
 import fs from "fs";
 import { databasePlugin } from "./plugins/database";
 import { authGuardPlugin } from "./plugins/auth-guard";
+import { s3Plugin } from "./plugins/s3";
 import { authRoutes } from "./modules/auth";
+import { uploadRoutes } from "./modules/uploads";
 
 for (const envPath of [
   path.resolve(process.cwd(), ".env"),
@@ -37,6 +39,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   // Register Core Plugins
   await app.register(databasePlugin);
   await app.register(authGuardPlugin);
+  await app.register(s3Plugin);
 
   await app.register(swagger, {
     openapi: {
@@ -51,6 +54,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
       tags: [
         { name: "System", description: "Operational and health check endpoints" },
         { name: "Auth", description: "Authentication and session management" },
+        { name: "Uploads", description: "Direct S3 presigned upload operations" },
       ],
     },
   });
@@ -73,6 +77,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
 
   // Register Feature Routes
   await app.register(authRoutes, { prefix: "/api/auth" });
+  await app.register(uploadRoutes, { prefix: "/api/uploads" });
 
   app.get(
     "/healthz",

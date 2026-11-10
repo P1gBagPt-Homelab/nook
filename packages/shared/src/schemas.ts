@@ -24,6 +24,13 @@ export const setPasswordSchema = z.object({
   password: z.string().min(8).max(128),
 });
 
+// Upload Schemas
+export const presignedUploadSchema = z.object({
+  folder: z.enum(["products", "receipts", "manuals"]),
+  fileExtension: z.string().min(2).max(5),
+  contentType: z.string().min(3),
+});
+
 // Catalog Schemas
 export const createProductSchema = z.object({
   barcode: z.string().min(4).max(64),
