@@ -1,5 +1,89 @@
 @import "tailwindcss";
 
+@theme {
+  --color-canvas: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-foreground: #18181B;
+  --color-muted: #71717A;
+  --color-joy-peach: #FF7A59;
+  --color-joy-peach-hover: #ff6842;
+  --color-joy-sage: #10B981;
+  --color-joy-sage-hover: #059669;
+  --color-joy-amber: #F59E0B;
+  --color-joy-lavender: #8B5CF6;
+  --color-joy-sky: #0EA5E9;
+  --radius-card: 1.25rem;
+  --radius-button: 9999px;
+}
+
 :root {
+  --background: #FAFAF8;
+  --surface: #FFFFFF;
+  --foreground: #18181B;
+  --muted: #71717A;
+  
+  --joy-peach: #FF7A59;
+  --joy-sage: #10B981;
+  --joy-amber: #F59E0B;
+  --joy-lavender: #8B5CF6;
+  --joy-sky: #0EA5E9;
+  
+  --radius-card: 1.25rem;
+  --radius-button: 9999px;
+
   color-scheme: light;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/* Custom ambient shadow & card styles */
+.card-impeccable {
+  background-color: #FFFFFF;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(24, 24, 27, 0.05);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 12px 0 rgba(0, 0, 0, 0.03);
+}
+
+.button-peach-glow {
+  box-shadow: 0 4px 20px -2px rgba(255, 122, 89, 0.45);
+}
+
+.button-peach-glow:hover {
+  box-shadow: 0 6px 24px -2px rgba(255, 122, 89, 0.55);
+}
+
+.button-sage-glow {
+  box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.35);
+}
+
+/* Reticle corner pulse animation */
+@keyframes reticle-pulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.02);
+  }
+}
+
+.animate-reticle {
+  animation: reticle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hide scrollbar for category pills */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

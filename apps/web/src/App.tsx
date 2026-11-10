@@ -1,12 +1,28 @@
 import { useState, useEffect } from "react";
 import { GroceryPage } from "./pages/GroceryPage";
+import { FinancePage } from "./pages/FinancePage";
+import { HousePage } from "./pages/HousePage";
 import { SetupPage } from "./pages/SetupPage";
-import { Sparkles } from "lucide-react";
+import { Header } from "./components/navigation/Header";
+import { BottomDock, NavTab } from "./components/navigation/BottomDock";
+import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
+import { ProductCreateDrawer } from "./components/products/ProductCreateDrawer";
 
 export function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Active navigation state
+  const [activeTab, setActiveTab] = useState<NavTab>("grocery");
+  const [grocerySubTab, setGrocerySubTab] = useState<"cart" | "stock">("cart");
+
+  // Scanner & Digitalization Drawer State
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isDigitalizeOpen, setIsDigitalizeOpen] = useState(false);
+  const [digitalizeBarcode, setDigitalizeBarcode] = useState("");
+  const [digitalizeInitialData, setDigitalizeInitialData] = useState<any>(null);
 
   async function checkAuthStatus() {
     try {
@@ -45,7 +61,7 @@ export function App() {
         }
 
         // Try ensuring active session for dev/e2e
-        const meRes = await fetch("/api/auth/me");
+        let meRes = await fetch("/api/auth/me");
         if (!meRes.ok) {
           for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
             const loginRes = await fetch("/api/auth/login", {
@@ -53,8 +69,16 @@ export function App() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email: "daniel@test.com", password: pwd }),
             });
-            if (loginRes.ok) break;
+            if (loginRes.ok) {
+              meRes = await fetch("/api/auth/me");
+              break;
+            }
           }
+        }
+
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          setCurrentUser(meData.user);
         }
       }
     } catch {
@@ -74,6 +98,55 @@ export function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.reload();
+  }
+
+  function handleTabChange(tab: NavTab) {
+    if (tab === "stock") {
+      setActiveTab("grocery");
+      setGrocerySubTab("stock");
+    } else if (tab === "grocery") {
+      setActiveTab("grocery");
+      setGrocerySubTab("cart");
+    } else {
+      setActiveTab(tab);
+    }
+  }
+
+  function handleProductDetected(barcode: string, productData?: any) {
+    setDigitalizeBarcode(barcode);
+    setDigitalizeInitialData(productData || null);
+    setIsDigitalizeOpen(true);
+  }
+
+  async function handleAddDirectToCart(product: any) {
+    try {
+      await fetch("/api/cart/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          customTitle: product.title,
+          quantity: 1,
+          unit: product.unit || "pcs",
+          targetLocation: "Pantry",
+        }),
+      });
+      setActiveTab("grocery");
+      setGrocerySubTab("cart");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleSaveDigitalizedProduct(product: any, addToCart: boolean) {
+    if (addToCart && product?.id) {
+      await handleAddDirectToCart(product);
+    }
+  }
+
   // Handle /setup route
   if (currentPath === "/setup" || (isInitialized === false && !isLoadingAuth)) {
     return (
@@ -82,32 +155,52 @@ export function App() {
           setIsInitialized(true);
           window.history.pushState({}, "", "/");
           setCurrentPath("/");
+          checkAuthStatus();
         }}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-zinc-900">
-      {/* Top App Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-zinc-200/60 px-4 py-3">
-        <div className="max-w-md mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-zinc-900 text-white flex items-center justify-center shadow-xs">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-tight text-zinc-900">Nook</h1>
-              <p className="text-[10px] text-zinc-400 font-medium -mt-0.5">Groceries & Stock</p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#FAFAF8] text-[#18181B] selection:bg-[#FF7A59]/20 selection:text-[#FF7A59]">
+      {/* Top App Header with Profile Chip (Blueprint Section 2) */}
+      <Header user={currentUser} onLogout={handleLogout} />
 
-      {/* Main Grocery View */}
-      <main>
-        <GroceryPage />
+      {/* Main Dynamic Pillar View */}
+      <main className="transition-opacity duration-200">
+        {activeTab === "grocery" && (
+          <GroceryPage
+            activeSubTab={grocerySubTab}
+            onSubTabChange={(sub: "cart" | "stock") => setGrocerySubTab(sub)}
+          />
+        )}
+        {activeTab === "finance" && <FinancePage />}
+        {activeTab === "house" && <HousePage />}
       </main>
+
+      {/* Floating Bottom Dock (Blueprint Section 2) */}
+      <BottomDock
+        activeTab={activeTab === "grocery" && grocerySubTab === "stock" ? "stock" : activeTab}
+        onTabChange={handleTabChange}
+        onOpenScanner={() => setIsScannerOpen(true)}
+      />
+
+      {/* In-Store Barcode Scanner Viewfinder (Blueprint Section 3) */}
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onProductDetected={handleProductDetected}
+        onAddDirectToCart={handleAddDirectToCart}
+      />
+
+      {/* Product Digitalization Bottom Sheet (`Vaul` Drawer) (Blueprint Section 4) */}
+      <ProductCreateDrawer
+        isOpen={isDigitalizeOpen}
+        onClose={() => setIsDigitalizeOpen(false)}
+        barcode={digitalizeBarcode}
+        initialData={digitalizeInitialData}
+        onSave={handleSaveDigitalizedProduct}
+      />
     </div>
   );
 }

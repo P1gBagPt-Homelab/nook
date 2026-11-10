@@ -3,11 +3,11 @@ import {
   Package,
   Search,
   Trash2,
-  ShoppingCart,
   AlertTriangle,
   CheckCircle,
   XCircle,
   Sparkles,
+  Plus,
 } from "lucide-react";
 
 export interface StockItem {
@@ -88,14 +88,17 @@ export function StockInventoryView() {
     const currentQty = parseFloat(item.quantity) || 1;
     const nextQty = Math.max(0, currentQty + delta);
 
-    // Auto-update status if depleted to 0
+    // Auto-update status if depleted to 0 or 1
     let nextStatus = item.status;
     if (nextQty === 0) {
       nextStatus = "out_of_stock";
     } else if (nextQty <= 1 && item.status === "in_stock") {
       nextStatus = "running_low";
+    } else if (nextQty > 1 && item.status === "out_of_stock") {
+      nextStatus = "in_stock";
     }
 
+    navigator.vibrate?.(15);
     setStockItems((prev) =>
       prev.map((i) =>
         i.id === item.id ? { ...i, quantity: nextQty.toString(), status: nextStatus } : i
@@ -121,6 +124,7 @@ export function StockInventoryView() {
       out_of_stock: "in_stock",
     };
     const nextStatus = cycleMap[item.status] || "in_stock";
+    navigator.vibrate?.(20);
 
     setStockItems((prev) =>
       prev.map((i) => (i.id === item.id ? { ...i, status: nextStatus } : i))
@@ -139,6 +143,7 @@ export function StockInventoryView() {
   }
 
   async function handleAddToCart(item: StockItem) {
+    navigator.vibrate?.(25);
     try {
       const res = await fetch("/api/cart/items", {
         method: "POST",
@@ -153,8 +158,8 @@ export function StockInventoryView() {
       });
 
       if (res.ok) {
-        setFeedback(`🛒 Added "${item.title}" to your Shopping Cart!`);
-        setTimeout(() => setFeedback(null), 4000);
+        setFeedback(`🛒 Added "${item.title}" to Shopping Cart!`);
+        setTimeout(() => setFeedback(null), 3500);
       }
     } catch (err) {
       console.error(err);
@@ -162,6 +167,7 @@ export function StockInventoryView() {
   }
 
   async function handleDelete(id: string) {
+    navigator.vibrate?.(20);
     setStockItems((prev) => prev.filter((i) => i.id !== id));
     try {
       await fetch(`/api/stock/${id}`, { method: "DELETE" });
@@ -186,26 +192,29 @@ export function StockInventoryView() {
   ).length;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Feedback Toast */}
       {feedback && (
-        <div className="p-4 rounded-2xl bg-[#FF7A59]/10 border border-[#FF7A59]/20 text-[#FF7A59] text-xs font-semibold flex items-center gap-2 animate-fade-in">
-          <Sparkles className="w-4 h-4 shrink-0" />
+        <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-[#FF7A59] text-xs font-bold flex items-center gap-2.5 animate-fade-in shadow-xs">
+          <Sparkles className="w-4 h-4 shrink-0 text-[#FF7A59]" />
           <span>{feedback}</span>
         </div>
       )}
 
-      {/* Overview Banner */}
-      <div className="bg-white rounded-3xl p-5 shadow-xs border border-zinc-100 flex items-center justify-between">
+      {/* Overview Banner (Card Surface: #FFFFFF with 1px border rgba(0,0,0,0.04)) */}
+      <div className="card-impeccable p-5 flex items-center justify-between">
         <div>
-          <h2 className="text-base font-semibold text-zinc-900">Pantry & Home Stock</h2>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            {stockItems.length} registered products in household
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#10B981] block mb-0.5">
+            Cupboards & Pantry
+          </span>
+          <h2 className="text-base font-bold text-zinc-900">Home Stock Inventory</h2>
+          <p className="text-xs text-zinc-500 mt-0.5 font-medium">
+            {stockItems.length} registered products at home
           </p>
         </div>
         {runningLowCount > 0 && (
-          <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold flex items-center gap-1.5">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+          <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-bold flex items-center gap-1.5 shadow-2xs">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#F59E0B]" />
             <span>{runningLowCount} to restock</span>
           </div>
         )}
@@ -213,26 +222,26 @@ export function StockInventoryView() {
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3" />
+        <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-3.5 pointer-events-none" />
         <input
           type="text"
-          placeholder="Search pantry items..."
+          placeholder="Search pantry, fridge, spices..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-zinc-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#10B981] shadow-2xs"
+          className="w-full pl-11 pr-4 py-3 rounded-full bg-white border border-zinc-200 text-xs font-semibold text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#10B981] shadow-2xs"
         />
       </div>
 
-      {/* Location Filter Pills */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+      {/* Location Filter Pills (Blueprint: All, Fridge, Pantry, Freezer, Cleaning) */}
+      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {locations.map((loc) => (
           <button
             key={loc}
             onClick={() => setSelectedLocation(loc)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer ${
               selectedLocation === loc
                 ? "bg-zinc-900 text-white shadow-xs"
-                : "bg-white text-zinc-500 hover:text-zinc-800 border border-zinc-200/80"
+                : "bg-white text-zinc-600 hover:text-zinc-900 border border-zinc-200"
             }`}
           >
             {loc !== "All" && <span>{locationIcons[loc] || "🥫"}</span>}
@@ -243,19 +252,21 @@ export function StockInventoryView() {
 
       {/* Stock Items List */}
       {isLoading ? (
-        <div className="py-12 text-center text-zinc-400 animate-pulse text-sm">
+        <div className="py-16 text-center text-zinc-400 animate-pulse text-xs font-semibold tracking-wide">
           Loading stock items...
         </div>
       ) : error ? (
-        <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-sm text-center">
+        <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-semibold text-center border border-red-100">
           {error}
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="bg-white rounded-3xl p-8 text-center border border-zinc-100 shadow-xs">
-          <Package className="w-10 h-10 text-zinc-300 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-zinc-800">No stock items found</p>
-          <p className="text-xs text-zinc-400 mt-1">
-            Items unpackaged from your shopping cart will automatically appear here!
+        <div className="card-impeccable p-8 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#10B981] flex items-center justify-center mx-auto mb-3">
+            <Package className="w-6 h-6" />
+          </div>
+          <p className="text-sm font-bold text-zinc-900">No stock items in this location</p>
+          <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
+            Items unpacked from your shopping cart will automatically appear here!
           </p>
         </div>
       ) : (
@@ -264,22 +275,26 @@ export function StockInventoryView() {
             const statusConfig = {
               in_stock: {
                 label: "In Stock",
-                bg: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                dot: "bg-[#10B981]",
+                badge: "bg-emerald-50 text-emerald-800 border-emerald-200",
                 icon: CheckCircle,
               },
               running_low: {
                 label: "Running Low",
-                bg: "bg-amber-50 text-amber-700 border-amber-200",
+                dot: "bg-[#F59E0B]",
+                badge: "bg-amber-50 text-amber-800 border-amber-200",
                 icon: AlertTriangle,
               },
               out_of_stock: {
                 label: "Out of Stock",
-                bg: "bg-rose-50 text-rose-700 border-rose-200",
+                dot: "bg-rose-500",
+                badge: "bg-rose-50 text-rose-800 border-rose-200",
                 icon: XCircle,
               },
             }[item.status] || {
               label: item.status,
-              bg: "bg-zinc-50 text-zinc-700 border-zinc-200",
+              dot: "bg-zinc-400",
+              badge: "bg-zinc-50 text-zinc-800 border-zinc-200",
               icon: CheckCircle,
             };
 
@@ -288,7 +303,7 @@ export function StockInventoryView() {
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-3xl p-4 shadow-xs border border-zinc-100 space-y-3 transition hover:border-zinc-200"
+                className="card-impeccable p-4 space-y-3 transition duration-150 hover:border-zinc-300"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -296,13 +311,13 @@ export function StockInventoryView() {
                       <span className="text-sm font-bold text-zinc-900 truncate">
                         {item.title}
                       </span>
-                      <span className="text-xs" title={item.location}>
+                      <span className="text-xs shrink-0" title={item.location}>
                         {locationIcons[item.location] || "🥫"}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-400">
-                      {item.brand && <span>{item.brand} •</span>}
+                      {item.brand && <span className="font-medium">{item.brand} •</span>}
                       <span>{item.category}</span>
                       <span>• {item.location}</span>
                     </div>
@@ -311,46 +326,46 @@ export function StockInventoryView() {
                   {/* Status Pill Toggle */}
                   <button
                     onClick={() => handleCycleStatus(item)}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 transition ${statusConfig.bg}`}
-                    title="Click to toggle status"
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-2xs ${statusConfig.badge}`}
+                    title="Click to cycle status"
                   >
-                    <StatusIcon className="w-3 h-3" />
+                    <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                    <StatusIcon className="w-3 h-3 stroke-[2.5]" />
                     <span>{statusConfig.label}</span>
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-zinc-50">
+                <div className="flex items-center justify-between pt-2 border-t border-zinc-100">
                   {/* Quantity Stepper */}
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-zinc-400 font-medium">Quantity:</span>
-                    <div className="flex items-center gap-1 bg-zinc-50 rounded-xl px-2 py-1 border border-zinc-100">
+                    <div className="flex items-center gap-1 bg-zinc-50 rounded-xl px-2 py-1 border border-zinc-200/80">
                       <button
                         onClick={() => handleUpdateQuantity(item, -1)}
-                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-800 text-xs font-bold"
+                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
                       >
                         -
                       </button>
-                      <span className="text-xs font-bold text-zinc-800 min-w-4 text-center">
+                      <span className="text-xs font-black text-zinc-900 min-w-5 text-center">
                         {parseFloat(item.quantity)}
                       </span>
                       <button
                         onClick={() => handleUpdateQuantity(item, 1)}
-                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-800 text-xs font-bold"
+                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
                       >
                         +
                       </button>
                     </div>
-                    <span className="text-xs text-zinc-400">{item.unit}</span>
+                    <span className="text-xs font-semibold text-zinc-400">{item.unit}</span>
                   </div>
 
                   {/* Actions: Add to Shopping Cart & Delete */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleAddToCart(item)}
-                      className="px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-[#FF7A59] text-xs font-bold flex items-center gap-1.5 transition active:scale-95"
+                      className="px-3.5 py-1.5 rounded-full bg-orange-50 hover:bg-orange-100 active:scale-95 text-[#FF7A59] text-xs font-bold flex items-center gap-1.5 transition border border-orange-200/60 cursor-pointer"
                       title="Add to Shopping Cart"
                     >
-                      <ShoppingCart className="w-3.5 h-3.5" />
+                      <Plus className="w-3.5 h-3.5 stroke-[3]" />
                       <span>Add to Cart</span>
                     </button>
 
