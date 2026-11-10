@@ -16,6 +16,8 @@ jobs:
     name: Lint, Test & Validate
     runs-on: self-hosted
     timeout-minutes: 5
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://nook_user:NookSecretPass2026@localhost:5432/nook_db' }}
     steps:
       - uses: actions/checkout@v4
 
