@@ -1,55 +1,69 @@
-name: Deploy to Coolify (Janus Self-Hosted)
+name: Test and Deploy Nook to Janus
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
-# Cancel in-flight or previously queued runs if a newer commit is pushed
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  deploy:
-    name: Trigger Coolify Redeploy
-    # Runs directly on the Janus Ubuntu Server 24.04 bare-metal runner (0 billed minutes)
-    runs-on: self-hosted
-    # Strict execution timeout: abort if deployment hook takes longer than 1 minute
-    timeout-minutes: 1
-    # Guard: only queue/run if Coolify secrets are configured.
-    # In template repos or unconfigured projects, this skips immediately in 0 seconds.
-    if: ${{ secrets.COOLIFY_UUID != '' }}
-
+  test:
+    name: Lint, Test & Validate
+    runs-on: self-hosted # Janus self-hosted runner
+    timeout-minutes: 5
     steps:
-      - name: Trigger Coolify Deployment Webhook
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit & Integration Tests
+        run: npm run test
+
+      - name: Ensure Coolify Docker Network
+        run: docker network create coolify || true
+
+      - name: Build & Run Docker Containers for Smoke Test
+        run: |
+          docker compose -f docker-compose.yml up -d --build
+          timeout 30 sh -c 'until curl -sf http://localhost:8000/healthz; do sleep 1; done'
+
+      - name: Lint OpenAPI Schema with Spectral
+        run: |
+          npm install -g @stoplight/spectral-cli
+          curl -sf http://localhost:8000/openapi.json -o openapi.json
+          spectral lint openapi.json
+
+      - name: Run Bruno Smoke Tests
+        run: |
+          npm install -g @usebruno/cli
+          cd bruno && bru run -r --env Local --bail
+
+      - name: Clean Up Test Containers
+        if: always()
+        run: docker compose down -v
+
+  deploy:
+    name: Trigger Coolify Deployment
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+      - name: Trigger Coolify Webhook
         env:
           COOLIFY_HOST: ${{ secrets.COOLIFY_HOST }}
           COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
-          echo "🚀 Triggering Coolify deployment for UUID: ${COOLIFY_UUID} on ${COOLIFY_HOST}..."
-          
-          if [ -z "${COOLIFY_HOST}" ] || [ -z "${COOLIFY_UUID}" ] || [ -z "${COOLIFY_TOKEN}" ]; then
-            echo "❌ Error: COOLIFY_HOST, COOLIFY_UUID, or COOLIFY_TOKEN secrets are missing."
-            exit 1
-          fi
-
-          RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 30 -X POST \
+          echo "🚀 Quality gates passed. Triggering deployment on Janus..."
+          curl -s -f -X POST \
             -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
             -H "Content-Type: application/json" \
-            "${COOLIFY_HOST}/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false")
-
-          HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
-          BODY=$(echo "${RESPONSE}" | sed '$d')
-
-          echo "Response Body: ${BODY}"
-          echo "HTTP Status: ${HTTP_STATUS}"
-
-          if [ "${HTTP_STATUS}" -eq 200 ]; then
-            echo "✅ Deployment successfully queued on Project Janus Coolify engine!"
-          else
-            echo "❌ Coolify deployment trigger failed with HTTP ${HTTP_STATUS}"
-            exit 1
-          fi
+            "${COOLIFY_HOST}/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false"

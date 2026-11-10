@@ -1,0 +1,17 @@
+meta {
+  name: Version Check
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/version
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.version: isDefined
+  res.body.environment: isDefined
+}
