@@ -1,0 +1,55 @@
+name: Deploy to Coolify (Janus Self-Hosted)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Cancel in-flight or previously queued runs if a newer commit is pushed
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Trigger Coolify Redeploy
+    # Runs directly on the Janus Ubuntu Server 24.04 bare-metal runner (0 billed minutes)
+    runs-on: self-hosted
+    # Strict execution timeout: abort if deployment hook takes longer than 1 minute
+    timeout-minutes: 1
+    # Guard: only queue/run if Coolify secrets are configured.
+    # In template repos or unconfigured projects, this skips immediately in 0 seconds.
+    if: ${{ secrets.COOLIFY_UUID != '' }}
+
+    steps:
+      - name: Trigger Coolify Deployment Webhook
+        env:
+          COOLIFY_HOST: ${{ secrets.COOLIFY_HOST }}
+          COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          echo "🚀 Triggering Coolify deployment for UUID: ${COOLIFY_UUID} on ${COOLIFY_HOST}..."
+          
+          if [ -z "${COOLIFY_HOST}" ] || [ -z "${COOLIFY_UUID}" ] || [ -z "${COOLIFY_TOKEN}" ]; then
+            echo "❌ Error: COOLIFY_HOST, COOLIFY_UUID, or COOLIFY_TOKEN secrets are missing."
+            exit 1
+          fi
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 30 -X POST \
+            -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "${COOLIFY_HOST}/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false")
+
+          HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+          BODY=$(echo "${RESPONSE}" | sed '$d')
+
+          echo "Response Body: ${BODY}"
+          echo "HTTP Status: ${HTTP_STATUS}"
+
+          if [ "${HTTP_STATUS}" -eq 200 ]; then
+            echo "✅ Deployment successfully queued on Project Janus Coolify engine!"
+          else
+            echo "❌ Coolify deployment trigger failed with HTTP ${HTTP_STATUS}"
+            exit 1
+          fi

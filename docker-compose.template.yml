@@ -1,0 +1,68 @@
+version: '3.8'
+
+# ==============================================================================
+# PROJECT JANUS — MULTI-SERVICE COMPOSE BLUEPRINT (docker-compose.template.yml)
+# ==============================================================================
+# Use this file if your application has multiple containers (e.g. Web API + Worker).
+# Rename this file to docker-compose.yml when using with Coolify.
+# Notice: NEVER include database containers (Postgres, Redis) in this file.
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Web Application / API Service
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${APP_NAME:-my-app}-web
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+      - SENTRY_DSN=${SENTRY_DSN}
+    volumes:
+      - /data/volumes/${APP_NAME:-my-app}/data:/app/data
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-3000}/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------------------------
+  # 2. Optional: Background Worker (RabbitMQ consumer / Celery / BullMQ)
+  # ----------------------------------------------------------------------------
+  # worker:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: ${APP_NAME:-my-app}-worker
+  #   restart: unless-stopped
+  #   command: ["python", "-m", "worker"]
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - REDIS_URL=${REDIS_URL}
+  #     - RABBITMQ_URL=${RABBITMQ_URL}
+  #     - SENTRY_DSN=${SENTRY_DSN}
+  #   networks:
+  #     - coolify
+
+# ==============================================================================
+# NETWORKS (Mandatory external network attachment)
+# ==============================================================================
+networks:
+  coolify:
+    external: true
