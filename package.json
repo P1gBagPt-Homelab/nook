@@ -12,7 +12,9 @@
     "dev:api": "npm run dev --workspace=@nook/api",
     "dev:web": "npm run dev --workspace=@nook/web",
     "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
+    "db:generate": "npm run db:generate --workspace=@nook/api",
+    "db:migrate": "npm run db:migrate --workspace=@nook/api",
+    "test": "npm run test --workspaces --if-present",
     "lint:spectral": "spectral lint http://localhost:8000/openapi.json",
     "test:bruno": "cd bruno && bru run -r --env Local --bail",
     "test:e2e": "playwright test"
