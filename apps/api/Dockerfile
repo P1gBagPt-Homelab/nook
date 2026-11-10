@@ -11,7 +11,7 @@ RUN npm ci
 COPY packages/shared/ ./packages/shared/
 COPY apps/api/ ./apps/api/
 
-RUN npm run build --workspace=@nook/api
+RUN npm run build --workspace=@nook/shared && npm run build --workspace=@nook/api
 
 # Stage 2: Production Runner (Lean Alpine, Non-Root)
 FROM node:22-alpine AS runner

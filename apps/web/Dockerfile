@@ -11,7 +11,7 @@ RUN npm ci
 COPY packages/shared/ ./packages/shared/
 COPY apps/web/ ./apps/web/
 
-RUN npm run build --workspace=@nook/web
+RUN npm run build --workspace=@nook/shared && npm run build --workspace=@nook/web
 
 # Stage 2: Ultra-Lean Nginx Alpine (<10MB RAM!)
 FROM nginx:alpine AS runner
