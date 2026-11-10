@@ -34,6 +34,7 @@ export interface ServerOptions {
 export async function buildServer(options: ServerOptions = {}): Promise<FastifyInstance> {
   const app = Fastify({
     logger: options.testing ? false : true,
+    routerOptions: { ignoreTrailingSlash: true },
   });
 
   await app.register(cors, { origin: true, credentials: true });

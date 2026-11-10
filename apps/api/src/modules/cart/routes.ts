@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { FastifyPluginAsync } from "fastify";
 import { db } from "../../lib/db";
 import {
@@ -272,12 +273,32 @@ export const cartRoutes: FastifyPluginAsync = async (fastify) => {
       // Batch transfer into Stock in a single atomic transaction
       await db.transaction(async (tx) => {
         for (const item of itemsToUnpack) {
-          if (!item.productId) {
-            await tx
-              .update(shoppingItems)
-              .set({ isTransferredToStock: true, transferredAt: new Date() })
-              .where(eq(shoppingItems.id, item.id));
-            continue;
+          let prodId = item.productId;
+          if (!prodId) {
+            const [existingProd] = await tx
+              .select()
+              .from(productCatalog)
+              .where(
+                and(
+                  eq(productCatalog.householdId, householdId),
+                  eq(productCatalog.title, item.customTitle || "Unnamed Item")
+                )
+              );
+            if (existingProd) {
+              prodId = existingProd.id;
+            } else {
+              const [newProduct] = await tx
+                .insert(productCatalog)
+                .values({
+                  householdId,
+                  barcode: `custom_${randomBytes(8).toString("hex")}`,
+                  title: item.customTitle || "Unnamed Item",
+                  category: "Pantry",
+                  unit: item.unit || "pcs",
+                })
+                .returning();
+              prodId = newProduct.id;
+            }
           }
 
           // Check if item exists in stock
@@ -287,7 +308,7 @@ export const cartRoutes: FastifyPluginAsync = async (fastify) => {
             .where(
               and(
                 eq(stockItems.householdId, householdId),
-                eq(stockItems.productId, item.productId)
+                eq(stockItems.productId, prodId)
               )
             );
 
@@ -302,7 +323,7 @@ export const cartRoutes: FastifyPluginAsync = async (fastify) => {
             // Create new stock entry
             await tx.insert(stockItems).values({
               householdId,
-              productId: item.productId,
+              productId: prodId,
               location: item.targetLocation || body.targetLocation || "Pantry",
               status: "in_stock",
               quantity: item.quantity,
