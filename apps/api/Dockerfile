@@ -28,6 +28,7 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY apps/api/src/lib/db/migrations ./apps/api/dist/lib/db/migrations
 
 # Mandatory Janus Security: Run as non-root user
 USER node
