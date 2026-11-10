@@ -1,0 +1,26 @@
+{
+  "name": "nook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nook — Open-Source Modular Household & Life Operating System",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --parallel",
+    "dev:api": "npm run dev --workspace=@nook/api",
+    "dev:web": "npm run dev --workspace=@nook/web",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint:spectral": "spectral lint http://localhost:8000/openapi.json",
+    "test:bruno": "cd bruno && bru run -r --env Local --bail",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@stoplight/spectral-cli": "^6.14.0",
+    "@usebruno/cli": "^1.39.0",
+    "prettier": "^3.4.0",
+    "typescript": "^5.7.0"
+  }
+}
