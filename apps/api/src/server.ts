@@ -12,6 +12,8 @@ import { s3Plugin } from "./plugins/s3";
 import { authRoutes } from "./modules/auth";
 import { uploadRoutes } from "./modules/uploads";
 import { catalogRoutes } from "./modules/catalog";
+import { cartRoutes } from "./modules/cart";
+import { stockRoutes } from "./modules/stock";
 
 for (const envPath of [
   path.resolve(process.cwd(), ".env"),
@@ -57,6 +59,8 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
         { name: "Auth", description: "Authentication and session management" },
         { name: "Uploads", description: "Direct S3 presigned upload operations" },
         { name: "Catalog", description: "Product catalog and barcode scanner operations" },
+        { name: "Cart", description: "Shopping cart lifecycle and item collection" },
+        { name: "Stock", description: "Household inventory and pantry management" },
       ],
     },
   });
@@ -81,6 +85,8 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(uploadRoutes, { prefix: "/api/uploads" });
   await app.register(catalogRoutes, { prefix: "/api/catalog" });
+  await app.register(cartRoutes, { prefix: "/api/cart" });
+  await app.register(stockRoutes, { prefix: "/api/stock" });
 
   app.get(
     "/healthz",

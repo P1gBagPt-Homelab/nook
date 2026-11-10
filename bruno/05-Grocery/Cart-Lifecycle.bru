@@ -1,0 +1,17 @@
+meta {
+  name: Cart Lifecycle Test
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/cart/active
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.cart: isDefined
+  res.body.items: isArray
+}
