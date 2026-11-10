@@ -7,8 +7,8 @@ services:
       dockerfile: apps/api/Dockerfile
     container_name: nook-api
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
@@ -33,8 +33,8 @@ services:
       dockerfile: apps/web/Dockerfile
     container_name: nook-web
     restart: unless-stopped
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
     networks:
       - coolify
 
