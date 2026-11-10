@@ -1,0 +1,25 @@
+meta {
+  name: Generate Presigned URL
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/uploads/presigned-url
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "folder": "products",
+    "fileExtension": "webp",
+    "contentType": "image/webp"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.uploadUrl: isString
+  res.body.fileKey: startsWith products/
+}
