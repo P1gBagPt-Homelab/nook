@@ -13,6 +13,17 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const inviteUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(2).max(64),
+  role: z.enum(["admin", "member", "viewer"]).default("member"),
+});
+
+export const setPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(128),
+});
+
 // Catalog Schemas
 export const createProductSchema = z.object({
   barcode: z.string().min(4).max(64),

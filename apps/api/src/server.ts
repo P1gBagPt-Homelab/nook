@@ -1,12 +1,26 @@
-import Fastify, { FastifyInstance } from "fastify";
+import Fastify, { FastifyInstance, FastifyError } from "fastify";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import swagger from "@fastify/swagger";
 import scalarTheme from "@scalar/fastify-api-reference";
 import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
 import { databasePlugin } from "./plugins/database";
+import { authGuardPlugin } from "./plugins/auth-guard";
+import { authRoutes } from "./modules/auth";
 
-dotenv.config({ path: "../../.env" });
+for (const envPath of [
+  path.resolve(process.cwd(), ".env"),
+  path.resolve(process.cwd(), "../../.env"),
+  path.resolve(__dirname, "../../.env"),
+  path.resolve(__dirname, "../../../.env"),
+]) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
 
 export interface ServerOptions {
   testing?: boolean;
@@ -20,8 +34,9 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   await app.register(cors, { origin: true, credentials: true });
   await app.register(cookie);
 
-  // Register Database Plugin
+  // Register Core Plugins
   await app.register(databasePlugin);
+  await app.register(authGuardPlugin);
 
   await app.register(swagger, {
     openapi: {
@@ -35,6 +50,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
       ],
       tags: [
         { name: "System", description: "Operational and health check endpoints" },
+        { name: "Auth", description: "Authentication and session management" },
       ],
     },
   });
@@ -43,6 +59,20 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     routePrefix: "/docs",
     configuration: { theme: "elysiajs" },
   });
+
+  // Central RFC 7807 Error Handler
+  app.setErrorHandler((error: FastifyError, request, reply) => {
+    const statusCode = error.statusCode || 500;
+    return reply.status(statusCode).send({
+      type: `https://nook.app/errors/${error.code || "internal-error"}`,
+      title: error.name || "Internal Server Error",
+      status: statusCode,
+      detail: error.message,
+    });
+  });
+
+  // Register Feature Routes
+  await app.register(authRoutes, { prefix: "/api/auth" });
 
   app.get(
     "/healthz",

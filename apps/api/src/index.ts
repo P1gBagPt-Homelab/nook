@@ -1,5 +1,18 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "../../.env" });
+import path from "path";
+import fs from "fs";
+
+for (const envPath of [
+  path.resolve(process.cwd(), ".env"),
+  path.resolve(process.cwd(), "../../.env"),
+  path.resolve(__dirname, "../../.env"),
+  path.resolve(__dirname, "../../../.env"),
+]) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
 
 import { buildServer } from "./server";
 

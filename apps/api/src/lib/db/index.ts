@@ -1,9 +1,21 @@
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
 import * as schema from "./schema";
 
-dotenv.config({ path: "../../.env" });
+for (const envPath of [
+  path.resolve(process.cwd(), ".env"),
+  path.resolve(process.cwd(), "../../.env"),
+  path.resolve(__dirname, "../../.env"),
+  path.resolve(__dirname, "../../../../.env"),
+]) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
 
 const connectionString =
   process.env.DATABASE_URL ||
