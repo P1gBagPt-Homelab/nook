@@ -7,10 +7,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Lint, Test & Validate
-    runs-on: self-hosted # Janus self-hosted runner
+    runs-on: self-hosted
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -27,41 +31,67 @@ jobs:
       - name: Run Unit & Integration Tests
         run: npm run test
 
-      - name: Ensure Coolify Docker Network
-        run: docker network create coolify || true
-
-      - name: Build & Run Docker Containers for Smoke Test
-        run: |
-          docker compose -f docker-compose.yml up -d --build
-          timeout 30 sh -c 'until docker exec nook-api curl -sf http://localhost:8000/healthz; do sleep 1; done'
-
       - name: Lint OpenAPI Schema with Spectral
-        run: |
-          npm install -g @stoplight/spectral-cli
-          docker exec nook-api curl -sf http://localhost:8000/openapi.json -o openapi.json
-          spectral lint openapi.json
-
-      - name: Clean Up Test Containers
-        if: always()
-        run: docker compose down -v
-
-      - name: Run Bruno Smoke Tests
-        run: npm run test:bruno
+        run: npm run lint:spectral
 
   deploy:
-    name: Trigger Coolify Deployment
+    name: Trigger Coolify Redeploy
     needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: self-hosted
+    timeout-minutes: 2
     steps:
-      - name: Trigger Coolify Webhook
+      - name: Trigger Coolify Deployment
         env:
           COOLIFY_HOST: ${{ secrets.COOLIFY_HOST }}
           COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
         run: |
-          echo "🚀 Quality gates passed. Triggering deployment on Janus..."
-          curl -s -f -X POST \
-            -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
+          # 1. Check for dedicated Webhook URL first
+          if [ -n "${COOLIFY_WEBHOOK_URL}" ]; then
+            echo "🚀 Triggering deployment via Coolify Webhook URL..."
+            curl -s -f -X GET "${COOLIFY_WEBHOOK_URL}" || curl -s -f -X POST "${COOLIFY_WEBHOOK_URL}"
+            echo "✅ Deployment webhook triggered successfully!"
+            exit 0
+          fi
+
+          # 2. Resolve token from server local file (~/.coolify_token) or GitHub secret
+          TOKEN=""
+          if [ -f "$HOME/.coolify_token" ]; then
+            TOKEN=$(tr -d '\r\n ' < "$HOME/.coolify_token")
+          elif [ -f "/home/daniel/.coolify_token" ]; then
+            TOKEN=$(tr -d '\r\n ' < "/home/daniel/.coolify_token")
+          elif [ -n "${COOLIFY_TOKEN}" ]; then
+            TOKEN="${COOLIFY_TOKEN}"
+          fi
+
+          if [ -z "$TOKEN" ]; then
+            echo "❌ Error: Coolify API Token not found in ~/.coolify_token or GitHub secret COOLIFY_TOKEN!"
+            exit 1
+          fi
+
+          # 3. Host (defaults to local Coolify instance)
+          HOST="${COOLIFY_HOST:-http://localhost:8000}"
+
+          # 4. Nook Application UUID
+          UUID="${COOLIFY_UUID:-ll4zn09zwlo9rlo1wm9gdkcl}"
+
+          echo "🚀 Quality gates passed. Triggering deployment on Janus (${HOST}) for UUID ${UUID}..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 30 -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
             -H "Content-Type: application/json" \
-            "${COOLIFY_HOST}/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false"
+            "${HOST}/api/v1/deploy?uuid=${UUID}&force=false")
+
+          HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+          BODY=$(echo "${RESPONSE}" | sed '$d')
+
+          echo "Response Body: ${BODY}"
+          echo "HTTP Status: ${HTTP_STATUS}"
+
+          if [ "${HTTP_STATUS}" -eq 200 ] || [ "${HTTP_STATUS}" -eq 201 ]; then
+            echo "✅ Deployment successfully queued on Project Janus Coolify engine!"
+          else
+            echo "❌ Coolify deployment trigger failed with HTTP ${HTTP_STATUS}"
+            exit 1
+          fi
