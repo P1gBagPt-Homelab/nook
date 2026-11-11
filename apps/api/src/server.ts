@@ -17,6 +17,8 @@ import { uploadRoutes } from "./modules/uploads";
 import { catalogRoutes } from "./modules/catalog";
 import { cartRoutes } from "./modules/cart";
 import { stockRoutes } from "./modules/stock";
+import { financeRoutes } from "./modules/finance";
+import { houseRoutes } from "./modules/house";
 
 for (const envPath of [
   path.resolve(process.cwd(), ".env"),
@@ -79,6 +81,8 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
         { name: "Catalog", description: "Product catalog and barcode scanner operations" },
         { name: "Cart", description: "Shopping cart lifecycle and item collection" },
         { name: "Stock", description: "Household inventory and pantry management" },
+        { name: "Finance", description: "Household expenses, budgets, subscriptions, and shared split ledger" },
+        { name: "House", description: "Appliance dossiers, maintenance timers, and household chores" },
       ],
     },
   });
@@ -120,6 +124,8 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   await app.register(catalogRoutes, { prefix: "/api/catalog" });
   await app.register(cartRoutes, { prefix: "/api/cart" });
   await app.register(stockRoutes, { prefix: "/api/stock" });
+  await app.register(financeRoutes, { prefix: "/api/finance" });
+  await app.register(houseRoutes, { prefix: "/api/house" });
 
   // 1. Golden Endpoint: GET /healthz (Liveness)
   app.get(

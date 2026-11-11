@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { LogOut, ShieldCheck, ChevronDown } from "lucide-react";
+import { LogOut, ShieldCheck, ChevronDown, UserPlus } from "lucide-react";
 import { NavTab } from "./BottomDock";
+import { InviteMemberDrawer } from "../auth/InviteMemberDrawer";
 
 interface HeaderProps {
   user: {
@@ -38,6 +39,7 @@ const ROUTE_PILLS: Record<NavTab, { dot: string; badge: string; label: string }>
 
 export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const route = ROUTE_PILLS[activeTab];
 
   return (
@@ -87,6 +89,20 @@ export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
                   </div>
                 </div>
 
+                {user?.role === "admin" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      setIsInviteOpen(true);
+                    }}
+                    className="w-full min-h-[44px] flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#15803D] hover:bg-[#DCFCE7]/50 border-b border-[#E2ECE4] transition-colors cursor-pointer"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Invite Household Member</span>
+                  </button>
+                )}
+
                 {onLogout && (
                   <button
                     type="button"
@@ -105,6 +121,11 @@ export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
           )}
         </div>
       </div>
+
+      <InviteMemberDrawer
+        isOpen={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
+      />
     </header>
   );
 }

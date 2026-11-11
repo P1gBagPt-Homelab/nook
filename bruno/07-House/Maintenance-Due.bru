@@ -1,0 +1,16 @@
+meta {
+  name: Maintenance Due
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/house/maintenance/due
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body: isArray
+}

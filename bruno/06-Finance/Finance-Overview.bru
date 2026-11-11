@@ -1,0 +1,17 @@
+meta {
+  name: Finance Overview
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/finance/overview
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.totalSpentThisMonth: isNumber
+  res.body.recurringMonthlyBurn: isNumber
+}

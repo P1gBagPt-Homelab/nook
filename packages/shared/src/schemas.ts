@@ -49,4 +49,94 @@ export const unpackCartSchema = z.object({
   targetLocation: z.string().default("Pantry"),
   logExpense: z.boolean().default(false),
   totalAmount: z.number().positive().optional(),
+  receiptImageKey: z.string().optional(),
+  isSplit: z.boolean().default(false),
+});
+
+// Finance Schemas
+export const updateBudgetSchema = z.object({
+  monthlyBudget: z.number().nonnegative().nullable(),
+  currency: z.string().min(3).max(6).optional(),
+});
+
+export const createExpenseCategorySchema = z.object({
+  name: z.string().min(1).max(64),
+  color: z.string().min(4).max(16).default("#0284C7"),
+  monthlyBudget: z.number().nonnegative().nullable().optional(),
+});
+
+export const updateExpenseCategorySchema = createExpenseCategorySchema.partial();
+
+export const createExpenseSchema = z.object({
+  title: z.string().min(1).max(128),
+  amount: z.number().positive(),
+  categoryId: z.string().uuid().nullable().optional(),
+  receiptKey: z.string().nullable().optional(),
+  date: z.string().optional(),
+  isSplit: z.boolean().default(false),
+});
+
+export const updateExpenseSchema = createExpenseSchema.partial();
+
+export const createSubscriptionSchema = z.object({
+  title: z.string().min(1).max(128),
+  amount: z.number().positive(),
+  billingCycle: z.enum(["monthly", "yearly", "weekly"]).default("monthly"),
+  nextBillingDate: z.string().min(1),
+  categoryId: z.string().uuid().nullable().optional(),
+  isActive: z.boolean().default(true),
+});
+
+export const updateSubscriptionSchema = createSubscriptionSchema.partial();
+
+export const settleSplitSchema = z.object({
+  fromUserId: z.string().uuid().optional(),
+  toUserId: z.string().uuid().optional(),
+  amount: z.number().positive().optional(),
+  note: z.string().max(256).optional(),
+});
+
+// House Management Schemas
+export const createAssetSchema = z.object({
+  name: z.string().min(1).max(128),
+  roomLocation: z.string().min(1).max(64).default("Home"),
+  brand: z.string().max(64).nullable().optional(),
+  model: z.string().max(64).nullable().optional(),
+  serialNumber: z.string().max(128).nullable().optional(),
+  purchaseDate: z.string().nullable().optional(),
+  warrantyUntil: z.string().nullable().optional(),
+  manualKey: z.string().nullable().optional(),
+  notes: z.string().max(1000).nullable().optional(),
+});
+
+export const updateAssetSchema = createAssetSchema.partial();
+
+export const createMaintenanceTaskSchema = z.object({
+  assetId: z.string().uuid(),
+  title: z.string().min(1).max(128),
+  intervalDays: z.number().int().min(1).max(3650).default(90),
+  nextDueDate: z.string().optional(),
+  replacementPartTitle: z.string().max(128).nullable().optional(),
+});
+
+export const updateMaintenanceTaskSchema = z.object({
+  title: z.string().min(1).max(128).optional(),
+  intervalDays: z.number().int().min(1).max(3650).optional(),
+  nextDueDate: z.string().optional(),
+  replacementPartTitle: z.string().max(128).nullable().optional(),
+});
+
+export const createChoreSchema = z.object({
+  title: z.string().min(1).max(128),
+  cadence: z.enum(["daily", "weekly", "biweekly", "monthly", "once"]).default("weekly"),
+  assignedToUserId: z.string().uuid().nullable().optional(),
+  dueDate: z.string().nullable().optional(),
+});
+
+export const updateChoreSchema = z.object({
+  title: z.string().min(1).max(128).optional(),
+  cadence: z.enum(["daily", "weekly", "biweekly", "monthly", "once"]).optional(),
+  assignedToUserId: z.string().uuid().nullable().optional(),
+  dueDate: z.string().nullable().optional(),
+  isCompleted: z.boolean().optional(),
 });

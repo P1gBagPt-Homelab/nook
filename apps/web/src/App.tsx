@@ -5,6 +5,7 @@ import { FinancePage } from "./pages/FinancePage";
 import { HousePage } from "./pages/HousePage";
 import { SetupPage } from "./pages/SetupPage";
 import { LoginPage } from "./pages/LoginPage";
+import { JoinPage } from "./pages/JoinPage";
 import { Header } from "./components/navigation/Header";
 import { BottomDock, NavTab } from "./components/navigation/BottomDock";
 import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
@@ -135,6 +136,22 @@ export function App() {
           window.history.pushState({}, "", "/");
           setCurrentPath("/");
           checkAuthStatus();
+        }}
+      />
+    );
+  }
+
+  if (currentPath === "/join") {
+    return (
+      <JoinPage
+        onJoinSuccess={() => {
+          window.history.replaceState({}, "", "/");
+          setCurrentPath("/");
+          checkAuthStatus();
+        }}
+        onNavigateLogin={() => {
+          window.history.replaceState({}, "", "/");
+          setCurrentPath("/");
         }}
       />
     );
