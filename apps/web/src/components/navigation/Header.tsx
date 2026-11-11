@@ -61,7 +61,7 @@ export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
             aria-label="User Profile"
             aria-expanded={showProfileMenu}
           >
-            <span className="max-w-[120px] truncate">{user?.name || "Daniel"}</span>
+            <span className="max-w-[120px] truncate">{user?.name || "Account"}</span>
             <ChevronDown className="w-3.5 h-3.5 text-[#5B6B61]" />
           </button>
 
@@ -74,11 +74,13 @@ export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
               <div className="absolute right-0 mt-2 w-60 rounded-[18px] bg-white text-[#14201A] border border-[#E2ECE4] shadow-lg z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-[#E2ECE4]">
                   <div className="text-xs font-extrabold text-[#14201A]">
-                    {user?.name || "Daniel"}
+                    {user?.name || "Account"}
                   </div>
-                  <div className="text-xs text-[#5B6B61] truncate mt-0.5">
-                    {user?.email || "daniel@test.com"}
-                  </div>
+                  {user?.email && (
+                    <div className="text-xs text-[#5B6B61] truncate mt-0.5">
+                      {user.email}
+                    </div>
+                  )}
                   <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2.5 py-0.5 rounded-full">
                     <ShieldCheck className="w-3 h-3" />
                     <span>{user?.role === "admin" ? "Household Admin" : "Member"}</span>

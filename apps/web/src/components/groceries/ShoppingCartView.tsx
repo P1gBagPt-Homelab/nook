@@ -67,28 +67,13 @@ export function ShoppingCartView() {
   const { uploadPhoto, isUploading: isUploadingReceipt } = usePhotoUpload();
   const [receiptImageKey, setReceiptImageKey] = useState<string | null>(null);
 
-  async function ensureSession() {
-    for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "daniel@test.com", password: pwd }),
-      });
-      if (loginRes.ok) return true;
-    }
-    return false;
-  }
-
   async function fetchActiveCart() {
     try {
       setIsLoading(true);
       setError(null);
-      let res = await fetch("/api/cart/active");
+      const res = await fetch("/api/cart/active");
       if (res.status === 401) {
-        const loggedIn = await ensureSession();
-        if (loggedIn) {
-          res = await fetch("/api/cart/active");
-        }
+        throw new Error("Please sign in to access your shopping cart.");
       }
       if (!res.ok) throw new Error("Failed to load active cart");
       const data = await res.json();
@@ -140,7 +125,7 @@ export function ShoppingCartView() {
     setShowAddForm(false);
 
     try {
-      let res = await fetch("/api/cart/items", {
+      const res = await fetch("/api/cart/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -151,21 +136,6 @@ export function ShoppingCartView() {
           targetLocation: locToAdd,
         }),
       });
-
-      if (res.status === 401) {
-        await ensureSession();
-        res = await fetch("/api/cart/items", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            listId: cart?.id,
-            customTitle: titleToAdd,
-            quantity: qtyToAdd,
-            estimatedPrice: priceToAdd,
-            targetLocation: locToAdd,
-          }),
-        });
-      }
 
       if (res.ok) {
         const savedItem = await res.json();
