@@ -17,7 +17,7 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 5
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://nook_user:NookSecretPass2026@localhost:5432/nook_db' }}
+      DATABASE_URL: postgresql://nook_user:NookSecretPass2026@localhost:5432/nook_db
     steps:
       - uses: actions/checkout@v4
 
@@ -33,11 +33,41 @@ jobs:
       - name: Build Shared Packages
         run: npm run build --workspace=@nook/shared
 
+      - name: Start Ephemeral Postgres for Tests
+        run: |
+          docker rm -f nook-test-postgres 2>/dev/null || true
+          docker run -d \
+            --name nook-test-postgres \
+            -e POSTGRES_USER=nook_user \
+            -e POSTGRES_PASSWORD=NookSecretPass2026 \
+            -e POSTGRES_DB=nook_db \
+            -p 5432:5432 \
+            postgres:16-alpine
+          for i in {1..30}; do
+            if docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db >/dev/null 2>&1; then
+              sleep 2
+              if docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db >/dev/null 2>&1; then
+                echo "✅ PostgreSQL is fully ready and accepting connections!"
+                break
+              fi
+            fi
+            echo "⏳ Waiting for PostgreSQL to be ready ($i/30)..."
+            sleep 1
+          done
+          docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db
+
+      - name: Run Database Migrations
+        run: npm run db:migrate --workspace=@nook/api
+
       - name: Run Unit & Integration Tests
         run: npm run test
 
       - name: Lint OpenAPI Schema with Spectral
         run: npm run lint:spectral
+
+      - name: Cleanup Ephemeral Postgres
+        if: always()
+        run: docker rm -f nook-test-postgres 2>/dev/null || true
 
   deploy:
     name: Trigger Coolify Redeploy
