@@ -4,10 +4,8 @@ import {
   Search,
   Trash2,
   AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Sparkles,
   Plus,
+  X,
 } from "lucide-react";
 
 export interface StockItem {
@@ -35,13 +33,6 @@ export function StockInventoryView() {
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const locations = ["All", "Pantry", "Fridge", "Freezer", "Cleaning"];
-
-  const locationIcons: Record<string, string> = {
-    Pantry: "🥫",
-    Fridge: "🥛",
-    Freezer: "🧊",
-    Cleaning: "🧼",
-  };
 
   async function ensureSession() {
     for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
@@ -88,7 +79,6 @@ export function StockInventoryView() {
     const currentQty = parseFloat(item.quantity) || 1;
     const nextQty = Math.max(0, currentQty + delta);
 
-    // Auto-update status if depleted to 0 or 1
     let nextStatus = item.status;
     if (nextQty === 0) {
       nextStatus = "out_of_stock";
@@ -101,7 +91,9 @@ export function StockInventoryView() {
     navigator.vibrate?.(15);
     setStockItems((prev) =>
       prev.map((i) =>
-        i.id === item.id ? { ...i, quantity: nextQty.toString(), status: nextStatus } : i
+        i.id === item.id
+          ? { ...i, quantity: nextQty.toString(), status: nextStatus }
+          : i
       )
     );
 
@@ -158,7 +150,7 @@ export function StockInventoryView() {
       });
 
       if (res.ok) {
-        setFeedback(`🛒 Added "${item.title}" to Shopping Cart!`);
+        setFeedback(`Added "${item.title}" to Shopping Cart.`);
         setTimeout(() => setFeedback(null), 3500);
       }
     } catch (err) {
@@ -192,186 +184,222 @@ export function StockInventoryView() {
   ).length;
 
   return (
-    <div className="space-y-4">
-      {/* Feedback Toast */}
+    <div>
       {feedback && (
-        <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-[#FF7A59] text-xs font-bold flex items-center gap-2.5 animate-fade-in shadow-xs">
-          <Sparkles className="w-4 h-4 shrink-0 text-[#FF7A59]" />
+        <div
+          role="status"
+          className="px-4 py-3 bg-[#FFF7ED] border-b border-[#FDBA74] text-[#9A3412] text-xs font-bold flex items-center justify-between gap-2"
+        >
           <span>{feedback}</span>
+          <button
+            type="button"
+            onClick={() => setFeedback(null)}
+            aria-label="Dismiss notice"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#9A3412] hover:text-[#14191D] cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* Overview Banner (Card Surface: #FFFFFF with 1px border rgba(0,0,0,0.04)) */}
-      <div className="card-impeccable p-5 flex items-center justify-between">
+      {/* Summary Band */}
+      <div className="px-4 pt-4 pb-3 border-b border-[#D6D1C4] bg-[#F7F5EE] flex items-end justify-between gap-3">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#10B981] block mb-0.5">
-            Cupboards & Pantry
-          </span>
-          <h2 className="text-base font-bold text-zinc-900">Home Stock Inventory</h2>
-          <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-            {stockItems.length} registered products at home
+          <h2 className="text-[22px] font-extrabold tracking-[-0.03em] text-[#14191D] leading-tight font-display">
+            Home Stock Inventory
+          </h2>
+          <p className="text-xs font-semibold text-[#5B6268] mt-1 tabular-nums">
+            {stockItems.length} products tracked across zones
           </p>
         </div>
+
         {runningLowCount > 0 && (
-          <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-bold flex items-center gap-1.5 shadow-2xs">
-            <AlertTriangle className="w-3.5 h-3.5 text-[#F59E0B]" />
+          <div className="px-2.5 py-1 rounded-[3px] bg-[#FEF3C7] border border-[#F59E0B] text-[#92400E] text-[11px] font-extrabold flex items-center gap-1.5 tabular-nums shrink-0">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#B45309]" />
             <span>{runningLowCount} to restock</span>
           </div>
         )}
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-3.5 pointer-events-none" />
-        <input
-          type="text"
-          placeholder="Search pantry, fridge, spices..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 rounded-full bg-white border border-zinc-200 text-xs font-semibold text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#10B981] shadow-2xs"
-        />
+      {/* Search & Zone Route Filters */}
+      <div className="px-4 py-3 border-b border-[#D6D1C4] bg-[#EFECE2] flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+        <div className="relative md:w-72">
+          <Search className="w-4 h-4 text-[#5B6268] absolute left-3 top-3 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search pantry, fridge, spices..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full min-h-[40px] pl-9 pr-3 py-2 rounded-[4px] bg-[#FAF9F4] border border-[#D6D1C4] text-xs font-semibold text-[#14191D] placeholder-[#5B6268] focus:outline-none focus:border-[#047857]"
+          />
+        </div>
+
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+          {locations.map((loc) => (
+            <button
+              key={loc}
+              type="button"
+              onClick={() => setSelectedLocation(loc)}
+              className={`min-h-[40px] px-3 py-1.5 rounded-[3px] text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer border ${
+                selectedLocation === loc
+                  ? "bg-[#14191D] text-[#F7F5EE] border-[#14191D]"
+                  : "bg-[#FAF9F4] text-[#5B6268] hover:text-[#14191D] border-[#D6D1C4]"
+              }`}
+            >
+              {loc}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Location Filter Pills (Blueprint: All, Fridge, Pantry, Freezer, Cleaning) */}
-      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {locations.map((loc) => (
-          <button
-            key={loc}
-            onClick={() => setSelectedLocation(loc)}
-            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer ${
-              selectedLocation === loc
-                ? "bg-zinc-900 text-white shadow-xs"
-                : "bg-white text-zinc-600 hover:text-zinc-900 border border-zinc-200"
-            }`}
-          >
-            {loc !== "All" && <span>{locationIcons[loc] || "🥫"}</span>}
-            <span>{loc}</span>
-          </button>
-        ))}
+      {/* Stock Table Header */}
+      <div className="px-4 py-2 bg-[#EFECE2] border-b border-[#D6D1C4] flex items-center justify-between text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#5B6268]">
+        <span>Zone Stock ({filteredItems.length})</span>
+        <span>Status / Qty / Restock</span>
       </div>
 
-      {/* Stock Items List */}
       {isLoading ? (
-        <div className="py-16 text-center text-zinc-400 animate-pulse text-xs font-semibold tracking-wide">
-          Loading stock items...
+        <div aria-busy="true" aria-label="Loading stock items">
+          {[1, 2, 3].map((row) => (
+            <div
+              key={row}
+              className="px-4 py-3.5 border-b border-[#E2DDD0] bg-[#FAF9F4] flex items-center justify-between gap-3"
+            >
+              <div className="space-y-1.5 flex-1">
+                <div className="h-4 w-40 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+                <div className="h-3 w-28 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+              </div>
+              <div className="h-6 w-20 bg-[#EFECE2] rounded-[3px] animate-pulse" />
+            </div>
+          ))}
         </div>
       ) : error ? (
-        <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-semibold text-center border border-red-100">
-          {error}
+        <div className="m-4 p-4 bg-[#FEE2E2] text-[#991B1B] rounded-[4px] text-xs font-bold border border-[#FCA5A5] flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={fetchStock}
+            className="min-h-[44px] px-3 py-1.5 rounded-[3px] bg-[#991B1B] text-white text-xs font-bold cursor-pointer"
+          >
+            Retry
+          </button>
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="card-impeccable p-8 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#10B981] flex items-center justify-center mx-auto mb-3">
-            <Package className="w-6 h-6" />
+        <div className="px-6 py-10 bg-[#FAF9F4] border-b border-[#D6D1C4] text-center">
+          <div className="w-10 h-10 rounded-[4px] bg-[#EFECE2] border border-[#D6D1C4] text-[#047857] flex items-center justify-center mx-auto mb-3">
+            <Package className="w-5 h-5" />
           </div>
-          <p className="text-sm font-bold text-zinc-900">No stock items in this location</p>
-          <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
-            Items unpacked from your shopping cart will automatically appear here!
+          <p className="text-sm font-extrabold text-[#14191D]">
+            No stock items in this location
+          </p>
+          <p className="text-xs text-[#5B6268] mt-1 max-w-xs mx-auto">
+            Items unpacked from your shopping cart will appear here automatically.
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div>
           {filteredItems.map((item) => {
+            const needsRestock =
+              item.status === "running_low" || item.status === "out_of_stock";
+
             const statusConfig = {
               in_stock: {
                 label: "In Stock",
-                dot: "bg-[#10B981]",
-                badge: "bg-emerald-50 text-emerald-800 border-emerald-200",
-                icon: CheckCircle,
+                marker: "w-1.5 h-1.5 rounded-full bg-[#047857]",
+                badge: "bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]",
               },
               running_low: {
                 label: "Running Low",
-                dot: "bg-[#F59E0B]",
-                badge: "bg-amber-50 text-amber-800 border-amber-200",
-                icon: AlertTriangle,
+                marker: "w-2 h-2 rounded-[2px] bg-[#B45309]",
+                badge: "bg-[#FEF3C7] text-[#92400E] border-[#F59E0B]",
               },
               out_of_stock: {
                 label: "Out of Stock",
-                dot: "bg-rose-500",
-                badge: "bg-rose-50 text-rose-800 border-rose-200",
-                icon: XCircle,
+                marker: "w-2.5 h-2.5 rounded-[1px] bg-[#D9381E]",
+                badge: "bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]",
               },
             }[item.status] || {
               label: item.status,
-              dot: "bg-zinc-400",
-              badge: "bg-zinc-50 text-zinc-800 border-zinc-200",
-              icon: CheckCircle,
+              marker: "w-1.5 h-1.5 rounded-full bg-[#5B6268]",
+              badge: "bg-[#EFECE2] text-[#14191D] border-[#D6D1C4]",
             };
-
-            const StatusIcon = statusConfig.icon;
 
             return (
               <div
                 key={item.id}
-                className="card-impeccable p-4 space-y-3 transition duration-150 hover:border-zinc-300"
+                className="px-3 sm:px-4 py-2.5 border-b border-[#E2DDD0] bg-[#FAF9F4] flex flex-wrap md:flex-nowrap items-center justify-between gap-2.5"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-bold text-zinc-900 truncate">
-                        {item.title}
-                      </span>
-                      <span className="text-xs shrink-0" title={item.location}>
-                        {locationIcons[item.location] || "🥫"}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-400">
-                      {item.brand && <span className="font-medium">{item.brand} •</span>}
-                      <span>{item.category}</span>
-                      <span>• {item.location}</span>
-                    </div>
+                {/* Name & Metadata */}
+                <div className="min-w-0 flex-1 basis-48">
+                  <div className="text-sm font-bold text-[#14191D] truncate">
+                    {item.title}
                   </div>
-
-                  {/* Status Pill Toggle */}
-                  <button
-                    onClick={() => handleCycleStatus(item)}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-2xs ${statusConfig.badge}`}
-                    title="Click to cycle status"
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
-                    <StatusIcon className="w-3 h-3 stroke-[2.5]" />
-                    <span>{statusConfig.label}</span>
-                  </button>
+                  <div className="text-[11px] font-semibold text-[#5B6268] mt-0.5 truncate">
+                    {item.location} · {item.category}
+                    {item.brand ? ` · ${item.brand}` : ""}
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-zinc-100">
-                  {/* Quantity Stepper */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 bg-zinc-50 rounded-xl px-2 py-1 border border-zinc-200/80">
+                {/* Proportional status badge */}
+                <button
+                  type="button"
+                  onClick={() => handleCycleStatus(item)}
+                  className={`min-h-[36px] px-2.5 py-1 rounded-[3px] text-[10px] font-extrabold border flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${statusConfig.badge}`}
+                  title="Click to cycle stock status"
+                >
+                  <span className={statusConfig.marker} aria-hidden="true" />
+                  <span>{statusConfig.label}</span>
+                </button>
+
+                {/* Controls Row: 44px Qty Stepper + Conditional Restock + Delete */}
+                <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                  <div className="flex items-center gap-2 tabular-nums">
+                    <div className="flex items-center border border-[#D6D1C4] rounded-[3px] bg-[#F7F5EE]">
                       <button
+                        type="button"
                         onClick={() => handleUpdateQuantity(item, -1)}
-                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
+                        aria-label="Decrease stock quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
                       >
                         -
                       </button>
-                      <span className="text-xs font-black text-zinc-900 min-w-5 text-center">
+                      <span className="text-xs font-extrabold text-[#14191D] px-1.5 min-w-6 text-center">
                         {parseFloat(item.quantity)}
                       </span>
                       <button
+                        type="button"
                         onClick={() => handleUpdateQuantity(item, 1)}
-                        className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
+                        aria-label="Increase stock quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
                       >
                         +
                       </button>
                     </div>
-                    <span className="text-xs font-semibold text-zinc-400">{item.unit}</span>
+                    <span className="text-xs font-semibold text-[#5B6268] min-w-7">
+                      {item.unit}
+                    </span>
                   </div>
 
-                  {/* Actions: Add to Shopping Cart & Delete */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <button
+                      type="button"
                       onClick={() => handleAddToCart(item)}
-                      className="px-3.5 py-1.5 rounded-full bg-orange-50 hover:bg-orange-100 active:scale-95 text-[#FF7A59] text-xs font-bold flex items-center gap-1.5 transition border border-orange-200/60 cursor-pointer"
+                      className={`min-h-[44px] px-3 py-1.5 rounded-[3px] text-xs font-extrabold flex items-center gap-1 transition-colors cursor-pointer border ${
+                        needsRestock
+                          ? "bg-[#D9381E] hover:bg-[#B92B14] border-[#D9381E] text-white"
+                          : "bg-[#F7F5EE] hover:bg-[#EFECE2] border-[#D6D1C4] text-[#14191D]"
+                      }`}
                       title="Add to Shopping Cart"
                     >
-                      <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                      <Plus className="w-3.5 h-3.5 stroke-[2.6]" />
                       <span>Add to Cart</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 text-zinc-300 hover:text-red-500 transition"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5B6268] hover:text-[#B91C1C] transition-colors cursor-pointer"
+                      aria-label="Delete stock item"
                       title="Delete Stock Item"
                     >
                       <Trash2 className="w-4 h-4" />

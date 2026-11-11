@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ShoppingBag, Package, Camera, PieChart, Home } from "lucide-react";
 import { GroceryPage } from "./pages/GroceryPage";
 import { FinancePage } from "./pages/FinancePage";
 import { HousePage } from "./pages/HousePage";
@@ -14,11 +15,9 @@ export function App() {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // Active navigation state
   const [activeTab, setActiveTab] = useState<NavTab>("grocery");
   const [grocerySubTab, setGrocerySubTab] = useState<"cart" | "stock">("cart");
 
-  // Scanner & Digitalization Drawer State
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isDigitalizeOpen, setIsDigitalizeOpen] = useState(false);
   const [digitalizeBarcode, setDigitalizeBarcode] = useState("");
@@ -32,7 +31,6 @@ export function App() {
 
       if (data.setupRequired) {
         if (window.location.pathname === "/groceries") {
-          // Auto-setup admin for grocery testing
           const setupRes = await fetch("/api/auth/setup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -54,13 +52,11 @@ export function App() {
           setCurrentPath("/setup");
         }
       } else {
-        // If visiting /setup when already initialized, redirect to /
         if (window.location.pathname === "/setup") {
           window.history.replaceState({}, "", "/");
           setCurrentPath("/");
         }
 
-        // Try ensuring active session for dev/e2e
         let meRes = await fetch("/api/auth/me");
         if (!meRes.ok) {
           for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
@@ -147,7 +143,6 @@ export function App() {
     }
   }
 
-  // Handle /setup route
   if (currentPath === "/setup" || (isInitialized === false && !isLoadingAuth)) {
     return (
       <SetupPage
@@ -161,31 +156,97 @@ export function App() {
     );
   }
 
+  const effectiveTab: NavTab =
+    activeTab === "grocery" && grocerySubTab === "stock" ? "stock" : activeTab;
+
+  const desktopRoutes: {
+    id: NavTab;
+    label: string;
+    meta: string;
+    accent: string;
+    icon: typeof ShoppingBag;
+  }[] = [
+    { id: "grocery", label: "Grocery Cart", meta: "Trip & checkoff", accent: "border-[#D9381E]", icon: ShoppingBag },
+    { id: "stock", label: "Pantry Stock", meta: "Fridge & cupboard", accent: "border-[#047857]", icon: Package },
+    { id: "finance", label: "Finance", meta: "Budgets & split", accent: "border-[#1D4ED8]", icon: PieChart },
+    { id: "house", label: "House", meta: "Assets & chores", accent: "border-[#6D28D9]", icon: Home },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-[#18181B] selection:bg-[#FF7A59]/20 selection:text-[#FF7A59]">
-      {/* Top App Header with Profile Chip (Blueprint Section 2) */}
-      <Header user={currentUser} onLogout={handleLogout} />
+    <div className="min-h-screen flex flex-col bg-[#F7F5EE] text-[#14191D]">
+      <Header user={currentUser} activeTab={effectiveTab} onLogout={handleLogout} />
 
-      {/* Main Dynamic Pillar View */}
-      <main className="transition-opacity duration-200">
-        {activeTab === "grocery" && (
-          <GroceryPage
-            activeSubTab={grocerySubTab}
-            onSubTabChange={(sub: "cart" | "stock") => setGrocerySubTab(sub)}
-          />
-        )}
-        {activeTab === "finance" && <FinancePage />}
-        {activeTab === "house" && <HousePage />}
-      </main>
+      <div className="flex-1 w-full max-w-6xl mx-auto md:grid md:grid-cols-[224px_1fr] md:border-x md:border-[#D6D1C4]">
+        {/* Desktop Market Hall Route Rail */}
+        <aside
+          aria-label="Desktop Route Navigation"
+          className="hidden md:flex md:flex-col justify-between bg-[#14191D] text-[#F7F5EE] border-r border-[#2A3137]"
+        >
+          <div>
+            <div className="px-4 py-3 border-b border-[#2A3137] text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#A1AAB3]">
+              Household Routes
+            </div>
+            <div className="divide-y divide-[#2A3137]">
+              {desktopRoutes.map((r) => {
+                const Icon = r.icon;
+                const active = effectiveTab === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => handleTabChange(r.id)}
+                    className={`w-full text-left px-4 py-3.5 border-l-[3px] flex items-center gap-3 transition-colors cursor-pointer ${
+                      active
+                        ? `${r.accent} bg-[#1D2329] text-white`
+                        : "border-transparent text-[#A1AAB3] hover:text-white hover:bg-[#1A2026]"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-sm font-extrabold leading-tight">{r.label}</div>
+                      <div className="text-[11px] text-[#A1AAB3] mt-0.5">{r.meta}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
 
-      {/* Floating Bottom Dock (Blueprint Section 2) */}
+            <div className="p-4 border-t border-[#2A3137]">
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                className="w-full min-h-[44px] px-3 py-2.5 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Scan Barcode</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="px-4 py-3 border-t border-[#2A3137] text-[11px] font-semibold text-[#A1AAB3]">
+            Project Janus · Self-Hosted
+          </div>
+        </aside>
+
+        {/* Main Workspace */}
+        <main className="min-w-0 pb-0 md:pb-8 bg-[#F7F5EE]">
+          {activeTab === "grocery" && (
+            <GroceryPage
+              activeSubTab={grocerySubTab}
+              onSubTabChange={(sub: "cart" | "stock") => setGrocerySubTab(sub)}
+            />
+          )}
+          {activeTab === "finance" && <FinancePage />}
+          {activeTab === "house" && <HousePage />}
+        </main>
+      </div>
+
       <BottomDock
-        activeTab={activeTab === "grocery" && grocerySubTab === "stock" ? "stock" : activeTab}
+        activeTab={effectiveTab}
         onTabChange={handleTabChange}
         onOpenScanner={() => setIsScannerOpen(true)}
       />
 
-      {/* In-Store Barcode Scanner Viewfinder (Blueprint Section 3) */}
       <BarcodeScannerModal
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
@@ -193,7 +254,6 @@ export function App() {
         onAddDirectToCart={handleAddDirectToCart}
       />
 
-      {/* Product Digitalization Bottom Sheet (`Vaul` Drawer) (Blueprint Section 4) */}
       <ProductCreateDrawer
         isOpen={isDigitalizeOpen}
         onClose={() => setIsDigitalizeOpen(false)}

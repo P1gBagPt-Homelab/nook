@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T16:28:00Z",
+  "title": "Design System: Nook",
+  "extensions": {
+    "colorMeta": {
+      "route-grocery": {
+        "role": "primary",
+        "displayName": "Signal Vermilion",
+        "canonical": "#D9381E",
+        "tonalRamp": ["#4A1108", "#751C0E", "#A62814", "#B92B14", "#D9381E", "#E8634B", "#F39E8E", "#FDE8E4"]
+      },
+      "route-grocery-hover": {
+        "role": "primary",
+        "displayName": "Signal Vermilion Hover",
+        "canonical": "#B92B14",
+        "tonalRamp": ["#3D0D06", "#64170B", "#8E2110", "#B92B14", "#D9381E", "#E8634B", "#F39E8E", "#FDE8E4"]
+      },
+      "route-stock": {
+        "role": "secondary",
+        "displayName": "Market Emerald",
+        "canonical": "#047857",
+        "tonalRamp": ["#022C22", "#064E3B", "#065F46", "#047857", "#059669", "#34D399", "#A7F3D0", "#ECFDF5"]
+      },
+      "route-stock-hover": {
+        "role": "secondary",
+        "displayName": "Market Emerald Hover",
+        "canonical": "#065F46",
+        "tonalRamp": ["#022C22", "#043F2E", "#065F46", "#047857", "#059669", "#34D399", "#A7F3D0", "#ECFDF5"]
+      },
+      "route-finance": {
+        "role": "tertiary",
+        "displayName": "Cobalt Route",
+        "canonical": "#1D4ED8",
+        "tonalRamp": ["#172554", "#1E3A8A", "#1E40AF", "#1D4ED8", "#2563EB", "#60A5FA", "#BFDBFE", "#EFF6FF"]
+      },
+      "route-finance-hover": {
+        "role": "tertiary",
+        "displayName": "Cobalt Route Hover",
+        "canonical": "#1E40AF",
+        "tonalRamp": ["#172554", "#1E3A8A", "#1E40AF", "#1D4ED8", "#3B82F6", "#60A5FA", "#BFDBFE", "#EFF6FF"]
+      },
+      "route-house": {
+        "role": "tertiary",
+        "displayName": "Plum Route",
+        "canonical": "#6D28D9",
+        "tonalRamp": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#A78BFA", "#DDD6FE", "#F5F3FF"]
+      },
+      "route-house-hover": {
+        "role": "tertiary",
+        "displayName": "Plum Route Hover",
+        "canonical": "#5B21B6",
+        "tonalRamp": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#A78BFA", "#DDD6FE", "#F5F3FF"]
+      },
+      "signal-amber": {
+        "role": "tertiary",
+        "displayName": "Ochre Signal",
+        "canonical": "#B45309",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FEF3C7"]
+      },
+      "enamel-ground": {
+        "role": "neutral",
+        "displayName": "Enamel Cream Ground",
+        "canonical": "#F7F5EE",
+        "tonalRamp": ["#2A2822", "#4B483F", "#706C5F", "#969182", "#BCB7A7", "#DDD8CB", "#EFECE2", "#F7F5EE"]
+      },
+      "enamel-bay": {
+        "role": "neutral",
+        "displayName": "Secondary Bay Tint",
+        "canonical": "#EFECE2",
+        "tonalRamp": ["#292721", "#49463C", "#6C675A", "#908A7B", "#B5AFA0", "#D6D1C4", "#E2DDD0", "#EFECE2"]
+      },
+      "enamel-plate": {
+        "role": "neutral",
+        "displayName": "Enamel Plate",
+        "canonical": "#FAF9F4",
+        "tonalRamp": ["#2C2B26", "#4E4C44", "#747166", "#9A968A", "#C0BCB0", "#DFDCD2", "#F2EFE6", "#FAF9F4"]
+      },
+      "enamel-settled": {
+        "role": "neutral",
+        "displayName": "Settled Row Tint",
+        "canonical": "#F2EFE6",
+        "tonalRamp": ["#2A2823", "#4B483F", "#6F6B5F", "#938F81", "#B8B3A5", "#D6D1C4", "#E6E2D7", "#F2EFE6"]
+      },
+      "enamel-ink": {
+        "role": "neutral",
+        "displayName": "Rail Charcoal",
+        "canonical": "#14191D",
+        "tonalRamp": ["#0B0E11", "#14191D", "#1D2329", "#2A3137", "#43494E", "#5B6268", "#A1AAB3", "#E2E6E9"]
+      },
+      "enamel-settled-ink": {
+        "role": "neutral",
+        "displayName": "Settled Charcoal",
+        "canonical": "#43494E",
+        "tonalRamp": ["#14191D", "#252B30", "#353B40", "#43494E", "#5B6268", "#7D858D", "#B2B8BE", "#E4E7EA"]
+      },
+      "enamel-muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#5B6268",
+        "tonalRamp": ["#14191D", "#2A3137", "#43494E", "#5B6268", "#777E85", "#99A0A7", "#C4C9CE", "#ECEEEF"]
+      },
+      "enamel-rule": {
+        "role": "neutral",
+        "displayName": "Primary Hairline Rule",
+        "canonical": "#D6D1C4",
+        "tonalRamp": ["#2E2C26", "#504D43", "#736F63", "#979284", "#B8B2A4", "#D6D1C4", "#E7E3D9", "#F5F3EC"]
+      },
+      "enamel-rule-soft": {
+        "role": "neutral",
+        "displayName": "Soft Row Rule",
+        "canonical": "#E2DDD0",
+        "tonalRamp": ["#2E2C26", "#524F46", "#787367", "#9D988A", "#C0BBB0", "#D6D1C4", "#E2DDD0", "#F7F5EE"]
+      },
+      "rail-active": {
+        "role": "neutral",
+        "displayName": "Rail Active Surface",
+        "canonical": "#1D2329",
+        "tonalRamp": ["#0E1115", "#14191D", "#1D2329", "#2A3137", "#3D464F", "#5E6872", "#9CA6AF", "#DCE1E5"]
+      },
+      "rail-divider": {
+        "role": "neutral",
+        "displayName": "Rail Divider",
+        "canonical": "#2A3137",
+        "tonalRamp": ["#111519", "#1B2126", "#2A3137", "#3B444C", "#545F69", "#76818C", "#AAB3BC", "#DFE4E8"]
+      },
+      "rail-muted": {
+        "role": "neutral",
+        "displayName": "Rail Muted Ink",
+        "canonical": "#A1AAB3",
+        "tonalRamp": ["#14191D", "#2A3137", "#475058", "#667079", "#848E98", "#A1AAB3", "#C9CFD5", "#EFF2F4"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page summary headings and right-aligned euro/burn-rate totals (Archivo 800, 22px)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Top bar wordmark and Vaul bottom drawer headers (Archivo 800, 16px)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Pending checklist item titles, stock products, appliances, chores, and desktop rail labels (Public Sans 700, 14px)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Action buttons, inline form inputs, secondary metadata, and route sub-tabs (Public Sans 600–800, 12px)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase bay headers, column captions, and percentage readouts (Public Sans 800, 11px)."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "reticle-pulse",
+        "value": "1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Vermilion corner reticle pulse inside the barcode scanner viewfinder."
+      },
+      {
+        "name": "route-transition",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Crisp color and border state transitions on route tabs, list rows, and enamel buttons."
+      },
+      {
+        "name": "progress-fill",
+        "value": "300ms ease",
+        "purpose": "Smooth horizontal fill on the 3px enamel cart and budget progress meters."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "container-max", "value": "1152px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Signal Vermilion CTA",
+      "kind": "button",
+      "refersTo": "button-grocery",
+      "description": "Primary Signal Vermilion action button for barcode scanning, adding cart items, and restocking.",
+      "html": "<button class=\"ds-btn-grocery\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>Scan Barcode</span></button>",
+      "css": ".ds-btn-grocery { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-grocery, #D9381E); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; letter-spacing: -0.01em; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-grocery:hover { background-color: #B92B14; } .ds-btn-grocery:active { transform: scale(0.99); } .ds-btn-grocery:focus-visible { outline: 2px solid #D9381E; outline-offset: 2px; }"
+    },
+    {
+      "name": "Market Emerald Unpack CTA",
+      "kind": "button",
+      "refersTo": "button-stock",
+      "description": "Full-width Market Emerald action bar for transferring collected items from Cart into Home Stock.",
+      "html": "<button class=\"ds-btn-stock\" type=\"button\"><span class=\"ds-btn-stock-lead\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>Arrived Home? Unpack to Stock</span></span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-stock { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 360px; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-stock, #047857); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-stock-lead { display: inline-flex; align-items: center; gap: 0.5rem; } .ds-btn-stock:hover { background-color: #065F46; } .ds-btn-stock:active { transform: scale(0.99); } .ds-btn-stock:focus-visible { outline: 2px solid #047857; outline-offset: 2px; }"
+    },
+    {
+      "name": "Cobalt Settle CTA",
+      "kind": "button",
+      "refersTo": "button-finance",
+      "description": "Cobalt Route confirmation button for settling shared household ledger balances.",
+      "html": "<button class=\"ds-btn-finance\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>1-Tap Settle</span></button>",
+      "css": ".ds-btn-finance { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-finance, #1D4ED8); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-finance:hover { background-color: #1E40AF; } .ds-btn-finance:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hairline Enamel Checklist Rows",
+      "kind": "card",
+      "refersTo": "enamel-plate",
+      "description": "Pending (#FAF9F4) and settled (#F2EFE6) checklist rows separated by 1px rules with locked tabular totals.",
+      "html": "<div class=\"ds-list\"><div class=\"ds-row ds-row-pending\"><span class=\"ds-check-box\"></span><div class=\"ds-row-meta\"><div class=\"ds-row-title\">Whole Milk 1L</div><div class=\"ds-row-sub\">Fridge · Terra Nostra</div></div><div class=\"ds-stepper\"><span class=\"ds-step-btn\">-</span><span class=\"ds-step-val\">2</span><span class=\"ds-step-btn\">+</span></div><div class=\"ds-row-price\"><div class=\"ds-price-num\">€2.98</div><div class=\"ds-price-unit\">2 pcs</div></div></div><div class=\"ds-row ds-row-settled\"><span class=\"ds-check-box ds-check-done\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span><div class=\"ds-row-meta\"><div class=\"ds-row-title ds-title-done\">Sourdough Loaf</div><div class=\"ds-row-sub ds-sub-done\">Pantry</div></div><div class=\"ds-row-qty-locked\">1 pcs</div><div class=\"ds-row-price\"><div class=\"ds-price-num ds-price-done\">€3.20</div></div></div></div>",
+      "css": ".ds-list { border: 1px solid var(--enamel-rule, #D6D1C4); border-radius: 4px; overflow: hidden; font-family: \"Public Sans\", sans-serif; max-width: 480px; } .ds-row { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid #E2DDD0; transition: background-color 150ms ease; } .ds-row:last-child { border-bottom: none; } .ds-row-pending { background-color: var(--enamel-plate, #FAF9F4); } .ds-row-pending:hover { background-color: #FFFFFF; } .ds-row-settled { background-color: #F2EFE6; } .ds-check-box { width: 20px; height: 20px; border-radius: 3px; border: 2px solid var(--enamel-ink, #14191D); flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; } .ds-check-done { background-color: var(--route-stock, #047857); border-color: var(--route-stock, #047857); color: #FFFFFF; } .ds-row-meta { flex: 1; min-width: 0; } .ds-row-title { font-size: 14px; font-weight: 700; color: #14191D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-title-done { font-weight: 600; color: #43494E; text-decoration: line-through; } .ds-row-sub { font-size: 11px; font-weight: 600; color: #5B6268; margin-top: 2px; } .ds-sub-done { color: #43494E; } .ds-stepper { display: inline-flex; align-items: center; border: 1px solid #D6D1C4; border-radius: 3px; background-color: #F7F5EE; font-variant-numeric: tabular-nums; } .ds-step-btn { padding: 4px 10px; font-size: 13px; font-weight: 800; color: #14191D; } .ds-step-val { padding: 0 4px; font-size: 12px; font-weight: 800; color: #14191D; } .ds-row-qty-locked { width: 80px; text-align: center; font-size: 12px; font-weight: 700; color: #43494E; font-variant-numeric: tabular-nums; } .ds-row-price { width: 64px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; } .ds-price-num { font-size: 12px; font-weight: 800; color: #14191D; } .ds-price-done { color: #047857; } .ds-price-unit { font-size: 10px; font-weight: 600; color: #5B6268; }"
+    },
+    {
+      "name": "Proportional Status Badges",
+      "kind": "chip",
+      "description": "Stock status chips pairing proportional geometric markers (6px circle, 8px square, 10px block) with semantic tint borders.",
+      "html": "<div class=\"ds-badge-row\"><span class=\"ds-badge ds-badge-ok\"><span class=\"ds-dot-ok\"></span>In Stock</span><span class=\"ds-badge ds-badge-low\"><span class=\"ds-dot-low\"></span>Running Low</span><span class=\"ds-badge ds-badge-out\"><span class=\"ds-dot-out\"></span>Out of Stock</span></div>",
+      "css": ".ds-badge-row { display: flex; flex-wrap: wrap; gap: 8px; font-family: \"Public Sans\", sans-serif; } .ds-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 800; border: 1px solid transparent; } .ds-badge-ok { background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0; } .ds-dot-ok { width: 6px; height: 6px; border-radius: 9999px; background-color: #047857; } .ds-badge-low { background-color: #FEF3C7; color: #92400E; border-color: #F59E0B; } .ds-dot-low { width: 8px; height: 8px; border-radius: 2px; background-color: #B45309; } .ds-badge-out { background-color: #FEE2E2; color: #991B1B; border-color: #FCA5A5; } .ds-dot-out { width: 10px; height: 10px; border-radius: 1px; background-color: #D9381E; }"
+    },
+    {
+      "name": "Enamel Bay Search Field",
+      "kind": "input",
+      "refersTo": "input-enamel",
+      "description": "Crisp 4px-radius enamel search input with 1px mineral rule border and route-colored focus state.",
+      "html": "<div class=\"ds-search-wrap\"><svg class=\"ds-search-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" type=\"text\" placeholder=\"Search pantry, fridge, spices...\" /></div>",
+      "css": ".ds-search-wrap { position: relative; max-width: 300px; font-family: \"Public Sans\", sans-serif; } .ds-search-icon { position: absolute; left: 12px; top: 12px; color: #5B6268; pointer-events: none; } .ds-input { width: 100%; min-height: 40px; padding: 8px 12px 8px 36px; border-radius: 4px; background-color: var(--enamel-plate, #FAF9F4); border: 1px solid var(--enamel-rule, #D6D1C4); color: var(--enamel-ink, #14191D); font-size: 12px; font-weight: 600; outline: none; transition: border-color 150ms ease; } .ds-input::placeholder { color: #5B6268; } .ds-input:focus { border-color: var(--route-stock, #047857); }"
+    },
+    {
+      "name": "Market Hall Route Switch",
+      "kind": "nav",
+      "refersTo": "route-switch",
+      "description": "Full-bleed 2-column bay switch with 1px divider and 3px route-colored bottom bar.",
+      "html": "<div class=\"ds-switch\"><button class=\"ds-switch-btn ds-switch-active-grocery\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Shopping Cart</span></button><button class=\"ds-switch-btn\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><line x1=\"12\" x2=\"12\" y1=\"22\" y2=\"12\"/></svg><span>My Stock</span></button></div>",
+      "css": ".ds-switch { display: grid; grid-template-columns: repeat(2, 1fr); background-color: var(--enamel-bay, #EFECE2); border-bottom: 1px solid #D6D1C4; font-family: \"Public Sans\", sans-serif; max-width: 440px; } .ds-switch-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 12px; border: none; border-right: 1px solid #D6D1C4; border-bottom: 3px solid transparent; background: transparent; color: #5B6268; font-size: 12px; font-weight: 800; cursor: pointer; transition: color 150ms ease, background-color 150ms ease; } .ds-switch-btn:last-child { border-right: none; } .ds-switch-btn:hover { color: #14191D; } .ds-switch-active-grocery { background-color: var(--enamel-ground, #F7F5EE); color: #14191D; border-bottom-color: var(--route-grocery, #D9381E); } .ds-switch-active-grocery svg { color: var(--route-grocery, #D9381E); }"
+    },
+    {
+      "name": "Charcoal Bottom Route Dock",
+      "kind": "nav",
+      "refersTo": "rail-dock",
+      "description": "Sticky 5-column charcoal bottom rail with 3px active pillar bars and an in-grid 4px-radius vermilion Scan button.",
+      "html": "<nav class=\"ds-dock\"><button class=\"ds-dock-tab ds-dock-tab-active\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Grocery</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/></svg><span>Pantry</span></button><div class=\"ds-dock-scan-cell\"><button class=\"ds-dock-scan\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>SCAN</span></button></div><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/><path d=\"M22 12A10 10 0 0 0 12 2v10z\"/></svg><span>Finance</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>House</span></button></nav>",
+      "css": ".ds-dock { display: grid; grid-template-columns: repeat(5, 1fr); align-items: stretch; background-color: var(--enamel-ink, #14191D); border-top: 1px solid #2A3137; font-family: \"Public Sans\", sans-serif; max-width: 420px; } .ds-dock-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 54px; padding: 8px 4px; border: none; border-top: 3px solid transparent; background: transparent; color: #A1AAB3; font-size: 11px; font-weight: 700; cursor: pointer; } .ds-dock-tab:hover { color: #FFFFFF; } .ds-dock-tab-active { background-color: #1D2329; border-top-color: var(--route-grocery, #D9381E); color: #FFFFFF; } .ds-dock-scan-cell { display: flex; align-items: center; justify-content: center; padding: 6px; } .ds-dock-scan { width: 100%; min-height: 44px; border: none; border-radius: 4px; background-color: var(--route-grocery, #D9381E); color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-dock-scan:hover { background-color: #B92B14; } .ds-dock-scan:active { transform: scale(0.97); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Market Hall Wayfinding",
+    "overview": "Nook is engineered for bright-aisle supermarket runs, kitchen pantry checks, and monthly household reviews on a self-hosted homelab. Its visual system takes its cues from European market hall signage and vitreous enamel plates: warm cream enamel grounds, deep charcoal transit rails, crisp 1px hairline divisions, and unmistakable pillar color routes that separate Grocery, Pantry Stock, Finance, and House without decorative noise.\n\nInstead of soft pastel cards, floating drop shadows, or oversized pill chrome, Nook organizes operational data into dense, high-contrast hairline checklists and aligned tabular numeric columns. Pending items sit above settled ones, active route bars anchor the top and bottom edges of the screen, and critical one-handed triggers—checking off items, scanning barcodes, and unpacking groceries into stock—remain within immediate thumb reach.",
+    "keyCharacteristics": [
+      "Vitreous Enamel Surfaces: Warm cream grounds (#F7F5EE), secondary bay tints (#EFECE2), and crisp row plates (#FAF9F4) eliminate harsh pure-white glare under bright store lighting.",
+      "Zero-Shadow Hairline Structure: Boundaries are drawn strictly with 1px warm mineral rules (#D6D1C4 / #E2DDD0) and 3px route bars—never blurred drop shadows or glowing buttons.",
+      "Pillar Color Routes: Four distinct operational lines—Signal Vermilion (#D9381E), Market Emerald (#047857), Cobalt Route (#1D4ED8), and Plum Route (#6D28D9)—identify each household domain at a glance.",
+      "Locked Tabular Columns: Quantities, unit prices, and euro totals stay right-aligned in tabular-nums across both pending and collected rows so totals scan vertically without horizontal jitter."
+    ],
+    "rules": [
+      {
+        "name": "The Pillar Route Rule",
+        "body": "Every primary domain owns one route color (#D9381E Grocery, #047857 Pantry Stock, #1D4ED8 Finance, #6D28D9 House). Route colors appear on 3px active rail/tab borders, progress meters, and domain-specific primary CTAs—never mixed decoratively across domains.",
+        "section": "colors"
+      },
+      {
+        "name": "The Settled Contrast Rule",
+        "body": "Collected or completed rows step down from #FAF9F4 to #F2EFE6 and shift text to #43494E rather than fading via low opacity, guaranteeing legible strike-through contrast in bright daylight.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Lock Rule",
+        "body": "Every numeric column—euro totals, unit prices, quantity steppers, stock counts, and cadence dates—must apply font-variant-numeric: tabular-nums so numbers align vertically across rows.",
+        "section": "typography"
+      },
+      {
+        "name": "The Proportional Signal Rule",
+        "body": "Status markers scale in size and geometry with urgency rather than relying on color alone: a 6px (w-1.5 h-1.5) circle for nominal In Stock / Paid, an 8px (w-2 h-2, 2px radius) square for Running Low, and a 10px (w-2.5 h-2.5, 1px radius) block for Out of Stock / Urgent.",
+        "section": "typography"
+      },
+      {
+        "name": "The Zero-Ghost-Shadow Rule",
+        "body": "Never apply diffuse drop shadows (box-shadow) to cards, buttons, docks, or drawers. Separate layers with 1px borders (#D6D1C4, #E2DDD0, or #14191D on interactive menus) and tonal stepping between #F7F5EE, #EFECE2, #FAF9F4, and #F2EFE6.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do build surfaces from the four enamel neutrals (#F7F5EE, #EFECE2, #FAF9F4, #F2EFE6) separated by 1px rules (#D6D1C4 / #E2DDD0).",
+      "Do enforce tabular-nums on every price, quantity stepper, stock count, and budget readout.",
+      "Do keep primary interactive buttons, checklist toggles, and route switches at least 44px tall (min-h-[44px]).",
+      "Do pair domain route colors (#D9381E, #047857, #1D4ED8, #6D28D9) with explicit 3px borders or 1px-bordered proportional badges rather than decorative gradients.",
+      "Do provide instant optimistic list updates paired with subtle haptic pulses (navigator.vibrate?.(15..50))."
+    ],
+    "donts": [
+      "Don't add drop shadows (box-shadow) or blurred glass backdrops to cards, buttons, docks, or drawers.",
+      "Don't use 9999px pill radii on buttons, filter chips, or navigation docks; reserve rounded-full strictly for 6px nominal status indicator dots.",
+      "Don't fade completed/collected rows with low CSS opacity; use the #F2EFE6 settled plate and #43494E ink to maintain >= 4.5:1 legibility.",
+      "Don't use pure #FFFFFF as the global viewport background or mix route colors across unrelated domains."
+    ]
+  }
+}

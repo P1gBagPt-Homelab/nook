@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
 interface SetupPageProps {
   onSetupComplete: () => void;
@@ -45,113 +45,109 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-zinc-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
-      {/* Brand Hero */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <div className="w-16 h-16 rounded-3xl bg-zinc-900 text-white flex items-center justify-center mx-auto shadow-md ring-4 ring-[#FF7A59]/20 relative">
-          <Sparkles className="w-8 h-8 text-amber-300 stroke-[2]" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FF7A59] border-2 border-white" />
+    <div className="min-h-screen bg-[#F7F5EE] text-[#14191D] flex flex-col">
+      <header className="bg-[#14191D] text-[#F7F5EE] border-b-[3px] border-[#D9381E]">
+        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-[2px] bg-[#D9381E]" aria-hidden="true" />
+            <span className="text-base font-extrabold tracking-[-0.02em]">Nook</span>
+          </div>
+          <span className="text-[11px] font-bold text-[#A1AAB3]">Initial Setup</span>
         </div>
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-zinc-900">
-            Welcome to Nook
-          </h1>
-          <p className="text-xs font-semibold text-zinc-400 mt-1">
-            Modular Household & Life Operating System
-          </p>
-        </div>
-      </div>
+      </header>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="card-impeccable p-7 sm:p-9 space-y-5">
-          <div className="border-b border-zinc-100 pb-3">
-            <h2 className="text-sm font-bold text-zinc-800">
-              Create Household & Admin Account
-            </h2>
-            <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-              Initialize your private Nook. Registration will automatically close to outside users.
+      <div className="flex-1 flex flex-col justify-center px-4 py-10 max-w-md w-full mx-auto">
+        <div className="enamel-plate overflow-hidden">
+          <div className="bg-[#EFECE2] px-5 py-4 border-b border-[#D6D1C4]">
+            <h1 className="text-xl font-extrabold tracking-[-0.025em] text-[#14191D]">
+              Welcome to Nook
+            </h1>
+            <p className="text-xs text-[#5B6268] font-medium mt-1">
+              Initialize your household and administrator account. Registration closes automatically after setup.
             </p>
           </div>
 
-          {error && (
-            <div className="p-3.5 bg-red-50 text-red-700 rounded-2xl text-xs font-bold border border-red-200">
-              {error}
-            </div>
-          )}
+          <div className="p-5 space-y-4">
+            {error && (
+              <div
+                role="alert"
+                className="p-3 bg-[#FEE2E2] text-[#991B1B] rounded-[4px] text-xs font-bold border border-[#FCA5A5]"
+              >
+                {error}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">
-                Household Name
-              </label>
-              <div className="relative">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-[11px] font-bold text-[#5B6268] uppercase tracking-wider mb-1">
+                  Household Name
+                </label>
                 <input
                   type="text"
                   placeholder="Household Name *"
                   required
                   value={householdName}
                   onChange={(e) => setHouseholdName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl bg-[#FAFAF8] border border-zinc-200/90 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
+                  className="w-full px-3.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-sm font-semibold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
                 />
               </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-[#5B6268] uppercase tracking-wider mb-1">
+                  Your Full Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your Name *"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-sm font-semibold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-[#5B6268] uppercase tracking-wider mb-1">
+                  Admin Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="Email Address *"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-sm font-semibold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-[#5B6268] uppercase tracking-wider mb-1">
+                  Master Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="Admin Password *"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-sm font-semibold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full mt-2 py-3 px-4 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] active:scale-[0.99] text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                <span>{isLoading ? "Setting up..." : "Create Nook"}</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </form>
+
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#5B6268] font-semibold pt-2 border-t border-[#E2DDD0]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#047857]" />
+              <span>Self-hosted on Project Janus · Private Household Instance</span>
             </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">
-                Your Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="Your Name *"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAFAF8] border border-zinc-200/90 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">
-                Admin Email
-              </label>
-              <input
-                type="email"
-                placeholder="Email Address *"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAFAF8] border border-zinc-200/90 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">
-                Master Password
-              </label>
-              <input
-                type="password"
-                placeholder="Admin Password *"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAFAF8] border border-zinc-200/90 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-4 py-3.5 px-4 rounded-full bg-[#FF7A59] hover:bg-[#ff6842] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md button-peach-glow transition active:scale-[0.99] disabled:opacity-50 cursor-pointer"
-            >
-              <span>{isLoading ? "Setting up..." : "Create Nook"}</span>
-              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-            </button>
-          </form>
-
-          {/* Privacy badge */}
-          <div className="flex items-center justify-center gap-1.5 text-[10px] text-zinc-400 font-semibold pt-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Self-hosted on Project Janus • 100% Private</span>
           </div>
         </div>
       </div>
