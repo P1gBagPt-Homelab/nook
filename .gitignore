@@ -81,3 +81,12 @@ docker-compose.override.yml
 local-storage/
 tmp/
 scratch/
+
+# Impeccable ephemeral & platform-specific binaries
+.agents/skills/impeccable/scripts/bin/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/decision-payload.json
+**/.impeccable/live/sessions/
+**/.impeccable/live/roots.json
+**/.impeccable/live/inject-journal.json

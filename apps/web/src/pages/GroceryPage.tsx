@@ -19,32 +19,40 @@ export function GroceryPage({
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 pt-4 pb-32">
-      {/* Top Segmented Control (Blueprint Section 2) */}
-      <div className="flex bg-zinc-200/60 p-1 rounded-full shadow-inner mb-5 border border-zinc-200/40">
+    <div className="w-full">
+      {/* 2-Column Market Hall Route Switch */}
+      <div className="grid grid-cols-2 border-b border-[#D6D1C4] bg-[#EFECE2]">
         <button
           type="button"
           onClick={() => setTab("cart")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-bold flex items-center justify-center gap-2 transition duration-200 cursor-pointer ${
+          className={`min-h-[44px] py-2.5 px-3 text-xs font-extrabold flex items-center justify-center gap-2 border-r border-[#D6D1C4] border-b-[3px] transition-colors cursor-pointer ${
             currentTab === "cart"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-500 hover:text-zinc-800"
+              ? "bg-[#F7F5EE] text-[#14191D] border-b-[#D9381E]"
+              : "text-[#5B6268] hover:text-[#14191D] border-b-transparent"
           }`}
         >
-          <ShoppingBag className={`w-4 h-4 stroke-[2.2] ${currentTab === "cart" ? "text-[#FF7A59]" : "text-zinc-400"}`} />
+          <ShoppingBag
+            className={`w-4 h-4 stroke-[2.2] ${
+              currentTab === "cart" ? "text-[#D9381E]" : "text-[#5B6268]"
+            }`}
+          />
           <span>Shopping Cart</span>
         </button>
 
         <button
           type="button"
           onClick={() => setTab("stock")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-bold flex items-center justify-center gap-2 transition duration-200 cursor-pointer ${
+          className={`min-h-[44px] py-2.5 px-3 text-xs font-extrabold flex items-center justify-center gap-2 border-b-[3px] transition-colors cursor-pointer ${
             currentTab === "stock"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-500 hover:text-zinc-800"
+              ? "bg-[#F7F5EE] text-[#14191D] border-b-[#047857]"
+              : "text-[#5B6268] hover:text-[#14191D] border-b-transparent"
           }`}
         >
-          <Package className={`w-4 h-4 stroke-[2.2] ${currentTab === "stock" ? "text-[#10B981]" : "text-zinc-400"}`} />
+          <Package
+            className={`w-4 h-4 stroke-[2.2] ${
+              currentTab === "stock" ? "text-[#047857]" : "text-[#5B6268]"
+            }`}
+          />
           <span>My Stock</span>
         </button>
       </div>

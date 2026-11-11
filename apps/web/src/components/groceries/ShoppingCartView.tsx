@@ -7,13 +7,12 @@ import {
   ShoppingBag,
   Home,
   CheckCircle2,
-  Circle,
-  Sparkles,
   ArrowRight,
   ChevronDown,
   ChevronUp,
   Camera,
   Loader2,
+  X,
 } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 
@@ -50,14 +49,12 @@ export function ShoppingCartView() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // New item form state
   const [newItemTitle, setNewItemTitle] = useState("");
   const [newItemQty, setNewItemQty] = useState("1");
   const [newItemPrice, setNewItemPrice] = useState("");
   const [newItemLocation, setNewItemLocation] = useState("Pantry");
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Unpack drawer state
   const [isUnpackDrawerOpen, setIsUnpackDrawerOpen] = useState(false);
   const [logExpense, setLogExpense] = useState(true);
   const [totalExpenseAmount, setTotalExpenseAmount] = useState("");
@@ -65,7 +62,6 @@ export function ShoppingCartView() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
   const [excludedItemIds, setExcludedItemIds] = useState<Set<string>>(new Set());
 
-  // Accordion for collected items
   const [showCollected, setShowCollected] = useState(true);
 
   const { uploadPhoto, isUploading: isUploadingReceipt } = usePhotoUpload();
@@ -112,10 +108,10 @@ export function ShoppingCartView() {
   const toBuyItems = items.filter((i) => !i.isCollected);
   const collectedItems = items.filter((i) => i.isCollected);
 
-  // Calculate totals
   const totalItemsCount = items.length;
   const collectedCount = collectedItems.length;
-  const progressPercent = totalItemsCount > 0 ? Math.round((collectedCount / totalItemsCount) * 100) : 0;
+  const progressPercent =
+    totalItemsCount > 0 ? Math.round((collectedCount / totalItemsCount) * 100) : 0;
 
   const totalEstimatedPrice = items.reduce((acc, item) => {
     const p = parseFloat(item.estimatedPrice || "0");
@@ -186,7 +182,6 @@ export function ShoppingCartView() {
     const newStatus = !item.isCollected;
     navigator.vibrate?.(20);
 
-    // Optimistic UI update
     setItems((prev) =>
       prev.map((i) => (i.id === item.id ? { ...i, isCollected: newStatus } : i))
     );
@@ -203,7 +198,11 @@ export function ShoppingCartView() {
     }
   }
 
-  async function handleUpdateQuantity(item: ShoppingItem, delta: number, e?: React.MouseEvent) {
+  async function handleUpdateQuantity(
+    item: ShoppingItem,
+    delta: number,
+    e?: React.MouseEvent
+  ) {
     if (e) e.stopPropagation();
     const currentQty = parseFloat(item.quantity) || 1;
     const nextQty = Math.max(1, currentQty + delta);
@@ -276,7 +275,8 @@ export function ShoppingCartView() {
           transferAll: true,
           targetLocation: "Pantry",
           logExpense,
-          totalAmount: logExpense && totalExpenseAmount ? parseFloat(totalExpenseAmount) : undefined,
+          totalAmount:
+            logExpense && totalExpenseAmount ? parseFloat(totalExpenseAmount) : undefined,
           receiptImageKey: logExpense ? receiptImageKey || undefined : undefined,
         }),
       });
@@ -285,7 +285,9 @@ export function ShoppingCartView() {
         const result = await res.json();
         setIsUnpackDrawerOpen(false);
         navigator.vibrate?.(50);
-        setFeedbackMsg(`✨ Successfully stocked ${result.unpackedCount} items into your pantry!`);
+        setFeedbackMsg(
+          `Transferred ${result.unpackedCount} items from Cart to Home Stock.`
+        );
         setTimeout(() => setFeedbackMsg(null), 5000);
         await fetchActiveCart();
       }
@@ -296,100 +298,118 @@ export function ShoppingCartView() {
     }
   }
 
-  const locationIcons: Record<string, string> = {
-    Pantry: "🥫",
-    Fridge: "🥛",
-    Freezer: "🧊",
-    Cleaning: "🧼",
-  };
-
   if (isLoading && !cart) {
     return (
-      <div className="py-16 text-center text-zinc-400 animate-pulse text-xs font-semibold tracking-wide">
-        Loading active cart...
+      <div aria-busy="true" aria-label="Loading active shopping cart">
+        <div className="px-4 py-4 border-b border-[#D6D1C4] flex justify-between items-end">
+          <div className="space-y-2">
+            <div className="h-6 w-40 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+            <div className="h-3.5 w-28 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+          </div>
+          <div className="space-y-1.5 text-right">
+            <div className="h-6 w-20 bg-[#EFECE2] rounded-[2px] animate-pulse ml-auto" />
+            <div className="h-3 w-16 bg-[#EFECE2] rounded-[2px] animate-pulse ml-auto" />
+          </div>
+        </div>
+        {[1, 2, 3, 4].map((row) => (
+          <div
+            key={row}
+            className="px-4 py-3.5 border-b border-[#E2DDD0] bg-[#FAF9F4] flex items-center gap-3"
+          >
+            <div className="w-5 h-5 bg-[#EFECE2] rounded-[3px] animate-pulse" />
+            <div className="flex-1 space-y-1.5">
+              <div className="h-4 w-36 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+              <div className="h-3 w-24 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+            </div>
+            <div className="h-4 w-12 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-semibold text-center border border-red-100">
-        {error}
+      <div className="m-4 p-4 bg-[#FEE2E2] text-[#991B1B] rounded-[4px] text-xs font-bold border border-[#FCA5A5] flex items-center justify-between gap-3">
+        <span>{error}</span>
+        <button
+          type="button"
+          onClick={fetchActiveCart}
+          className="min-h-[44px] px-3 py-1.5 rounded-[3px] bg-[#991B1B] text-white text-xs font-bold cursor-pointer"
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Feedback banner */}
+    <div>
       {feedbackMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2.5 transition animate-fade-in shadow-xs">
-          <Sparkles className="w-4 h-4 text-emerald-600 shrink-0 pointer-events-none" />
-          <span>{feedbackMsg}</span>
+        <div
+          role="status"
+          className="px-4 py-3 bg-[#ECFDF5] border-b border-[#A7F3D0] text-[#065F46] text-xs font-bold flex items-center justify-between gap-2"
+        >
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
+            <span>{feedbackMsg}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFeedbackMsg(null)}
+            aria-label="Dismiss notice"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#065F46] hover:text-[#14191D] cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* Shopping Trip Progress & Metrics Card (Card Surface: #FFFFFF with 1px border rgba(0,0,0,0.04)) */}
-      <div className="card-impeccable p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF7A59] block mb-0.5">
-              Supermarket Run
-            </span>
-            <h2 className="text-base font-bold text-zinc-900 flex items-center gap-2">
-              <span>{cart?.title || "Active Shopping List"}</span>
+      {/* Summary Band: Checklist leads immediately beneath */}
+      <div className="px-4 pt-3 pb-2.5 border-b border-[#D6D1C4] bg-[#F7F5EE]">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-[22px] font-extrabold tracking-[-0.03em] text-[#14191D] leading-tight truncate font-display">
+              {cart?.title || "Supermarket Run"}
             </h2>
-            <p className="text-xs text-zinc-500 mt-0.5 font-medium">
-              {collectedCount} of {totalItemsCount} items collected ({progressPercent}%)
+            <p className="text-xs font-semibold text-[#5B6268] mt-1 tabular-nums">
+              {toBuyItems.length} pending · {collectedCount} in basket
             </p>
           </div>
-          <div className="text-right">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Estimated Total</span>
-            <div className="text-lg font-black tracking-tight text-zinc-900">
+          <div className="text-right tabular-nums shrink-0">
+            <div className="text-[22px] font-extrabold tracking-[-0.02em] text-[#14191D] leading-tight font-display">
               €{totalEstimatedPrice.toFixed(2)}
+            </div>
+            <div className="text-[11px] font-extrabold tracking-[0.04em] uppercase text-[#047857] mt-1">
+              {progressPercent}% COLLECTED
             </div>
           </div>
         </div>
 
-        {/* Peach Progress Bar */}
-        <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden p-0.5">
+        {/* Crisp 3px Enamel Progress Meter */}
+        <div className="w-full h-[3px] bg-[#E2DDD0] mt-3 overflow-hidden">
           <div
-            className="h-full bg-[#FF7A59] rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(255,122,89,0.5)]"
+            className="h-full bg-[#D9381E] transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
-
-        {/* Arrived Home / Unpack CTA (Fresh Sage #10B981) */}
-        <div className={collectedCount > 0 ? "block" : "hidden"}>
-          <button
-            onClick={openUnpackDrawer}
-            className="w-full py-3 px-4 rounded-full bg-[#10B981] hover:bg-[#059669] active:scale-[0.99] text-white font-bold text-xs flex items-center justify-center gap-2 button-sage-glow transition cursor-pointer"
-          >
-            <Home className="w-4 h-4 pointer-events-none" />
-            <span className="pointer-events-none">Arrived Home? Unpack to Stock</span>
-            <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-80 pointer-events-none" />
-          </button>
-        </div>
       </div>
 
-      {/* Quick Add Toggle / Bottom Slide Form */}
-      <div className="card-impeccable p-4">
-        {!showAddForm ? (
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="w-full py-3 px-4 rounded-full border-2 border-dashed border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:border-[#FF7A59]/40 hover:bg-orange-50/20 transition text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
+      {/* Inline Add Form (when toggled open) */}
+      {showAddForm && (
+        <div className="px-4 py-3 border-b border-[#D6D1C4] bg-[#EFECE2]">
+          <form
+            onSubmit={handleAddItem}
+            className="bg-[#FAF9F4] border border-[#14191D] rounded-[4px] p-3.5 space-y-3"
           >
-            <Plus className="w-4 h-4 text-[#FF7A59] pointer-events-none" />
-            <span className="pointer-events-none">+ Add Item</span>
-          </button>
-        ) : (
-          <form onSubmit={handleAddItem} className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-zinc-900">Add Item to Cart</span>
+              <span className="text-xs font-extrabold text-[#14191D]">
+                Add Item to Cart
+              </span>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="text-xs font-semibold text-zinc-400 hover:text-zinc-600"
+                className="min-h-[36px] px-2 text-xs font-bold text-[#5B6268] hover:text-[#14191D] cursor-pointer"
               >
                 Cancel
               </button>
@@ -400,46 +420,52 @@ export function ShoppingCartView() {
               placeholder="Item name..."
               value={newItemTitle}
               onChange={(e) => setNewItemTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAFAF8] border border-zinc-200 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
+              className="w-full px-3 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-sm font-semibold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
               autoFocus
             />
 
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Qty</label>
+                <label className="text-[11px] font-extrabold text-[#5B6268] uppercase tracking-wider block mb-1">
+                  Qty
+                </label>
                 <input
                   type="number"
                   min="0.1"
                   step="0.5"
                   value={newItemQty}
                   onChange={(e) => setNewItemQty(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAFAF8] border border-zinc-200 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
+                  className="w-full px-2.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-xs font-bold text-[#14191D] tabular-nums focus:outline-none focus:border-[#D9381E]"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Est. Price (€)</label>
+                <label className="text-[11px] font-extrabold text-[#5B6268] uppercase tracking-wider block mb-1">
+                  Unit (€)
+                </label>
                 <input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   value={newItemPrice}
                   onChange={(e) => setNewItemPrice(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAFAF8] border border-zinc-200 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
+                  className="w-full px-2.5 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-xs font-bold text-[#14191D] tabular-nums focus:outline-none focus:border-[#D9381E]"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Location</label>
+                <label className="text-[11px] font-extrabold text-[#5B6268] uppercase tracking-wider block mb-1">
+                  Storage
+                </label>
                 <select
                   value={newItemLocation}
                   onChange={(e) => setNewItemLocation(e.target.value)}
-                  className="w-full px-2 py-2 rounded-xl bg-[#FAFAF8] border border-zinc-200 text-xs font-semibold text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FF7A59]"
+                  className="w-full px-2 py-2.5 rounded-[4px] bg-[#F7F5EE] border border-[#D6D1C4] text-xs font-bold text-[#14191D] focus:outline-none focus:border-[#D9381E]"
                 >
-                  <option value="Pantry">🥫 Pantry</option>
-                  <option value="Fridge">🥛 Fridge</option>
-                  <option value="Freezer">🧊 Freezer</option>
-                  <option value="Cleaning">🧼 Clean</option>
+                  <option value="Pantry">Pantry</option>
+                  <option value="Fridge">Fridge</option>
+                  <option value="Freezer">Freezer</option>
+                  <option value="Cleaning">Cleaning</option>
                 </select>
               </div>
             </div>
@@ -448,323 +474,436 @@ export function ShoppingCartView() {
               type="submit"
               onClick={handleAddItem}
               disabled={!newItemTitle.trim()}
-              className="w-full py-3 rounded-full bg-[#FF7A59] hover:bg-[#ff6842] active:scale-[0.99] text-white font-bold text-xs transition button-peach-glow disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full min-h-[44px] py-2.5 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] active:scale-[0.99] text-white font-extrabold text-xs transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 pointer-events-none" />
               <span className="pointer-events-none">Add to Cart</span>
             </button>
           </form>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Phase 1: To Buy Section */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between px-1">
-          <span className="text-[11px] font-black text-zinc-400 uppercase tracking-wider">
+      {/* Phase 1: To Buy Hairline Table */}
+      <div>
+        <div className="px-4 py-2 bg-[#EFECE2] border-b border-[#D6D1C4] flex items-center justify-between gap-2">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#5B6268]">
             To Buy ({toBuyItems.length})
           </span>
-          {toBuyItems.length > 0 && (
-            <span className="text-[10px] font-bold text-zinc-400">
-              Tap anywhere to collect
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#5B6268] hidden sm:inline">
+              Qty / Line Total
             </span>
-          )}
+            {!showAddForm && (
+              <button
+                type="button"
+                onClick={() => setShowAddForm(true)}
+                className="min-h-[36px] px-2.5 py-1 rounded-[3px] bg-[#FAF9F4] hover:bg-white border border-[#14191D] text-[#14191D] text-xs font-extrabold cursor-pointer"
+              >
+                + Add Item
+              </button>
+            )}
+          </div>
         </div>
 
         {toBuyItems.length === 0 ? (
-          <div className="card-impeccable p-8 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#FF7A59] flex items-center justify-center mx-auto mb-3">
-              <ShoppingBag className="w-6 h-6" />
+          <div className="px-6 py-10 bg-[#FAF9F4] border-b border-[#D6D1C4] text-center">
+            <div className="w-10 h-10 rounded-[4px] bg-[#EFECE2] border border-[#D6D1C4] text-[#D9381E] flex items-center justify-center mx-auto mb-3">
+              <ShoppingBag className="w-5 h-5" />
             </div>
-            <p className="text-sm font-bold text-zinc-900">Your shopping list is clear</p>
-            <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
-              Scan items in store or add what you need before heading out!
+            <p className="text-sm font-extrabold text-[#14191D]">
+              Your shopping list is clear
+            </p>
+            <p className="text-xs text-[#5B6268] mt-1 max-w-xs mx-auto">
+              Tap + Add Item or scan barcodes with the bottom dock to start collecting.
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
-            {toBuyItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (target.closest("button")) return;
-                  handleToggleCollect(item);
-                }}
-                className="card-impeccable p-3.5 flex items-center gap-3 transition duration-150 hover:border-zinc-300 active:scale-[0.99] cursor-pointer group"
-              >
-                {/* Round Checkbox Button */}
-                <button
-                  type="button"
+          <div>
+            {toBuyItems.map((item) => {
+              const qtyNum = parseFloat(item.quantity) || 1;
+              const unitPriceNum = item.estimatedPrice
+                ? parseFloat(item.estimatedPrice)
+                : null;
+              const lineTotal =
+                unitPriceNum !== null && !isNaN(unitPriceNum)
+                  ? unitPriceNum * qtyNum
+                  : null;
+
+              return (
+                <div
+                  key={item.id}
                   onClick={(e) => {
-                    e.stopPropagation();
+                    const target = e.target as HTMLElement;
+                    if (target.closest("button")) return;
                     handleToggleCollect(item);
                   }}
-                  aria-label="Collect item"
-                  className="w-7 h-7 rounded-full border-2 border-zinc-300 group-hover:border-[#FF7A59] flex items-center justify-center transition shrink-0"
+                  className="px-3 sm:px-4 py-1.5 border-b border-[#E2DDD0] bg-[#FAF9F4] hover:bg-white transition-colors cursor-pointer group"
                 >
-                  <Circle className="w-4 h-4 text-transparent group-hover:text-zinc-200 pointer-events-none" />
-                </button>
+                  <div className="flex items-center gap-2">
+                    {/* 44px hit target wrapping crisp 20px square checkbox */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleCollect(item);
+                      }}
+                      aria-label="Collect item"
+                      className="min-w-[44px] min-h-[44px] -ml-1.5 flex items-center justify-center shrink-0 cursor-pointer"
+                    >
+                      <span className="w-5 h-5 rounded-[3px] border-2 border-[#14191D] group-hover:border-[#D9381E] block transition-colors" />
+                    </button>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-bold text-zinc-900 truncate">
-                      {item.productTitle || item.customTitle}
-                    </span>
-                    <span className="text-xs shrink-0" title={item.targetLocation}>
-                      {locationIcons[item.targetLocation] || "🥫"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {item.brand && (
-                      <span className="text-[11px] text-zinc-400 font-medium">{item.brand} •</span>
-                    )}
-                    <span className="text-[11px] text-zinc-500 font-semibold">
-                      {item.quantity} {item.unit}
-                    </span>
-                    {item.estimatedPrice && (
-                      <span className="text-[11px] font-bold text-zinc-600">
-                        • €{parseFloat(item.estimatedPrice).toFixed(2)}
+                    {/* Item Name & Route Storage */}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-[#14191D] truncate">
+                        {item.productTitle || item.customTitle}
+                      </div>
+                      <div className="text-[11px] font-semibold text-[#5B6268] truncate mt-0.5">
+                        {item.targetLocation}
+                        {item.brand ? ` · ${item.brand}` : ""}
+                        {unitPriceNum !== null && qtyNum > 1
+                          ? ` · €${unitPriceNum.toFixed(2)}/ea`
+                          : ""}
+                      </div>
+                    </div>
+
+                    {/* Desktop-inline Stepper */}
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="hidden sm:flex items-center border border-[#D6D1C4] rounded-[3px] bg-[#F7F5EE] shrink-0 tabular-nums"
+                    >
+                      <button
+                        type="button"
+                        onClick={(e) => handleUpdateQuantity(item, -1, e)}
+                        aria-label="Decrease quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                      >
+                        -
+                      </button>
+                      <span className="text-xs font-extrabold text-[#14191D] px-1 min-w-6 text-center">
+                        {qtyNum}
                       </span>
-                    )}
+                      <button
+                        type="button"
+                        onClick={(e) => handleUpdateQuantity(item, 1, e)}
+                        aria-label="Increase quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Right-aligned Line Total + Unit Column */}
+                    <div className="text-right tabular-nums w-[68px] shrink-0">
+                      <div className="text-xs font-extrabold text-[#14191D]">
+                        {lineTotal !== null ? `€${lineTotal.toFixed(2)}` : "—"}
+                      </div>
+                      <div className="text-[10px] font-semibold text-[#5B6268] truncate">
+                        {qtyNum} {item.unit}
+                      </div>
+                    </div>
+
+                    {/* Desktop 44px Delete button */}
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteItem(item.id, e)}
+                      className="hidden sm:flex min-w-[44px] min-h-[44px] -mr-2 items-center justify-center text-[#5B6268] hover:text-[#B91C1C] transition-colors shrink-0 cursor-pointer"
+                      aria-label="Remove item"
+                      title="Remove"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Mobile-only compact control row so item title never truncates */}
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex sm:hidden items-center justify-between pl-[38px] mt-0.5"
+                  >
+                    <div className="flex items-center border border-[#D6D1C4] rounded-[3px] bg-[#F7F5EE] tabular-nums">
+                      <button
+                        type="button"
+                        onClick={(e) => handleUpdateQuantity(item, -1, e)}
+                        aria-label="Decrease quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                      >
+                        -
+                      </button>
+                      <span className="text-xs font-extrabold text-[#14191D] px-2 min-w-6 text-center">
+                        {qtyNum}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => handleUpdateQuantity(item, 1, e)}
+                        aria-label="Increase quantity"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteItem(item.id, e)}
+                      className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[#5B6268] hover:text-[#B91C1C] transition-colors cursor-pointer"
+                      aria-label="Remove item"
+                      title="Remove"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
-
-                {/* Quantity Adjustment */}
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 bg-zinc-50 rounded-xl px-1.5 py-1 border border-zinc-100 shrink-0"
-                >
-                  <button
-                    type="button"
-                    onClick={(e) => handleUpdateQuantity(item, -1, e)}
-                    className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
-                  >
-                    -
-                  </button>
-                  <span className="text-xs font-bold text-zinc-800 min-w-4 text-center">
-                    {parseFloat(item.quantity)}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => handleUpdateQuantity(item, 1, e)}
-                    className="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 text-xs font-bold"
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Delete Item */}
-                <button
-                  type="button"
-                  onClick={(e) => handleDeleteItem(item.id, e)}
-                  className="p-1.5 text-zinc-300 hover:text-red-500 transition shrink-0"
-                  title="Remove"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* Phase 2: In-Store Collected Section */}
+      {/* Phase 2: In-Store Collected Section (Locked column alignment, >=4.5:1 settled ink) */}
       {collectedItems.length > 0 && (
-        <div className="space-y-2.5 pt-2">
+        <div>
           <button
             type="button"
             onClick={() => setShowCollected(!showCollected)}
-            className="w-full flex items-center justify-between px-1 text-[11px] font-black text-zinc-400 uppercase tracking-wider hover:text-zinc-600"
+            className="w-full min-h-[44px] px-4 py-2 bg-[#EFECE2] border-b border-[#D6D1C4] flex items-center justify-between text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#047857] hover:text-[#065F46] cursor-pointer"
           >
-            <span>
-              Collected in Cart ({collectedItems.length})
-            </span>
-            {showCollected ? <ChevronUp className="w-4 h-4 pointer-events-none" /> : <ChevronDown className="w-4 h-4 pointer-events-none" />}
+            <span>Collected in Cart ({collectedItems.length})</span>
+            {showCollected ? (
+              <ChevronUp className="w-4 h-4 pointer-events-none" />
+            ) : (
+              <ChevronDown className="w-4 h-4 pointer-events-none" />
+            )}
           </button>
 
           {showCollected && (
-            <div className="space-y-2">
-              {collectedItems.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => handleToggleCollect(item)}
-                  className="bg-emerald-50/40 rounded-2xl p-3.5 border border-emerald-100 flex items-center gap-3 transition cursor-pointer active:scale-[0.99] group"
-                >
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleCollect(item);
-                    }}
-                    aria-label="Collect item"
-                    className="w-7 h-7 rounded-full bg-[#10B981] text-white flex items-center justify-center transition shrink-0 shadow-xs"
-                  >
-                    <Check className="w-4 h-4 stroke-[3] pointer-events-none" />
-                  </button>
+            <div>
+              {collectedItems.map((item) => {
+                const qtyNum = parseFloat(item.quantity) || 1;
+                const unitPriceNum = item.estimatedPrice
+                  ? parseFloat(item.estimatedPrice)
+                  : null;
+                const lineTotal =
+                  unitPriceNum !== null && !isNaN(unitPriceNum)
+                    ? unitPriceNum * qtyNum
+                    : null;
 
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-zinc-400 line-through truncate block">
-                      {item.productTitle || item.customTitle}
-                    </span>
-                    <div className="flex items-center gap-2 mt-0.5 text-[11px] text-zinc-400">
-                      <span>{item.quantity} {item.unit}</span>
-                      <span>• {locationIcons[item.targetLocation] || "🥫"} {item.targetLocation}</span>
-                      {item.estimatedPrice && (
-                        <span className="font-semibold text-emerald-700">• €{parseFloat(item.estimatedPrice).toFixed(2)}</span>
-                      )}
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => handleToggleCollect(item)}
+                    className="px-3 sm:px-4 py-2 border-b border-[#E2DDD0] bg-[#F2EFE6] flex items-center gap-2.5 cursor-pointer"
+                  >
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleCollect(item);
+                      }}
+                      aria-label="Collect item"
+                      className="min-w-[44px] min-h-[44px] -ml-1.5 flex items-center justify-center shrink-0 cursor-pointer"
+                    >
+                      <span className="w-5 h-5 rounded-[3px] bg-[#047857] border-2 border-[#047857] text-white flex items-center justify-center">
+                        <Check className="w-3.5 h-3.5 stroke-[3] pointer-events-none" />
+                      </span>
+                    </button>
+
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-semibold text-[#43494E] line-through truncate block">
+                        {item.productTitle || item.customTitle}
+                      </span>
+                      <div className="text-[11px] font-semibold text-[#43494E]">
+                        {item.targetLocation}
+                      </div>
                     </div>
-                  </div>
 
-                  <button
-                    type="button"
-                    onClick={(e) => handleDeleteItem(item.id, e)}
-                    className="p-1.5 text-zinc-300 hover:text-red-500 transition"
-                  >
-                    <Trash2 className="w-4 h-4 pointer-events-none" />
-                  </button>
-                </div>
-              ))}
+                    {/* Locked Qty Column matching Pending */}
+                    <div className="hidden sm:block w-[112px] text-center tabular-nums text-xs font-bold text-[#43494E] shrink-0">
+                      {qtyNum} {item.unit}
+                    </div>
+
+                    {/* Locked Line Total Column */}
+                    <div className="text-right tabular-nums w-[68px] shrink-0">
+                      <div className="text-xs font-extrabold text-[#047857]">
+                        {lineTotal !== null ? `€${lineTotal.toFixed(2)}` : "—"}
+                      </div>
+                      <div className="sm:hidden text-[10px] font-semibold text-[#43494E]">
+                        {qtyNum} {item.unit}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteItem(item.id, e)}
+                      aria-label="Remove collected item"
+                      className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[#43494E] hover:text-[#B91C1C] transition-colors shrink-0 cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4 pointer-events-none" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
       )}
 
-      {/* Phase 3: Unpack Bottom Sheet Drawer (`Vaul` Drawer) */}
+      {/* Thumb-Zone Unpack Bar (in normal flow so list rows are never occluded) */}
+      <div
+        className={
+          collectedCount > 0
+            ? "px-4 py-2.5 bg-[#EFECE2] border-b border-[#D6D1C4]"
+            : "hidden"
+        }
+      >
+        <button
+          type="button"
+          onClick={openUnpackDrawer}
+          className="w-full min-h-[44px] py-2.5 px-4 rounded-[4px] bg-[#047857] hover:bg-[#065F46] active:scale-[0.99] text-white font-extrabold text-xs flex items-center justify-between transition-colors cursor-pointer"
+        >
+          <span className="flex items-center gap-2 pointer-events-none">
+            <Home className="w-4 h-4" />
+            <span>Arrived Home? Unpack to Stock</span>
+          </span>
+          <ArrowRight className="w-4 h-4 opacity-90 pointer-events-none" />
+        </button>
+      </div>
+
+      {/* Phase 3: Unpack Bottom Sheet Drawer (`Vaul`) */}
       <Drawer.Root open={isUnpackDrawerOpen} onOpenChange={setIsUnpackDrawerOpen}>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 transition-opacity" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-white rounded-t-[32px] p-6 z-50 shadow-2xl border-t border-zinc-100 max-h-[90vh] overflow-y-auto">
-            {/* Drag Handle */}
-            <div className="w-12 h-1.5 bg-zinc-200 rounded-full mx-auto mb-5" />
+          <Drawer.Overlay className="fixed inset-0 bg-[#14191D]/60 z-50" />
+          <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#FAF9F4] rounded-t-[8px] z-50 border-t-[3px] border-[#047857] max-h-[90vh] overflow-y-auto">
+            <div className="w-10 h-1 bg-[#D6D1C4] rounded-[2px] mx-auto mt-3 mb-2" />
 
-            {/* Header */}
-            <div className="text-center space-y-1.5 mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#10B981] flex items-center justify-center mx-auto shadow-xs">
-                <Home className="w-6 h-6 stroke-[2.2]" />
+            <div className="px-5 py-3 border-b border-[#D6D1C4] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-[4px] bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] flex items-center justify-center shrink-0">
+                <Home className="w-5 h-5 stroke-[2.2]" />
               </div>
-              <Drawer.Title className="text-lg font-bold text-zinc-900">
-                Arrived Home? Unpack to Stock
-              </Drawer.Title>
-              <p className="text-xs text-zinc-500 max-w-xs mx-auto">
-                Transfer {collectedCount} collected items directly into your household cupboards.
-              </p>
+              <div>
+                <Drawer.Title className="text-base font-extrabold text-[#14191D] font-display">
+                  Arrived Home? Unpack to Stock
+                </Drawer.Title>
+                <p className="text-xs text-[#5B6268] font-medium">
+                  Transfer {collectedCount} collected items into home storage.
+                </p>
+              </div>
             </div>
 
-            {/* Checklist of collected items with location tags */}
-            <div className="space-y-2 mb-5">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                  Review Stock Transfer ({collectedItems.length - excludedItemIds.size} included)
-                </span>
-              </div>
-              <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
-                {collectedItems.map((item) => {
-                  const isExcluded = excludedItemIds.has(item.id);
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => toggleExcludeItem(item.id)}
-                      className={`p-3 rounded-2xl border transition flex items-center gap-3 cursor-pointer ${
-                        isExcluded
-                          ? "bg-zinc-50 border-zinc-200 opacity-60"
-                          : "bg-white border-zinc-200/80 shadow-2xs"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!isExcluded}
-                        onChange={() => toggleExcludeItem(item.id)}
-                        className="w-4 h-4 rounded text-[#10B981] focus:ring-[#10B981] pointer-events-none"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <span className="text-xs font-bold text-zinc-800 truncate block">
-                          {item.productTitle || item.customTitle}
-                        </span>
-                        <span className="text-[10px] text-zinc-400 font-medium">
-                          {item.quantity} {item.unit}
+            <div className="p-5 space-y-4">
+              <div>
+                <div className="text-[11px] font-extrabold text-[#5B6268] uppercase tracking-wider mb-2">
+                  Stock Transfer Manifest ({collectedItems.length - excludedItemIds.size} selected)
+                </div>
+                <div className="max-h-44 overflow-y-auto border border-[#D6D1C4] rounded-[4px] bg-[#F7F5EE] divide-y divide-[#E2DDD0]">
+                  {collectedItems.map((item) => {
+                    const isExcluded = excludedItemIds.has(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => toggleExcludeItem(item.id)}
+                        className={`px-3 py-2.5 flex items-center gap-3 cursor-pointer ${
+                          isExcluded ? "bg-[#EFECE2] text-[#43494E]" : "bg-[#FAF9F4]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!isExcluded}
+                          onChange={() => toggleExcludeItem(item.id)}
+                          className="w-4 h-4 rounded-[2px] accent-[#047857] pointer-events-none"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-xs font-bold text-[#14191D] truncate block">
+                            {item.productTitle || item.customTitle}
+                          </span>
+                          <span className="text-[11px] text-[#5B6268] tabular-nums">
+                            {item.quantity} {item.unit}
+                          </span>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 rounded-[3px] bg-[#EFECE2] border border-[#D6D1C4] text-[#14191D] font-bold">
+                          {item.targetLocation}
                         </span>
                       </div>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-semibold">
-                        {locationIcons[item.targetLocation] || "🥫"} {item.targetLocation}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Expense Logging Section */}
-            <div className="bg-[#FAFAF8] rounded-2xl p-4 border border-zinc-200/80 space-y-3 mb-5">
-              <label className="flex items-center gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={logExpense}
-                  onChange={(e) => setLogExpense(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#0EA5E9] focus:ring-[#0EA5E9]"
-                />
-                <span className="text-xs font-bold text-zinc-900">
-                  Record expense in Groceries budget
-                </span>
-              </label>
-
-              {logExpense && (
-                <div className="space-y-2 pt-1">
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-2.5 text-zinc-400 font-bold text-xs">€</span>
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder="Total receipt amount"
-                      value={totalExpenseAmount}
-                      onChange={(e) => setTotalExpenseAmount(e.target.value)}
-                      className="w-full pl-8 pr-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs font-bold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]"
-                    />
-                  </div>
-
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-600 cursor-pointer hover:border-[#0EA5E9] transition">
-                    <Camera className="w-4 h-4 text-[#0EA5E9]" />
-                    <span className="font-semibold flex-1">
-                      {receiptImageKey ? "✓ Receipt Photo Attached" : "Snap Receipt Photo (Optional)"}
-                    </span>
-                    {isUploadingReceipt && <Loader2 className="w-4 h-4 animate-spin text-[#0EA5E9]" />}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      className="hidden"
-                      onChange={handleReceiptUpload}
-                    />
-                  </label>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={handleConfirmUnpack}
-                disabled={isUnpacking}
-                className="w-full py-3.5 rounded-full bg-[#10B981] hover:bg-[#059669] active:scale-[0.99] text-white font-bold text-xs button-sage-glow shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {isUnpacking ? (
-                  <span>Unpacking...</span>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 pointer-events-none" />
-                    <span className="pointer-events-none">Put All into Stock</span>
-                  </>
+              <div className="bg-[#EFECE2] rounded-[4px] p-3.5 border border-[#D6D1C4] space-y-3">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={logExpense}
+                    onChange={(e) => setLogExpense(e.target.checked)}
+                    className="w-4 h-4 rounded-[2px] accent-[#1D4ED8]"
+                  />
+                  <span className="text-xs font-extrabold text-[#14191D]">
+                    Record trip expense in Finance ledger
+                  </span>
+                </label>
+
+                {logExpense && (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-[#5B6268] font-bold text-xs">
+                        €
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder="Total receipt amount"
+                        value={totalExpenseAmount}
+                        onChange={(e) => setTotalExpenseAmount(e.target.value)}
+                        className="w-full pl-7 pr-3 py-2.5 rounded-[4px] bg-[#FAF9F4] border border-[#D6D1C4] text-xs font-bold text-[#14191D] tabular-nums focus:outline-none focus:border-[#1D4ED8]"
+                      />
+                    </div>
+
+                    <label className="flex items-center gap-2 min-h-[44px] p-2.5 rounded-[4px] bg-[#FAF9F4] border border-[#D6D1C4] text-xs text-[#14191D] cursor-pointer hover:border-[#1D4ED8] transition-colors">
+                      <Camera className="w-4 h-4 text-[#1D4ED8]" />
+                      <span className="font-bold flex-1">
+                        {receiptImageKey
+                          ? "Receipt Photo Attached"
+                          : "Attach Receipt Photo (Optional)"}
+                      </span>
+                      {isUploadingReceipt && (
+                        <Loader2 className="w-4 h-4 animate-spin text-[#1D4ED8]" />
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="hidden"
+                        onChange={handleReceiptUpload}
+                      />
+                    </label>
+                  </div>
                 )}
-              </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => setIsUnpackDrawerOpen(false)}
-                className="w-full py-2.5 rounded-full text-xs font-semibold text-zinc-400 hover:text-zinc-700 transition"
-              >
-                Cancel
-              </button>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={handleConfirmUnpack}
+                  disabled={isUnpacking}
+                  className="w-full min-h-[44px] py-3 rounded-[4px] bg-[#047857] hover:bg-[#065F46] active:scale-[0.99] text-white font-extrabold text-xs transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {isUnpacking ? (
+                    <span>Unpacking...</span>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 pointer-events-none" />
+                      <span className="pointer-events-none">Put All into Stock</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsUnpackDrawerOpen(false)}
+                  className="w-full min-h-[44px] py-2 rounded-[4px] text-xs font-bold text-[#5B6268] hover:text-[#14191D] cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </Drawer.Content>
         </Drawer.Portal>
