@@ -163,73 +163,92 @@ export function App() {
     id: NavTab;
     label: string;
     meta: string;
-    accent: string;
+    activeClass: string;
     icon: typeof ShoppingBag;
   }[] = [
-    { id: "grocery", label: "Grocery Cart", meta: "Trip & checkoff", accent: "border-[#D9381E]", icon: ShoppingBag },
-    { id: "stock", label: "Pantry Stock", meta: "Fridge & cupboard", accent: "border-[#047857]", icon: Package },
-    { id: "finance", label: "Finance", meta: "Budgets & split", accent: "border-[#1D4ED8]", icon: PieChart },
-    { id: "house", label: "House", meta: "Assets & chores", accent: "border-[#6D28D9]", icon: Home },
+    {
+      id: "grocery",
+      label: "Grocery Cart",
+      meta: "Trip & checkoff",
+      activeClass: "bg-[#DCFCE7] text-[#15803D]",
+      icon: ShoppingBag,
+    },
+    {
+      id: "stock",
+      label: "Pantry Stock",
+      meta: "Fridge & cupboard",
+      activeClass: "bg-[#DCFCE7] text-[#15803D]",
+      icon: Package,
+    },
+    {
+      id: "finance",
+      label: "Finance",
+      meta: "Budgets & split",
+      activeClass: "bg-[#E0F2FE] text-[#0369A1]",
+      icon: PieChart,
+    },
+    {
+      id: "house",
+      label: "House",
+      meta: "Assets & chores",
+      activeClass: "bg-[#EDE9FE] text-[#6D28D9]",
+      icon: Home,
+    },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5EE] text-[#14191D]">
+    <div className="h-[100dvh] overflow-hidden md:h-auto md:min-h-screen md:overflow-visible flex flex-col bg-[#F4F9F5] text-[#14201A]">
       <Header user={currentUser} activeTab={effectiveTab} onLogout={handleLogout} />
 
-      <div className="flex-1 w-full max-w-6xl mx-auto md:grid md:grid-cols-[224px_1fr] md:border-x md:border-[#D6D1C4]">
-        {/* Desktop Market Hall Route Rail */}
+      <div className="flex-1 min-h-0 overflow-y-auto md:overflow-visible w-full max-w-6xl mx-auto md:grid md:grid-cols-[248px_1fr] md:gap-6 md:px-6 md:py-6 md:items-start">
+        {/* Desktop Botanical Floating Card Sidebar */}
         <aside
           aria-label="Desktop Route Navigation"
-          className="hidden md:flex md:flex-col justify-between bg-[#14191D] text-[#F7F5EE] border-r border-[#2A3137]"
+          className="hidden md:flex md:flex-col botanical-card h-fit sticky top-[84px] p-3.5 space-y-3"
         >
-          <div>
-            <div className="px-4 py-3 border-b border-[#2A3137] text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#A1AAB3]">
-              Household Routes
-            </div>
-            <div className="divide-y divide-[#2A3137]">
-              {desktopRoutes.map((r) => {
-                const Icon = r.icon;
-                const active = effectiveTab === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => handleTabChange(r.id)}
-                    className={`w-full text-left px-4 py-3.5 border-l-[3px] flex items-center gap-3 transition-colors cursor-pointer ${
-                      active
-                        ? `${r.accent} bg-[#1D2329] text-white`
-                        : "border-transparent text-[#A1AAB3] hover:text-white hover:bg-[#1A2026]"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-sm font-extrabold leading-tight">{r.label}</div>
-                      <div className="text-[11px] text-[#A1AAB3] mt-0.5">{r.meta}</div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="p-4 border-t border-[#2A3137]">
-              <button
-                type="button"
-                onClick={() => setIsScannerOpen(true)}
-                className="w-full min-h-[44px] px-3 py-2.5 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Camera className="w-4 h-4" />
-                <span>Scan Barcode</span>
-              </button>
-            </div>
+          <div className="space-y-1.5">
+            {desktopRoutes.map((r) => {
+              const Icon = r.icon;
+              const active = effectiveTab === r.id;
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => handleTabChange(r.id)}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors cursor-pointer ${
+                    active
+                      ? `${r.activeClass}`
+                      : "text-[#5B6B61] hover:text-[#14201A] hover:bg-[#F4F9F5]"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold leading-tight font-display">{r.label}</div>
+                    <div className="text-[11px] text-current/80 mt-0.5">{r.meta}</div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="px-4 py-3 border-t border-[#2A3137] text-[11px] font-semibold text-[#A1AAB3]">
+          <div className="pt-3 border-t border-[#E2ECE4]">
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="w-full min-h-[44px] px-4 py-2.5 rounded-full bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A] text-xs font-extrabold flex items-center justify-center gap-2 transition-colors cursor-pointer font-display"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Scan Barcode</span>
+            </button>
+          </div>
+
+          <div className="pt-2.5 border-t border-[#E2ECE4] text-[11px] font-semibold text-[#5B6B61] px-1">
             Project Janus · Self-Hosted
           </div>
         </aside>
 
         {/* Main Workspace */}
-        <main className="min-w-0 pb-0 md:pb-8 bg-[#F7F5EE]">
+        <main className="min-w-0 pb-4 md:pb-8">
           {activeTab === "grocery" && (
             <GroceryPage
               activeSubTab={grocerySubTab}

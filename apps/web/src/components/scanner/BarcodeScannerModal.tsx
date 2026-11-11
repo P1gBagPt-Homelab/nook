@@ -75,29 +75,28 @@ export function BarcodeScannerModal({
   return (
     <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-[#14191D]/75 z-50" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#14191D] text-[#F7F5EE] rounded-t-[8px] p-5 z-50 border-t-[3px] border-[#D9381E]">
-          <div className="w-10 h-1 bg-[#2A3137] rounded-[2px] mx-auto mb-4" />
+        <Drawer.Overlay className="fixed inset-0 bg-[#14201A]/70 z-50" />
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0F1B14] text-white rounded-t-[24px] p-5 z-50 border-t border-[#1F3528]">
+          <div className="w-10 h-1.5 bg-[#2A4736] rounded-full mx-auto mb-4" />
 
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-[2px] bg-[#D9381E]" aria-hidden="true" />
-              <Drawer.Title className="text-base font-extrabold text-[#F7F5EE] tracking-tight">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B4A]" aria-hidden="true" />
+              <Drawer.Title className="text-base font-bold text-white tracking-tight font-display">
                 In-Store Barcode Scanner
               </Drawer.Title>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-[4px] bg-[#2A3137] text-[#A1AAB3] hover:text-white transition-colors cursor-pointer"
+              className="min-w-[40px] min-h-[40px] rounded-full bg-[#1C2F24] text-[#A7C4B2] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
               aria-label="Close scanner"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Crisp Enamel Viewfinder Frame */}
-          <div className="relative aspect-square w-full max-w-[300px] mx-auto rounded-[4px] overflow-hidden bg-black border border-[#2A3137] flex items-center justify-center">
+          <div className="relative aspect-square w-full max-w-[300px] mx-auto rounded-[20px] overflow-hidden bg-black border border-[#1F3528] flex items-center justify-center">
             {hasCamera ? (
               <video
                 ref={videoRef}
@@ -106,36 +105,36 @@ export function BarcodeScannerModal({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="p-6 text-center text-[#A1AAB3] text-xs font-semibold">
+              <div className="p-6 text-center text-[#A7C4B2] text-xs font-semibold">
                 Camera unavailable or permission blocked. Use manual barcode entry below.
               </div>
             )}
 
-            {/* Vermilion Enamel Reticle */}
+            {/* Coral Reticle */}
             <div className="absolute inset-7 pointer-events-none flex flex-col justify-between">
               <div className="flex justify-between">
-                <div className="w-6 h-6 border-t-[3px] border-l-[3px] border-[#D9381E] animate-reticle" />
-                <div className="w-6 h-6 border-t-[3px] border-r-[3px] border-[#D9381E] animate-reticle" />
+                <div className="w-7 h-7 border-t-[3px] border-l-[3px] border-[#FF6B4A] rounded-tl-xl animate-reticle" />
+                <div className="w-7 h-7 border-t-[3px] border-r-[3px] border-[#FF6B4A] rounded-tr-xl animate-reticle" />
               </div>
 
-              <div className="w-full h-[2px] bg-[#D9381E]/75" />
+              <div className="w-full h-[2px] bg-[#FF6B4A]/75" />
 
               <div className="flex justify-between">
-                <div className="w-6 h-6 border-b-[3px] border-l-[3px] border-[#D9381E] animate-reticle" />
-                <div className="w-6 h-6 border-b-[3px] border-r-[3px] border-[#D9381E] animate-reticle" />
+                <div className="w-7 h-7 border-b-[3px] border-l-[3px] border-[#FF6B4A] rounded-bl-xl animate-reticle" />
+                <div className="w-7 h-7 border-b-[3px] border-r-[3px] border-[#FF6B4A] rounded-br-xl animate-reticle" />
               </div>
             </div>
 
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+            <div className="absolute top-3 right-3 flex items-center gap-2">
               <button
                 type="button"
                 onClick={toggleTorch}
                 title="Toggle Torch"
                 aria-label="Toggle Torch"
-                className={`p-2 rounded-[4px] border transition-colors cursor-pointer ${
+                className={`min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center transition-colors cursor-pointer ${
                   torchOn
-                    ? "bg-[#F59E0B] border-[#F59E0B] text-[#14191D]"
-                    : "bg-[#14191D]/80 border-[#2A3137] text-white hover:bg-[#14191D]"
+                    ? "bg-[#FACC15] text-[#14201A]"
+                    : "bg-[#0F1B14]/80 text-white hover:bg-[#0F1B14]"
                 }`}
               >
                 <Zap className="w-4 h-4" />
@@ -145,27 +144,27 @@ export function BarcodeScannerModal({
                 onClick={flipCamera}
                 title="Flip Camera"
                 aria-label="Flip Camera"
-                className="p-2 rounded-[4px] bg-[#14191D]/80 border border-[#2A3137] text-white hover:bg-[#14191D] transition-colors cursor-pointer"
+                className="min-w-[40px] min-h-[40px] rounded-full bg-[#0F1B14]/80 text-white hover:bg-[#0F1B14] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
               </button>
             </div>
 
             {isSearching && (
-              <div className="absolute inset-0 bg-[#14191D]/85 flex flex-col items-center justify-center text-white gap-2">
-                <Loader2 className="w-6 h-6 text-[#D9381E] animate-spin" />
+              <div className="absolute inset-0 bg-[#0F1B14]/85 flex flex-col items-center justify-center text-white gap-2">
+                <Loader2 className="w-6 h-6 text-[#FF6B4A] animate-spin" />
                 <span className="text-xs font-bold">Looking up barcode...</span>
               </div>
             )}
           </div>
 
           {scanResult && (
-            <div className="mt-4 p-3.5 rounded-[4px] bg-[#1D2329] border border-[#2A3137] space-y-2.5">
+            <div className="mt-4 p-4 rounded-2xl bg-[#16271D] border border-[#243E2F] space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-[#A1AAB3] tabular-nums">
+                <span className="text-xs font-bold text-[#A7C4B2] tabular-nums">
                   {scanResult.barcode}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-[2px] bg-[#047857] text-white font-extrabold">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#15803D] text-white font-bold">
                   {scanResult.product
                     ? scanResult.source === "local"
                       ? "Household Catalog"
@@ -174,12 +173,12 @@ export function BarcodeScannerModal({
                 </span>
               </div>
 
-              <div className="text-sm font-extrabold text-white">
+              <div className="text-sm font-bold text-white font-display">
                 {scanResult.product?.title || "Unregistered Product"}
               </div>
 
               {scanResult.product?.brand && (
-                <div className="text-xs text-[#A1AAB3] font-semibold">
+                <div className="text-xs text-[#A7C4B2] font-semibold">
                   {scanResult.product.brand}
                 </div>
               )}
@@ -187,7 +186,7 @@ export function BarcodeScannerModal({
               <button
                 type="button"
                 onClick={handleProceed}
-                className="w-full py-2.5 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] text-white font-extrabold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full min-h-[44px] py-2.5 rounded-full bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A] font-bold font-display text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 {scanResult.product?.id ? (
                   <>
@@ -204,14 +203,14 @@ export function BarcodeScannerModal({
             </div>
           )}
 
-          <div className="mt-4 pt-3 border-t border-[#2A3137] text-center">
+          <div className="mt-4 pt-3 border-t border-[#1F3528] text-center">
             {!showManualInput ? (
               <button
                 type="button"
                 onClick={() => setShowManualInput(true)}
-                className="inline-flex items-center gap-1.5 text-xs text-[#A1AAB3] hover:text-white font-bold transition-colors cursor-pointer"
+                className="min-h-[44px] inline-flex items-center gap-1.5 text-xs text-[#A7C4B2] hover:text-white font-bold transition-colors cursor-pointer"
               >
-                <KeyRound className="w-3.5 h-3.5 text-[#D9381E]" />
+                <KeyRound className="w-3.5 h-3.5 text-[#FF6B4A]" />
                 <span>Barcode damaged or unreadable? Enter manually</span>
               </button>
             ) : (
@@ -221,19 +220,19 @@ export function BarcodeScannerModal({
                   placeholder="Enter barcode number..."
                   value={manualCode}
                   onChange={(e) => setManualCode(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-[4px] bg-[#1D2329] border border-[#2A3137] text-xs font-mono text-white placeholder-[#A1AAB3] focus:outline-none focus:border-[#D9381E]"
+                  className="flex-1 px-4 py-2.5 rounded-full bg-[#16271D] border border-[#243E2F] text-xs font-semibold text-white placeholder-[#A7C4B2] focus:border-[#FF6B4A] tabular-nums"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="px-3.5 py-2 rounded-[4px] bg-[#D9381E] hover:bg-[#B92B14] text-white text-xs font-extrabold transition-colors cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-full bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A] text-xs font-bold font-display transition-colors cursor-pointer"
                 >
                   Lookup
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowManualInput(false)}
-                  className="px-2 py-2 text-xs font-bold text-[#A1AAB3] hover:text-white cursor-pointer"
+                  className="min-h-[44px] px-3 py-2 text-xs font-bold text-[#A7C4B2] hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>

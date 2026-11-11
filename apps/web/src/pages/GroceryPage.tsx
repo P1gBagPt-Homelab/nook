@@ -19,40 +19,32 @@ export function GroceryPage({
   }
 
   return (
-    <div className="w-full">
-      {/* 2-Column Market Hall Route Switch */}
-      <div className="grid grid-cols-2 border-b border-[#D6D1C4] bg-[#EFECE2]">
+    <div className="max-w-md mx-auto md:max-w-none px-4 md:px-0 pt-4 md:pt-0 space-y-4">
+      {/* Full-Pill Botanical Segmented Switch */}
+      <div className="flex gap-2">
         <button
           type="button"
           onClick={() => setTab("cart")}
-          className={`min-h-[44px] py-2.5 px-3 text-xs font-extrabold flex items-center justify-center gap-2 border-r border-[#D6D1C4] border-b-[3px] transition-colors cursor-pointer ${
+          className={`flex-1 min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 border transition-colors cursor-pointer font-display ${
             currentTab === "cart"
-              ? "bg-[#F7F5EE] text-[#14191D] border-b-[#D9381E]"
-              : "text-[#5B6268] hover:text-[#14191D] border-b-transparent"
+              ? "bg-[#15803D] text-white border-[#15803D]"
+              : "bg-white text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
           }`}
         >
-          <ShoppingBag
-            className={`w-4 h-4 stroke-[2.2] ${
-              currentTab === "cart" ? "text-[#D9381E]" : "text-[#5B6268]"
-            }`}
-          />
+          <ShoppingBag className="w-4 h-4 stroke-[2.2]" />
           <span>Shopping Cart</span>
         </button>
 
         <button
           type="button"
           onClick={() => setTab("stock")}
-          className={`min-h-[44px] py-2.5 px-3 text-xs font-extrabold flex items-center justify-center gap-2 border-b-[3px] transition-colors cursor-pointer ${
+          className={`flex-1 min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 border transition-colors cursor-pointer font-display ${
             currentTab === "stock"
-              ? "bg-[#F7F5EE] text-[#14191D] border-b-[#047857]"
-              : "text-[#5B6268] hover:text-[#14191D] border-b-transparent"
+              ? "bg-[#15803D] text-white border-[#15803D]"
+              : "bg-white text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
           }`}
         >
-          <Package
-            className={`w-4 h-4 stroke-[2.2] ${
-              currentTab === "stock" ? "text-[#047857]" : "text-[#5B6268]"
-            }`}
-          />
+          <Package className="w-4 h-4 stroke-[2.2]" />
           <span>My Stock</span>
         </button>
       </div>

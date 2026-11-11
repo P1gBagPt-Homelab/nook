@@ -1,85 +1,78 @@
 @import "tailwindcss";
 
 @theme {
-  --color-enamel-ground: #F7F5EE;
-  --color-enamel-bay: #EFECE2;
-  --color-enamel-plate: #FAF9F4;
-  --color-enamel-settled: #F2EFE6;
-  --color-enamel-ink: #14191D;
-  --color-enamel-muted: #5B6268;
-  --color-enamel-settled-ink: #43494E;
-  --color-enamel-rule: #D6D1C4;
-  --color-enamel-rule-soft: #E2DDD0;
-  --color-route-grocery: #D9381E;
-  --color-route-grocery-hover: #B92B14;
-  --color-route-stock: #047857;
-  --color-route-stock-hover: #065F46;
-  --color-route-finance: #1D4ED8;
-  --color-route-finance-hover: #1E40AF;
-  --color-route-house: #6D28D9;
-  --color-route-house-hover: #5B21B6;
-  --color-signal-amber: #B45309;
-  --font-display: "Archivo", "Public Sans", sans-serif;
-  --font-sans: "Public Sans", sans-serif;
+  --color-botanical-ground: #F4F9F5;
+  --color-botanical-surface: #FFFFFF;
+  --color-botanical-collected: #EEF7F0;
+  --color-botanical-tint: #DCFCE7;
+  --color-botanical-border: #E2ECE4;
+  --color-botanical-ring: #86EFAC;
+  --color-botanical-ink: #14201A;
+  --color-botanical-muted: #5B6B61;
+  --color-botanical-settled-ink: #475B4E;
+  --color-leaf: #16A34A;
+  --color-leaf-hover: #15803D;
+  --color-coral: #FF6B4A;
+  --color-coral-hover: #EA5838;
+  --color-sky: #0284C7;
+  --color-iris: #7C3AED;
+  --color-amber: #D97706;
+  --font-display: "Lexend", "Nunito Sans", sans-serif;
+  --font-sans: "Nunito Sans", sans-serif;
 }
 
 :root {
-  --enamel-ground: #F7F5EE;
-  --enamel-bay: #EFECE2;
-  --enamel-plate: #FAF9F4;
-  --enamel-ink: #14191D;
-  --enamel-muted: #5B6268;
-  --enamel-rule: #D6D1C4;
-  --route-grocery: #D9381E;
-  --route-stock: #047857;
-  --route-finance: #1D4ED8;
-  --route-house: #6D28D9;
-  --signal-amber: #B45309;
+  --botanical-ground: #F4F9F5;
+  --botanical-surface: #FFFFFF;
+  --botanical-ink: #14201A;
+  --botanical-muted: #5B6B61;
+  --botanical-border: #E2ECE4;
+  --leaf: #16A34A;
+  --coral: #FF6B4A;
   color-scheme: light;
-  accent-color: #D9381E;
+  accent-color: #16A34A;
 }
 
 body {
-  background-color: var(--enamel-ground);
-  color: var(--enamel-ink);
-  font-family: "Public Sans", sans-serif;
+  background-color: var(--botanical-ground);
+  color: var(--botanical-ink);
+  font-family: "Nunito Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
-  caret-color: #D9381E;
+  caret-color: #16A34A;
 }
 
 h1, h2, h3, .font-display {
-  font-family: "Archivo", "Public Sans", sans-serif;
+  font-family: "Lexend", "Nunito Sans", sans-serif;
 }
 
 ::selection {
-  background-color: #D9381E;
-  color: #F7F5EE;
+  background-color: #16A34A;
+  color: #FFFFFF;
 }
 
 *:focus-visible {
-  outline: 2px solid #D9381E;
+  outline: 2px solid #16A34A;
   outline-offset: 2px;
 }
 
-/* Custom hairline scrollbars */
+/* Subtle botanical scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #EFECE2;
+  background: #F4F9F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C2BCB0;
-  border-radius: 2px;
+  background: #C5D9C9;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8E887C;
+  background: #8EB396;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -95,20 +88,19 @@ h1, h2, h3, .font-display {
   font-variant-numeric: tabular-nums;
 }
 
-/* Enamel plate container: crisp 1px rule, zero ghost shadow */
-.enamel-plate {
-  background-color: #FAF9F4;
-  border: 1px solid #D6D1C4;
-  border-radius: 4px;
+/* Botanical card surface: declare border cleanly (no ghost shadow) */
+.botanical-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2ECE4;
+  border-radius: 18px;
 }
 
-.enamel-bay {
-  background-color: #EFECE2;
-  border: 1px solid #D6D1C4;
-  border-radius: 4px;
+.botanical-card-settled {
+  background-color: #EEF7F0;
+  border: 1px solid #CDE5D3;
+  border-radius: 18px;
 }
 
-/* Reticle corner pulse animation */
 @keyframes reticle-pulse {
   0%, 100% {
     opacity: 0.95;

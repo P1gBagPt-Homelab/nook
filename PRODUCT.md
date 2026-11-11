@@ -39,8 +39,8 @@ Unlike cloud SaaS tools (Splitwise, Bring!, Notion, Todoist) that isolate data i
 ## Brand Commitments
 
 - **Name**: Nook — Household & Life OS
-- **Aesthetic**: "Market Hall Wayfinding" — bright-aisle vitreous enamel legibility, 1px hairline structure, unmistakable pillar color routes, and locked tabular figures.
-- **Visual Personality**: Warm enamel cream canvas (`#F7F5EE`), deep rail charcoal (`#14191D`), hairline dividers (`#D6D1C4`), and functional pillar accents: signal vermilion (`#D9381E`, Grocery/Scan), market emerald (`#047857`, Pantry/Unpack), cobalt route (`#1D4ED8`, Finance), amber warning (`#B45309`, Low-Stock/Maintenance), and plum route (`#6D28D9`, House).
+- **Aesthetic**: "Fresh Botanical Capsules" — bright, airy daylight mint canvas, rounded white cards, soft pill capsules, and wide-aperture `Lexend` + `Nunito Sans` legibility.
+- **Visual Personality**: Light mint daylight ground (`#F4F9F5`), pure white cards (`#FFFFFF`) with soft botanical borders (`#E2ECE4`), deep pine ink (`#14201A`), leaf green (`#16A34A`, Primary/Grocery/Stock), coral punch (`#FF6B4A`, Barcode Scan/Urgent), sky blue (`#0284C7`, Finance), and iris violet (`#7C3AED`, House).
 
 ## Evidence on Hand
 
@@ -57,6 +57,6 @@ Unlike cloud SaaS tools (Splitwise, Bring!, Notion, Todoist) that isolate data i
 
 ## Accessibility & Inclusion
 
-- High contrast text (`#18181B` on `#FAFAF8` / `#FFFFFF`).
-- Touch targets designed to exceed 44×44px with 9999px pill radii.
-- Support for keyboard navigation and screen-reader accessible ARIA labels on bottom dock and scanner controls.
+- High contrast text (`#14201A` and `#475B4E` on `#F4F9F5` / `#FFFFFF` / `#EEF7F0`).
+- Touch targets designed to meet `>= 44x44px` across primary and list controls with `9999px` pill capsules and `18px` cards.
+- Support for pinch-to-zoom viewport scaling, keyboard navigation, and screen-reader accessible ARIA labels on navigation and scanner controls.
