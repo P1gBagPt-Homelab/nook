@@ -184,53 +184,53 @@ export function StockInventoryView() {
   ).length;
 
   return (
-    <div>
+    <div className="space-y-3.5">
       {feedback && (
         <div
           role="status"
-          className="px-4 py-3 bg-[#FFF7ED] border-b border-[#FDBA74] text-[#9A3412] text-xs font-bold flex items-center justify-between gap-2"
+          className="px-4 py-3 bg-[#FFF1EE] border border-[#FECAC0] rounded-[16px] text-[#C24124] text-xs font-bold flex items-center justify-between gap-2"
         >
           <span>{feedback}</span>
           <button
             type="button"
             onClick={() => setFeedback(null)}
             aria-label="Dismiss notice"
-            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#9A3412] hover:text-[#14191D] cursor-pointer"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Summary Band */}
-      <div className="px-4 pt-4 pb-3 border-b border-[#D6D1C4] bg-[#F7F5EE] flex items-end justify-between gap-3">
+      {/* Botanical Header */}
+      <div className="px-1 pt-1 flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-[22px] font-extrabold tracking-[-0.03em] text-[#14191D] leading-tight font-display">
+          <h1 className="text-[21px] font-bold tracking-[-0.025em] text-[#14201A] leading-tight font-display">
             Home Stock Inventory
-          </h2>
-          <p className="text-xs font-semibold text-[#5B6268] mt-1 tabular-nums">
+          </h1>
+          <p className="text-xs font-semibold text-[#5B6B61] mt-0.5 tabular-nums">
             {stockItems.length} products tracked across zones
           </p>
         </div>
 
         {runningLowCount > 0 && (
-          <div className="px-2.5 py-1 rounded-[3px] bg-[#FEF3C7] border border-[#F59E0B] text-[#92400E] text-[11px] font-extrabold flex items-center gap-1.5 tabular-nums shrink-0">
-            <AlertTriangle className="w-3.5 h-3.5 text-[#B45309]" />
+          <div className="px-3 py-1.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-xs font-bold flex items-center gap-1.5 tabular-nums shrink-0 font-display">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#D97706]" />
             <span>{runningLowCount} to restock</span>
           </div>
         )}
       </div>
 
-      {/* Search & Zone Route Filters */}
-      <div className="px-4 py-3 border-b border-[#D6D1C4] bg-[#EFECE2] flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
-        <div className="relative md:w-72">
-          <Search className="w-4 h-4 text-[#5B6268] absolute left-3 top-3 pointer-events-none" />
+      {/* Search & Zone Filter Pills */}
+      <div className="space-y-2.5 md:flex md:items-center md:justify-between md:space-y-0 md:gap-3">
+        <div className="relative md:flex-1">
+          <Search className="w-4 h-4 text-[#5B6B61] absolute left-3.5 top-3.5 pointer-events-none" />
           <input
             type="text"
             placeholder="Search pantry, fridge, spices..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full min-h-[40px] pl-9 pr-3 py-2 rounded-[4px] bg-[#FAF9F4] border border-[#D6D1C4] text-xs font-semibold text-[#14191D] placeholder-[#5B6268] focus:outline-none focus:border-[#047857]"
+            className="w-full min-h-[44px] pl-10 pr-4 py-2 rounded-full bg-white border border-[#E2ECE4] text-xs font-semibold text-[#14201A] placeholder-[#5B6B61] focus:border-[#15803D]"
           />
         </div>
 
@@ -240,10 +240,10 @@ export function StockInventoryView() {
               key={loc}
               type="button"
               onClick={() => setSelectedLocation(loc)}
-              className={`min-h-[40px] px-3 py-1.5 rounded-[3px] text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer border ${
+              className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border font-display ${
                 selectedLocation === loc
-                  ? "bg-[#14191D] text-[#F7F5EE] border-[#14191D]"
-                  : "bg-[#FAF9F4] text-[#5B6268] hover:text-[#14191D] border-[#D6D1C4]"
+                  ? "bg-[#14201A] text-white border-[#14201A]"
+                  : "bg-white text-[#5B6B61] hover:text-[#14201A] border-[#E2ECE4]"
               }`}
             >
               {loc}
@@ -252,52 +252,43 @@ export function StockInventoryView() {
         </div>
       </div>
 
-      {/* Stock Table Header */}
-      <div className="px-4 py-2 bg-[#EFECE2] border-b border-[#D6D1C4] flex items-center justify-between text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#5B6268]">
-        <span>Zone Stock ({filteredItems.length})</span>
-        <span>Status / Qty / Restock</span>
-      </div>
-
       {isLoading ? (
-        <div aria-busy="true" aria-label="Loading stock items">
+        <div className="space-y-2.5" aria-busy="true" aria-label="Loading stock items">
           {[1, 2, 3].map((row) => (
-            <div
-              key={row}
-              className="px-4 py-3.5 border-b border-[#E2DDD0] bg-[#FAF9F4] flex items-center justify-between gap-3"
-            >
-              <div className="space-y-1.5 flex-1">
-                <div className="h-4 w-40 bg-[#EFECE2] rounded-[2px] animate-pulse" />
-                <div className="h-3 w-28 bg-[#EFECE2] rounded-[2px] animate-pulse" />
+            <div key={row} className="botanical-card p-4 flex items-center justify-between gap-3">
+              <div className="space-y-2 flex-1">
+                <div className="h-4 w-40 bg-[#E2ECE4] rounded-full animate-pulse" />
+                <div className="h-3 w-28 bg-[#EEF7F0] rounded-full animate-pulse" />
               </div>
-              <div className="h-6 w-20 bg-[#EFECE2] rounded-[3px] animate-pulse" />
+              <div className="h-8 w-24 bg-[#E2ECE4] rounded-full animate-pulse" />
             </div>
           ))}
         </div>
       ) : error ? (
-        <div className="m-4 p-4 bg-[#FEE2E2] text-[#991B1B] rounded-[4px] text-xs font-bold border border-[#FCA5A5] flex items-center justify-between">
+        <div className="p-4 bg-[#FEE2E2] text-[#991B1B] rounded-[18px] text-xs font-bold border border-[#FCA5A5] flex items-center justify-between">
           <span>{error}</span>
           <button
             type="button"
             onClick={fetchStock}
-            className="min-h-[44px] px-3 py-1.5 rounded-[3px] bg-[#991B1B] text-white text-xs font-bold cursor-pointer"
+            className="min-h-[44px] px-4 py-1.5 rounded-full bg-[#DC2626] text-white text-xs font-bold cursor-pointer"
           >
             Retry
           </button>
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="px-6 py-10 bg-[#FAF9F4] border-b border-[#D6D1C4] text-center">
-          <div className="w-10 h-10 rounded-[4px] bg-[#EFECE2] border border-[#D6D1C4] text-[#047857] flex items-center justify-center mx-auto mb-3">
+        <div className="botanical-card p-8 text-center">
+          <div className="w-11 h-11 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center mx-auto mb-3">
             <Package className="w-5 h-5" />
           </div>
-          <p className="text-sm font-extrabold text-[#14191D]">
+          <p className="text-sm font-bold text-[#14201A] font-display">
             No stock items in this location
           </p>
-          <p className="text-xs text-[#5B6268] mt-1 max-w-xs mx-auto">
+          <p className="text-xs text-[#5B6B61] mt-1 max-w-xs mx-auto">
             Items unpacked from your shopping cart will appear here automatically.
           </p>
         </div>
       ) : (
-        <div>
+        <div className="space-y-2.5">
           {filteredItems.map((item) => {
             const needsRestock =
               item.status === "running_low" || item.status === "out_of_stock";
@@ -305,100 +296,97 @@ export function StockInventoryView() {
             const statusConfig = {
               in_stock: {
                 label: "In Stock",
-                marker: "w-1.5 h-1.5 rounded-full bg-[#047857]",
-                badge: "bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]",
+                marker: "w-2 h-2 rounded-full bg-[#16A34A]",
+                badge: "bg-[#DCFCE7] text-[#15803D]",
               },
               running_low: {
                 label: "Running Low",
-                marker: "w-2 h-2 rounded-[2px] bg-[#B45309]",
-                badge: "bg-[#FEF3C7] text-[#92400E] border-[#F59E0B]",
+                marker: "w-2.5 h-2.5 rounded-full bg-[#D97706]",
+                badge: "bg-[#FEF3C7] text-[#92400E]",
               },
               out_of_stock: {
                 label: "Out of Stock",
-                marker: "w-2.5 h-2.5 rounded-[1px] bg-[#D9381E]",
-                badge: "bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]",
+                marker: "w-2.5 h-2.5 rounded-[3px] bg-[#DC2626]",
+                badge: "bg-[#FEE2E2] text-[#991B1B]",
               },
             }[item.status] || {
               label: item.status,
-              marker: "w-1.5 h-1.5 rounded-full bg-[#5B6268]",
-              badge: "bg-[#EFECE2] text-[#14191D] border-[#D6D1C4]",
+              marker: "w-2 h-2 rounded-full bg-[#5B6B61]",
+              badge: "bg-[#F4F9F5] text-[#14201A]",
             };
 
             return (
               <div
                 key={item.id}
-                className="px-3 sm:px-4 py-2.5 border-b border-[#E2DDD0] bg-[#FAF9F4] flex flex-wrap md:flex-nowrap items-center justify-between gap-2.5"
+                className="botanical-card p-3.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-2.5"
               >
-                {/* Name & Metadata */}
                 <div className="min-w-0 flex-1 basis-48">
-                  <div className="text-sm font-bold text-[#14191D] truncate">
+                  <div className="text-sm font-bold text-[#14201A] truncate">
                     {item.title}
                   </div>
-                  <div className="text-[11px] font-semibold text-[#5B6268] mt-0.5 truncate">
+                  <div className="text-xs font-semibold text-[#5B6B61] mt-0.5 truncate">
                     {item.location} · {item.category}
                     {item.brand ? ` · ${item.brand}` : ""}
                   </div>
                 </div>
 
-                {/* Proportional status badge */}
                 <button
                   type="button"
                   onClick={() => handleCycleStatus(item)}
-                  className={`min-h-[36px] px-2.5 py-1 rounded-[3px] text-[10px] font-extrabold border flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${statusConfig.badge}`}
+                  className={`min-h-[36px] px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 font-display ${statusConfig.badge}`}
                   title="Click to cycle stock status"
                 >
                   <span className={statusConfig.marker} aria-hidden="true" />
                   <span>{statusConfig.label}</span>
                 </button>
 
-                {/* Controls Row: 44px Qty Stepper + Conditional Restock + Delete */}
                 <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
                   <div className="flex items-center gap-2 tabular-nums">
-                    <div className="flex items-center border border-[#D6D1C4] rounded-[3px] bg-[#F7F5EE]">
+                    <div className="flex items-center rounded-full bg-[#F4F9F5] border border-[#E2ECE4]">
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(item, -1)}
                         aria-label="Decrease stock quantity"
-                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                        className="min-w-[44px] min-h-[44px] rounded-l-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         -
                       </button>
-                      <span className="text-xs font-extrabold text-[#14191D] px-1.5 min-w-6 text-center">
+                      <span className="text-xs font-extrabold text-[#14201A] px-1.5 min-w-6 text-center">
                         {parseFloat(item.quantity)}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(item, 1)}
                         aria-label="Increase stock quantity"
-                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#14191D] hover:bg-[#EFECE2] text-sm font-extrabold cursor-pointer"
+                        className="min-w-[44px] min-h-[44px] rounded-r-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         +
                       </button>
                     </div>
-                    <span className="text-xs font-semibold text-[#5B6268] min-w-7">
+                    <span className="text-xs font-semibold text-[#5B6B61]">
                       {item.unit}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleAddToCart(item)}
-                      className={`min-h-[44px] px-3 py-1.5 rounded-[3px] text-xs font-extrabold flex items-center gap-1 transition-colors cursor-pointer border ${
+                      className={`min-h-[44px] px-3 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap flex items-center gap-1 transition-colors cursor-pointer font-display ${
                         needsRestock
-                          ? "bg-[#D9381E] hover:bg-[#B92B14] border-[#D9381E] text-white"
-                          : "bg-[#F7F5EE] hover:bg-[#EFECE2] border-[#D6D1C4] text-[#14191D]"
+                          ? "bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A]"
+                          : "bg-[#F4F9F5] hover:bg-[#EEF7F0] border border-[#E2ECE4] text-[#14201A]"
                       }`}
                       title="Add to Shopping Cart"
                     >
-                      <Plus className="w-3.5 h-3.5 stroke-[2.6]" />
+                      <Plus className="w-3.5 h-3.5 stroke-[2.6] shrink-0" />
                       <span>Add to Cart</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5B6268] hover:text-[#B91C1C] transition-colors cursor-pointer"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5B6B61] hover:text-[#DC2626] transition-colors cursor-pointer"
                       aria-label="Delete stock item"
                       title="Delete Stock Item"
                     >

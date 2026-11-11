@@ -1,156 +1,222 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T16:28:00Z",
+  "generatedAt": "2026-11-11T16:56:00Z",
   "title": "Design System: Nook",
   "extensions": {
     "colorMeta": {
-      "route-grocery": {
+      "botanical-ground": {
+        "role": "neutral",
+        "displayName": "Botanical Ground",
+        "canonical": "#F4F9F5",
+        "tonalRamp": ["#1C2920", "#334739", "#4E6856", "#6D8A76", "#94AE9B", "#BDD0C2", "#E2ECE4", "#F4F9F5"]
+      },
+      "botanical-surface": {
+        "role": "neutral",
+        "displayName": "Botanical Surface",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#262B28", "#474E4A", "#6B746F", "#909994", "#B5BEB9", "#D7DFDA", "#EEF4F0", "#FFFFFF"]
+      },
+      "botanical-collected": {
+        "role": "neutral",
+        "displayName": "Collected Card Tint",
+        "canonical": "#EEF7F0",
+        "tonalRamp": ["#1B2A1F", "#304837", "#4A6A53", "#688C72", "#8DAE96", "#B5CEBC", "#D8E9DC", "#EEF7F0"]
+      },
+      "botanical-tint": {
+        "role": "neutral",
+        "displayName": "Botanical Tint",
+        "canonical": "#DCFCE7",
+        "tonalRamp": ["#0D331B", "#14532D", "#15803D", "#16A34A", "#4ADE80", "#86EFAC", "#BBF7D0", "#DCFCE7"]
+      },
+      "botanical-border": {
+        "role": "neutral",
+        "displayName": "Botanical Border",
+        "canonical": "#E2ECE4",
+        "tonalRamp": ["#1F2922", "#38473D", "#54685B", "#73897B", "#95A99C", "#BACAC0", "#D5E1D8", "#E2ECE4"]
+      },
+      "botanical-settled-border": {
+        "role": "neutral",
+        "displayName": "Settled Border",
+        "canonical": "#CDE5D3",
+        "tonalRamp": ["#1A2B1F", "#2F4A37", "#486C52", "#658E71", "#86B092", "#A9CEB3", "#CDE5D3", "#EAF4ED"]
+      },
+      "botanical-ring": {
+        "role": "neutral",
+        "displayName": "Botanical Ring",
+        "canonical": "#86EFAC",
+        "tonalRamp": ["#0B2E18", "#14532D", "#15803D", "#16A34A", "#22C55E", "#4ADE80", "#86EFAC", "#DCFCE7"]
+      },
+      "botanical-ink": {
+        "role": "neutral",
+        "displayName": "Deep Pine Ink",
+        "canonical": "#14201A",
+        "tonalRamp": ["#0A110E", "#14201A", "#21332A", "#354D40", "#4E6B5B", "#769082", "#A8BBB0", "#DCE6E0"]
+      },
+      "botanical-settled-ink": {
+        "role": "neutral",
+        "displayName": "Settled Pine Ink",
+        "canonical": "#475B4E",
+        "tonalRamp": ["#14201A", "#243229", "#35473C", "#475B4E", "#617869", "#859A8C", "#B4C4BA", "#E3EAE5"]
+      },
+      "botanical-muted": {
+        "role": "neutral",
+        "displayName": "Muted Sage Ink",
+        "canonical": "#5B6B61",
+        "tonalRamp": ["#161E19", "#28342C", "#404E45", "#5B6B61", "#77887D", "#9AA99F", "#C2CDC6", "#E9EEEB"]
+      },
+      "leaf-fill": {
         "role": "primary",
-        "displayName": "Signal Vermilion",
-        "canonical": "#D9381E",
-        "tonalRamp": ["#4A1108", "#751C0E", "#A62814", "#B92B14", "#D9381E", "#E8634B", "#F39E8E", "#FDE8E4"]
+        "displayName": "Leaf Fill",
+        "canonical": "#15803D",
+        "tonalRamp": ["#052E16", "#14532D", "#166534", "#15803D", "#16A34A", "#4ADE80", "#86EFAC", "#DCFCE7"]
       },
-      "route-grocery-hover": {
+      "leaf-fill-hover": {
         "role": "primary",
-        "displayName": "Signal Vermilion Hover",
-        "canonical": "#B92B14",
-        "tonalRamp": ["#3D0D06", "#64170B", "#8E2110", "#B92B14", "#D9381E", "#E8634B", "#F39E8E", "#FDE8E4"]
+        "displayName": "Leaf Fill Hover",
+        "canonical": "#166534",
+        "tonalRamp": ["#052E16", "#0D3D20", "#14532D", "#166534", "#15803D", "#22C55E", "#86EFAC", "#DCFCE7"]
       },
-      "route-stock": {
+      "leaf-accent": {
+        "role": "primary",
+        "displayName": "Leaf Accent",
+        "canonical": "#16A34A",
+        "tonalRamp": ["#052E16", "#14532D", "#15803D", "#16A34A", "#22C55E", "#4ADE80", "#BBF7D0", "#F0FDF4"]
+      },
+      "coral-punch": {
         "role": "secondary",
-        "displayName": "Market Emerald",
-        "canonical": "#047857",
-        "tonalRamp": ["#022C22", "#064E3B", "#065F46", "#047857", "#059669", "#34D399", "#A7F3D0", "#ECFDF5"]
+        "displayName": "Coral Punch",
+        "canonical": "#FF6B4A",
+        "tonalRamp": ["#4D1508", "#7F230F", "#B53318", "#EA5838", "#FF6B4A", "#FF8F75", "#FFB8A8", "#FFF1EE"]
       },
-      "route-stock-hover": {
+      "coral-punch-hover": {
         "role": "secondary",
-        "displayName": "Market Emerald Hover",
-        "canonical": "#065F46",
-        "tonalRamp": ["#022C22", "#043F2E", "#065F46", "#047857", "#059669", "#34D399", "#A7F3D0", "#ECFDF5"]
+        "displayName": "Coral Punch Hover",
+        "canonical": "#FF5530",
+        "tonalRamp": ["#4D1206", "#7E1F0B", "#B52E12", "#E04220", "#FF5530", "#FF7E61", "#FFB19F", "#FFF1EE"]
       },
-      "route-finance": {
+      "finance-fill": {
         "role": "tertiary",
-        "displayName": "Cobalt Route",
-        "canonical": "#1D4ED8",
-        "tonalRamp": ["#172554", "#1E3A8A", "#1E40AF", "#1D4ED8", "#2563EB", "#60A5FA", "#BFDBFE", "#EFF6FF"]
+        "displayName": "Finance Fill",
+        "canonical": "#0369A1",
+        "tonalRamp": ["#082F49", "#0C4A6E", "#075985", "#0369A1", "#0284C7", "#38BDF8", "#BAE6FD", "#E0F2FE"]
       },
-      "route-finance-hover": {
+      "finance-fill-hover": {
         "role": "tertiary",
-        "displayName": "Cobalt Route Hover",
-        "canonical": "#1E40AF",
-        "tonalRamp": ["#172554", "#1E3A8A", "#1E40AF", "#1D4ED8", "#3B82F6", "#60A5FA", "#BFDBFE", "#EFF6FF"]
+        "displayName": "Finance Fill Hover",
+        "canonical": "#075985",
+        "tonalRamp": ["#082F49", "#0B3D5B", "#0C4A6E", "#075985", "#0369A1", "#38BDF8", "#BAE6FD", "#E0F2FE"]
       },
-      "route-house": {
+      "finance-accent": {
         "role": "tertiary",
-        "displayName": "Plum Route",
+        "displayName": "Finance Accent",
+        "canonical": "#0284C7",
+        "tonalRamp": ["#082F49", "#0C4A6E", "#0369A1", "#0284C7", "#0EA5E9", "#38BDF8", "#BAE6FD", "#F0F9FF"]
+      },
+      "finance-tint": {
+        "role": "tertiary",
+        "displayName": "Finance Tint",
+        "canonical": "#E0F2FE",
+        "tonalRamp": ["#082F49", "#0C4A6E", "#0369A1", "#0284C7", "#38BDF8", "#7DD3FC", "#BAE6FD", "#E0F2FE"]
+      },
+      "house-accent": {
+        "role": "tertiary",
+        "displayName": "House Accent",
+        "canonical": "#7C3AED",
+        "tonalRamp": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#A78BFA", "#DDD6FE", "#EDE9FE"]
+      },
+      "house-ink": {
+        "role": "tertiary",
+        "displayName": "House Ink",
         "canonical": "#6D28D9",
         "tonalRamp": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#A78BFA", "#DDD6FE", "#F5F3FF"]
       },
-      "route-house-hover": {
+      "house-tint": {
         "role": "tertiary",
-        "displayName": "Plum Route Hover",
-        "canonical": "#5B21B6",
-        "tonalRamp": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#A78BFA", "#DDD6FE", "#F5F3FF"]
+        "displayName": "House Tint",
+        "canonical": "#EDE9FE",
+        "tonalRamp": ["#2E1065", "#4C1D95", "#6D28D9", "#7C3AED", "#8B5CF6", "#C4B5FD", "#DDD6FE", "#EDE9FE"]
       },
-      "signal-amber": {
+      "amber-signal": {
         "role": "tertiary",
-        "displayName": "Ochre Signal",
-        "canonical": "#B45309",
+        "displayName": "Amber Signal",
+        "canonical": "#D97706",
         "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FEF3C7"]
       },
-      "enamel-ground": {
-        "role": "neutral",
-        "displayName": "Enamel Cream Ground",
-        "canonical": "#F7F5EE",
-        "tonalRamp": ["#2A2822", "#4B483F", "#706C5F", "#969182", "#BCB7A7", "#DDD8CB", "#EFECE2", "#F7F5EE"]
+      "amber-tint": {
+        "role": "tertiary",
+        "displayName": "Amber Tint",
+        "canonical": "#FEF3C7",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#D97706", "#F59E0B", "#FBBF24", "#FDE68A", "#FEF3C7"]
       },
-      "enamel-bay": {
-        "role": "neutral",
-        "displayName": "Secondary Bay Tint",
-        "canonical": "#EFECE2",
-        "tonalRamp": ["#292721", "#49463C", "#6C675A", "#908A7B", "#B5AFA0", "#D6D1C4", "#E2DDD0", "#EFECE2"]
+      "amber-ink": {
+        "role": "tertiary",
+        "displayName": "Amber Ink",
+        "canonical": "#92400E",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FEF3C7"]
       },
-      "enamel-plate": {
-        "role": "neutral",
-        "displayName": "Enamel Plate",
-        "canonical": "#FAF9F4",
-        "tonalRamp": ["#2C2B26", "#4E4C44", "#747166", "#9A968A", "#C0BCB0", "#DFDCD2", "#F2EFE6", "#FAF9F4"]
+      "danger-fill": {
+        "role": "tertiary",
+        "displayName": "Danger Fill",
+        "canonical": "#DC2626",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#B91C1C", "#DC2626", "#EF4444", "#FCA5A5", "#FEE2E2"]
       },
-      "enamel-settled": {
-        "role": "neutral",
-        "displayName": "Settled Row Tint",
-        "canonical": "#F2EFE6",
-        "tonalRamp": ["#2A2823", "#4B483F", "#6F6B5F", "#938F81", "#B8B3A5", "#D6D1C4", "#E6E2D7", "#F2EFE6"]
+      "danger-tint": {
+        "role": "tertiary",
+        "displayName": "Danger Tint",
+        "canonical": "#FEE2E2",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FEE2E2"]
       },
-      "enamel-ink": {
-        "role": "neutral",
-        "displayName": "Rail Charcoal",
-        "canonical": "#14191D",
-        "tonalRamp": ["#0B0E11", "#14191D", "#1D2329", "#2A3137", "#43494E", "#5B6268", "#A1AAB3", "#E2E6E9"]
+      "danger-ink": {
+        "role": "tertiary",
+        "displayName": "Danger Ink",
+        "canonical": "#991B1B",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#B91C1C", "#DC2626", "#EF4444", "#FCA5A5", "#FEE2E2"]
       },
-      "enamel-settled-ink": {
+      "scanner-surface": {
         "role": "neutral",
-        "displayName": "Settled Charcoal",
-        "canonical": "#43494E",
-        "tonalRamp": ["#14191D", "#252B30", "#353B40", "#43494E", "#5B6268", "#7D858D", "#B2B8BE", "#E4E7EA"]
+        "displayName": "Scanner Surface",
+        "canonical": "#0F1B14",
+        "tonalRamp": ["#080F0B", "#0F1B14", "#16271D", "#1F3528", "#2E4D3B", "#4B735B", "#7FA48D", "#C1D8C9"]
       },
-      "enamel-muted": {
+      "scanner-card": {
         "role": "neutral",
-        "displayName": "Muted Slate",
-        "canonical": "#5B6268",
-        "tonalRamp": ["#14191D", "#2A3137", "#43494E", "#5B6268", "#777E85", "#99A0A7", "#C4C9CE", "#ECEEEF"]
+        "displayName": "Scanner Card",
+        "canonical": "#16271D",
+        "tonalRamp": ["#0B140F", "#16271D", "#1F3528", "#2A4736", "#3E634D", "#5D876E", "#8EB39D", "#CBE0D3"]
       },
-      "enamel-rule": {
+      "scanner-border": {
         "role": "neutral",
-        "displayName": "Primary Hairline Rule",
-        "canonical": "#D6D1C4",
-        "tonalRamp": ["#2E2C26", "#504D43", "#736F63", "#979284", "#B8B2A4", "#D6D1C4", "#E7E3D9", "#F5F3EC"]
+        "displayName": "Scanner Border",
+        "canonical": "#1F3528",
+        "tonalRamp": ["#0D1711", "#16271D", "#1F3528", "#2D4C3A", "#426B53", "#648F76", "#95B8A3", "#D1E3D8"]
       },
-      "enamel-rule-soft": {
+      "scanner-muted": {
         "role": "neutral",
-        "displayName": "Soft Row Rule",
-        "canonical": "#E2DDD0",
-        "tonalRamp": ["#2E2C26", "#524F46", "#787367", "#9D988A", "#C0BBB0", "#D6D1C4", "#E2DDD0", "#F7F5EE"]
-      },
-      "rail-active": {
-        "role": "neutral",
-        "displayName": "Rail Active Surface",
-        "canonical": "#1D2329",
-        "tonalRamp": ["#0E1115", "#14191D", "#1D2329", "#2A3137", "#3D464F", "#5E6872", "#9CA6AF", "#DCE1E5"]
-      },
-      "rail-divider": {
-        "role": "neutral",
-        "displayName": "Rail Divider",
-        "canonical": "#2A3137",
-        "tonalRamp": ["#111519", "#1B2126", "#2A3137", "#3B444C", "#545F69", "#76818C", "#AAB3BC", "#DFE4E8"]
-      },
-      "rail-muted": {
-        "role": "neutral",
-        "displayName": "Rail Muted Ink",
-        "canonical": "#A1AAB3",
-        "tonalRamp": ["#14191D", "#2A3137", "#475058", "#667079", "#848E98", "#A1AAB3", "#C9CFD5", "#EFF2F4"]
+        "displayName": "Scanner Muted Ink",
+        "canonical": "#A7C4B2",
+        "tonalRamp": ["#16271D", "#253F30", "#385A47", "#507962", "#6E9880", "#8CB39C", "#A7C4B2", "#DAE9DF"]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Page summary headings and right-aligned euro/burn-rate totals (Archivo 800, 22px)."
+        "purpose": "Finance monthly spend and burn-rate hero figures (Lexend 800, 24px)."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Top bar wordmark and Vaul bottom drawer headers (Archivo 800, 16px)."
+        "purpose": "View titles such as Supermarket Run, Home Stock Inventory, and Appliance Dossiers (Lexend 700, 21px)."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Pending checklist item titles, stock products, appliances, chores, and desktop rail labels (Public Sans 700, 14px)."
+        "purpose": "Top bar Nook wordmark and Vaul bottom drawer headers (Lexend 700-800, 16px-18px)."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Action buttons, inline form inputs, secondary metadata, and route sub-tabs (Public Sans 600–800, 12px)."
+        "purpose": "Card titles, storage/brand metadata, inputs, and primary buttons (Nunito Sans 600-700, 12px-14px)."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Uppercase bay headers, column captions, and percentage readouts (Public Sans 800, 11px)."
+        "purpose": "Route pill badges, form field labels, barcode chips, and mobile dock captions (11px)."
       }
     },
     "shadows": [],
@@ -158,17 +224,17 @@
       {
         "name": "reticle-pulse",
         "value": "1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "purpose": "Vermilion corner reticle pulse inside the barcode scanner viewfinder."
+        "purpose": "Coral corner reticle opacity pulse inside the barcode scanner viewfinder."
       },
       {
-        "name": "route-transition",
+        "name": "state-transition",
         "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "Crisp color and border state transitions on route tabs, list rows, and enamel buttons."
+        "purpose": "Color, border, and subtle scale feedback across pill switches, cards, and dock tabs."
       },
       {
         "name": "progress-fill",
         "value": "300ms ease",
-        "purpose": "Smooth horizontal fill on the 3px enamel cart and budget progress meters."
+        "purpose": "Smooth horizontal width fill on cart collection and monthly budget progress bars."
       }
     ],
     "breakpoints": [
@@ -179,117 +245,112 @@
   },
   "components": [
     {
-      "name": "Signal Vermilion CTA",
+      "name": "Leaf Pill Unpack CTA",
       "kind": "button",
-      "refersTo": "button-grocery",
-      "description": "Primary Signal Vermilion action button for barcode scanning, adding cart items, and restocking.",
-      "html": "<button class=\"ds-btn-grocery\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>Scan Barcode</span></button>",
-      "css": ".ds-btn-grocery { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-grocery, #D9381E); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; letter-spacing: -0.01em; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-grocery:hover { background-color: #B92B14; } .ds-btn-grocery:active { transform: scale(0.99); } .ds-btn-grocery:focus-visible { outline: 2px solid #D9381E; outline-offset: 2px; }"
+      "refersTo": "button-leaf",
+      "description": "WCAG-AA Leaf Green full-pill action bar for unpacking collected groceries into home stock.",
+      "html": "<button class=\"ds-btn-leaf\" type=\"button\"><span class=\"ds-btn-leaf-lead\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>Arrived Home? Unpack to Stock</span></span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-leaf { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 360px; min-height: 48px; padding: 12px 20px; border: none; border-radius: 9999px; background-color: var(--color-leaf-hover, #15803D); color: #FFFFFF; font-family: \"Lexend\", \"Nunito Sans\", sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-leaf-lead { display: inline-flex; align-items: center; gap: 8px; } .ds-btn-leaf:hover { background-color: #166534; } .ds-btn-leaf:active { transform: scale(0.99); } .ds-btn-leaf:focus-visible { outline: 2px solid var(--leaf, #16A34A); outline-offset: 2px; }"
     },
     {
-      "name": "Market Emerald Unpack CTA",
+      "name": "Coral Scanner Capsule",
       "kind": "button",
-      "refersTo": "button-stock",
-      "description": "Full-width Market Emerald action bar for transferring collected items from Cart into Home Stock.",
-      "html": "<button class=\"ds-btn-stock\" type=\"button\"><span class=\"ds-btn-stock-lead\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>Arrived Home? Unpack to Stock</span></span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
-      "css": ".ds-btn-stock { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 360px; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-stock, #047857); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-stock-lead { display: inline-flex; align-items: center; gap: 0.5rem; } .ds-btn-stock:hover { background-color: #065F46; } .ds-btn-stock:active { transform: scale(0.99); } .ds-btn-stock:focus-visible { outline: 2px solid #047857; outline-offset: 2px; }"
+      "refersTo": "button-coral",
+      "description": "High-visibility Coral Punch pill trigger paired with Deep Pine Ink for barcode scanning and urgent restocks.",
+      "html": "<button class=\"ds-btn-coral\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>Scan Barcode</span></button>",
+      "css": ".ds-btn-coral { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border: none; border-radius: 9999px; background-color: var(--coral, #FF6B4A); color: var(--botanical-ink, #14201A); font-family: \"Lexend\", \"Nunito Sans\", sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-btn-coral:hover { background-color: #FF5530; } .ds-btn-coral:active { transform: scale(0.98); } .ds-btn-coral:focus-visible { outline: 2px solid var(--leaf, #16A34A); outline-offset: 2px; }"
     },
     {
-      "name": "Cobalt Settle CTA",
+      "name": "Finance Sky Settle Pill",
       "kind": "button",
       "refersTo": "button-finance",
-      "description": "Cobalt Route confirmation button for settling shared household ledger balances.",
+      "description": "Sky Blue confirmation pill for settling shared household ledger balances.",
       "html": "<button class=\"ds-btn-finance\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>1-Tap Settle</span></button>",
-      "css": ".ds-btn-finance { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: 10px 16px; border: none; border-radius: 4px; background-color: var(--route-finance, #1D4ED8); color: #FFFFFF; font-family: \"Public Sans\", sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-finance:hover { background-color: #1E40AF; } .ds-btn-finance:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px; }"
+      "css": ".ds-btn-finance { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border: none; border-radius: 9999px; background-color: #0369A1; color: #FFFFFF; font-family: \"Lexend\", \"Nunito Sans\", sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-finance:hover { background-color: #075985; } .ds-btn-finance:focus-visible { outline: 2px solid var(--leaf, #16A34A); outline-offset: 2px; }"
     },
     {
-      "name": "Hairline Enamel Checklist Rows",
+      "name": "Botanical Segmented Switch",
+      "kind": "nav",
+      "refersTo": "segmented-switch",
+      "description": "Two-pill domain switch with Leaf Fill active state and white botanical inactive state.",
+      "html": "<div class=\"ds-seg\"><button class=\"ds-seg-btn ds-seg-active\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Shopping Cart</span></button><button class=\"ds-seg-btn\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><line x1=\"12\" x2=\"12\" y1=\"22\" y2=\"12\"/></svg><span>My Stock</span></button></div>",
+      "css": ".ds-seg { display: flex; gap: 8px; max-width: 420px; font-family: \"Lexend\", \"Nunito Sans\", sans-serif; } .ds-seg-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 9999px; border: 1px solid var(--botanical-border, #E2ECE4); background-color: var(--botanical-surface, #FFFFFF); color: var(--botanical-muted, #5B6B61); font-size: 12px; font-weight: 800; cursor: pointer; transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease; } .ds-seg-btn:hover { color: var(--botanical-ink, #14201A); } .ds-seg-active { background-color: #15803D; border-color: #15803D; color: #FFFFFF; } .ds-seg-active:hover { color: #FFFFFF; }"
+    },
+    {
+      "name": "Botanical Item Cards",
       "kind": "card",
-      "refersTo": "enamel-plate",
-      "description": "Pending (#FAF9F4) and settled (#F2EFE6) checklist rows separated by 1px rules with locked tabular totals.",
-      "html": "<div class=\"ds-list\"><div class=\"ds-row ds-row-pending\"><span class=\"ds-check-box\"></span><div class=\"ds-row-meta\"><div class=\"ds-row-title\">Whole Milk 1L</div><div class=\"ds-row-sub\">Fridge · Terra Nostra</div></div><div class=\"ds-stepper\"><span class=\"ds-step-btn\">-</span><span class=\"ds-step-val\">2</span><span class=\"ds-step-btn\">+</span></div><div class=\"ds-row-price\"><div class=\"ds-price-num\">€2.98</div><div class=\"ds-price-unit\">2 pcs</div></div></div><div class=\"ds-row ds-row-settled\"><span class=\"ds-check-box ds-check-done\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span><div class=\"ds-row-meta\"><div class=\"ds-row-title ds-title-done\">Sourdough Loaf</div><div class=\"ds-row-sub ds-sub-done\">Pantry</div></div><div class=\"ds-row-qty-locked\">1 pcs</div><div class=\"ds-row-price\"><div class=\"ds-price-num ds-price-done\">€3.20</div></div></div></div>",
-      "css": ".ds-list { border: 1px solid var(--enamel-rule, #D6D1C4); border-radius: 4px; overflow: hidden; font-family: \"Public Sans\", sans-serif; max-width: 480px; } .ds-row { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid #E2DDD0; transition: background-color 150ms ease; } .ds-row:last-child { border-bottom: none; } .ds-row-pending { background-color: var(--enamel-plate, #FAF9F4); } .ds-row-pending:hover { background-color: #FFFFFF; } .ds-row-settled { background-color: #F2EFE6; } .ds-check-box { width: 20px; height: 20px; border-radius: 3px; border: 2px solid var(--enamel-ink, #14191D); flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; } .ds-check-done { background-color: var(--route-stock, #047857); border-color: var(--route-stock, #047857); color: #FFFFFF; } .ds-row-meta { flex: 1; min-width: 0; } .ds-row-title { font-size: 14px; font-weight: 700; color: #14191D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-title-done { font-weight: 600; color: #43494E; text-decoration: line-through; } .ds-row-sub { font-size: 11px; font-weight: 600; color: #5B6268; margin-top: 2px; } .ds-sub-done { color: #43494E; } .ds-stepper { display: inline-flex; align-items: center; border: 1px solid #D6D1C4; border-radius: 3px; background-color: #F7F5EE; font-variant-numeric: tabular-nums; } .ds-step-btn { padding: 4px 10px; font-size: 13px; font-weight: 800; color: #14191D; } .ds-step-val { padding: 0 4px; font-size: 12px; font-weight: 800; color: #14191D; } .ds-row-qty-locked { width: 80px; text-align: center; font-size: 12px; font-weight: 700; color: #43494E; font-variant-numeric: tabular-nums; } .ds-row-price { width: 64px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; } .ds-price-num { font-size: 12px; font-weight: 800; color: #14191D; } .ds-price-done { color: #047857; } .ds-price-unit { font-size: 10px; font-weight: 600; color: #5B6268; }"
+      "refersTo": "botanical-card",
+      "description": "Pending (.botanical-card) and collected (.botanical-card-settled) 18px cards with circular checkboxes and pill steppers.",
+      "html": "<div class=\"ds-card-stack\"><div class=\"ds-card\"><span class=\"ds-circle-check\"></span><div class=\"ds-card-body\"><div class=\"ds-card-title\">Whole Milk 1L</div><div class=\"ds-card-meta\">Fridge · Terra Nostra</div></div><div class=\"ds-stepper\"><span class=\"ds-step-btn\">-</span><span class=\"ds-step-val\">2</span><span class=\"ds-step-btn\">+</span></div><div class=\"ds-price-col\"><div class=\"ds-price-val\">€2.98</div><div class=\"ds-price-unit\">2 pcs</div></div></div><div class=\"ds-card ds-card-settled\"><span class=\"ds-circle-check ds-circle-done\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span><div class=\"ds-card-body\"><div class=\"ds-card-title ds-title-settled\">Sourdough Loaf</div><div class=\"ds-card-meta ds-meta-settled\">Pantry</div></div><div class=\"ds-qty-settled\">1 pcs</div><div class=\"ds-price-col\"><div class=\"ds-price-val ds-price-settled\">€3.20</div></div></div></div>",
+      "css": ".ds-card-stack { display: flex; flex-direction: column; gap: 8px; max-width: 480px; font-family: \"Nunito Sans\", sans-serif; } .ds-card { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background-color: var(--botanical-surface, #FFFFFF); border: 1px solid var(--botanical-border, #E2ECE4); border-radius: 18px; transition: border-color 150ms ease; } .ds-card:hover { border-color: #86EFAC; } .ds-card-settled { background-color: #EEF7F0; border-color: #CDE5D3; } .ds-card-settled:hover { border-color: #CDE5D3; } .ds-circle-check { width: 22px; height: 22px; border-radius: 9999px; border: 2px solid #86EFAC; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; } .ds-circle-done { background-color: var(--leaf, #16A34A); border-color: var(--leaf, #16A34A); color: #FFFFFF; } .ds-card-body { flex: 1; min-width: 0; } .ds-card-title { font-size: 14px; font-weight: 700; color: var(--botanical-ink, #14201A); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-title-settled { font-weight: 600; color: #475B4E; text-decoration: line-through; } .ds-card-meta { font-size: 12px; font-weight: 600; color: var(--botanical-muted, #5B6B61); margin-top: 2px; } .ds-meta-settled { color: #475B4E; } .ds-stepper { display: inline-flex; align-items: center; border-radius: 9999px; background-color: var(--botanical-ground, #F4F9F5); border: 1px solid var(--botanical-border, #E2ECE4); font-variant-numeric: tabular-nums; } .ds-step-btn { padding: 6px 12px; font-size: 14px; font-weight: 800; color: #14201A; } .ds-step-val { padding: 0 4px; font-size: 12px; font-weight: 800; color: #14201A; } .ds-qty-settled { width: 80px; text-align: center; font-size: 12px; font-weight: 700; color: #475B4E; font-variant-numeric: tabular-nums; } .ds-price-col { width: 68px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; } .ds-price-val { font-family: \"Lexend\", sans-serif; font-size: 14px; font-weight: 700; color: #14201A; } .ds-price-settled { color: #15803D; } .ds-price-unit { font-size: 11px; font-weight: 600; color: #5B6B61; }"
     },
     {
-      "name": "Proportional Status Badges",
+      "name": "Stock Status Pills",
       "kind": "chip",
-      "description": "Stock status chips pairing proportional geometric markers (6px circle, 8px square, 10px block) with semantic tint borders.",
-      "html": "<div class=\"ds-badge-row\"><span class=\"ds-badge ds-badge-ok\"><span class=\"ds-dot-ok\"></span>In Stock</span><span class=\"ds-badge ds-badge-low\"><span class=\"ds-dot-low\"></span>Running Low</span><span class=\"ds-badge ds-badge-out\"><span class=\"ds-dot-out\"></span>Out of Stock</span></div>",
-      "css": ".ds-badge-row { display: flex; flex-wrap: wrap; gap: 8px; font-family: \"Public Sans\", sans-serif; } .ds-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 800; border: 1px solid transparent; } .ds-badge-ok { background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0; } .ds-dot-ok { width: 6px; height: 6px; border-radius: 9999px; background-color: #047857; } .ds-badge-low { background-color: #FEF3C7; color: #92400E; border-color: #F59E0B; } .ds-dot-low { width: 8px; height: 8px; border-radius: 2px; background-color: #B45309; } .ds-badge-out { background-color: #FEE2E2; color: #991B1B; border-color: #FCA5A5; } .ds-dot-out { width: 10px; height: 10px; border-radius: 1px; background-color: #D9381E; }"
+      "description": "Tinted full-pill stock status chips pairing color-coded status dots with accessible label text.",
+      "html": "<div class=\"ds-pill-row\"><span class=\"ds-pill ds-pill-ok\"><span class=\"ds-dot-ok\"></span>In Stock</span><span class=\"ds-pill ds-pill-low\"><span class=\"ds-dot-low\"></span>Running Low</span><span class=\"ds-pill ds-pill-out\"><span class=\"ds-dot-out\"></span>Out of Stock</span></div>",
+      "css": ".ds-pill-row { display: flex; flex-wrap: wrap; gap: 8px; font-family: \"Lexend\", \"Nunito Sans\", sans-serif; } .ds-pill { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; } .ds-pill-ok { background-color: #DCFCE7; color: #15803D; } .ds-dot-ok { width: 8px; height: 8px; border-radius: 9999px; background-color: #16A34A; } .ds-pill-low { background-color: #FEF3C7; color: #92400E; } .ds-dot-low { width: 10px; height: 10px; border-radius: 9999px; background-color: #D97706; } .ds-pill-out { background-color: #FEE2E2; color: #991B1B; } .ds-dot-out { width: 10px; height: 10px; border-radius: 3px; background-color: #DC2626; }"
     },
     {
-      "name": "Enamel Bay Search Field",
+      "name": "Botanical Pill Search Field",
       "kind": "input",
-      "refersTo": "input-enamel",
-      "description": "Crisp 4px-radius enamel search input with 1px mineral rule border and route-colored focus state.",
-      "html": "<div class=\"ds-search-wrap\"><svg class=\"ds-search-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" type=\"text\" placeholder=\"Search pantry, fridge, spices...\" /></div>",
-      "css": ".ds-search-wrap { position: relative; max-width: 300px; font-family: \"Public Sans\", sans-serif; } .ds-search-icon { position: absolute; left: 12px; top: 12px; color: #5B6268; pointer-events: none; } .ds-input { width: 100%; min-height: 40px; padding: 8px 12px 8px 36px; border-radius: 4px; background-color: var(--enamel-plate, #FAF9F4); border: 1px solid var(--enamel-rule, #D6D1C4); color: var(--enamel-ink, #14191D); font-size: 12px; font-weight: 600; outline: none; transition: border-color 150ms ease; } .ds-input::placeholder { color: #5B6268; } .ds-input:focus { border-color: var(--route-stock, #047857); }"
+      "refersTo": "input-pill",
+      "description": "Full-pill white search input with 1px botanical border and deep leaf green focus ring.",
+      "html": "<div class=\"ds-search-wrap\"><svg class=\"ds-search-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-search-input\" type=\"text\" placeholder=\"Search pantry, fridge, spices...\" /></div>",
+      "css": ".ds-search-wrap { position: relative; max-width: 320px; font-family: \"Nunito Sans\", sans-serif; } .ds-search-icon { position: absolute; left: 14px; top: 14px; color: var(--botanical-muted, #5B6B61); pointer-events: none; } .ds-search-input { width: 100%; min-height: 44px; padding: 8px 16px 8px 40px; border-radius: 9999px; background-color: var(--botanical-surface, #FFFFFF); border: 1px solid var(--botanical-border, #E2ECE4); color: var(--botanical-ink, #14201A); font-size: 12px; font-weight: 600; outline: none; transition: border-color 150ms ease; } .ds-search-input::placeholder { color: #5B6B61; } .ds-search-input:focus { border-color: #15803D; }"
     },
     {
-      "name": "Market Hall Route Switch",
+      "name": "Botanical Mobile Bottom Dock",
       "kind": "nav",
-      "refersTo": "route-switch",
-      "description": "Full-bleed 2-column bay switch with 1px divider and 3px route-colored bottom bar.",
-      "html": "<div class=\"ds-switch\"><button class=\"ds-switch-btn ds-switch-active-grocery\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Shopping Cart</span></button><button class=\"ds-switch-btn\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><line x1=\"12\" x2=\"12\" y1=\"22\" y2=\"12\"/></svg><span>My Stock</span></button></div>",
-      "css": ".ds-switch { display: grid; grid-template-columns: repeat(2, 1fr); background-color: var(--enamel-bay, #EFECE2); border-bottom: 1px solid #D6D1C4; font-family: \"Public Sans\", sans-serif; max-width: 440px; } .ds-switch-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 12px; border: none; border-right: 1px solid #D6D1C4; border-bottom: 3px solid transparent; background: transparent; color: #5B6268; font-size: 12px; font-weight: 800; cursor: pointer; transition: color 150ms ease, background-color 150ms ease; } .ds-switch-btn:last-child { border-right: none; } .ds-switch-btn:hover { color: #14191D; } .ds-switch-active-grocery { background-color: var(--enamel-ground, #F7F5EE); color: #14191D; border-bottom-color: var(--route-grocery, #D9381E); } .ds-switch-active-grocery svg { color: var(--route-grocery, #D9381E); }"
-    },
-    {
-      "name": "Charcoal Bottom Route Dock",
-      "kind": "nav",
-      "refersTo": "rail-dock",
-      "description": "Sticky 5-column charcoal bottom rail with 3px active pillar bars and an in-grid 4px-radius vermilion Scan button.",
-      "html": "<nav class=\"ds-dock\"><button class=\"ds-dock-tab ds-dock-tab-active\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Grocery</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/></svg><span>Pantry</span></button><div class=\"ds-dock-scan-cell\"><button class=\"ds-dock-scan\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>SCAN</span></button></div><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/><path d=\"M22 12A10 10 0 0 0 12 2v10z\"/></svg><span>Finance</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>House</span></button></nav>",
-      "css": ".ds-dock { display: grid; grid-template-columns: repeat(5, 1fr); align-items: stretch; background-color: var(--enamel-ink, #14191D); border-top: 1px solid #2A3137; font-family: \"Public Sans\", sans-serif; max-width: 420px; } .ds-dock-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 54px; padding: 8px 4px; border: none; border-top: 3px solid transparent; background: transparent; color: #A1AAB3; font-size: 11px; font-weight: 700; cursor: pointer; } .ds-dock-tab:hover { color: #FFFFFF; } .ds-dock-tab-active { background-color: #1D2329; border-top-color: var(--route-grocery, #D9381E); color: #FFFFFF; } .ds-dock-scan-cell { display: flex; align-items: center; justify-content: center; padding: 6px; } .ds-dock-scan { width: 100%; min-height: 44px; border: none; border-radius: 4px; background-color: var(--route-grocery, #D9381E); color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-dock-scan:hover { background-color: #B92B14; } .ds-dock-scan:active { transform: scale(0.97); }"
+      "refersTo": "dock-chrome",
+      "description": "Sticky white 5-column mobile dock with tinted route pills and a centered Coral Punch Scan capsule.",
+      "html": "<nav class=\"ds-dock\"><button class=\"ds-dock-tab ds-dock-active\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Grocery</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 9.4 7.55 4.24\"/><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/></svg><span>Pantry</span></button><button class=\"ds-dock-scan\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/></svg><span>SCAN</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/><path d=\"M22 12A10 10 0 0 0 12 2v10z\"/></svg><span>Finance</span></button><button class=\"ds-dock-tab\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg><span>House</span></button></nav>",
+      "css": ".ds-dock { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; gap: 4px; padding: 6px 8px; background-color: var(--botanical-surface, #FFFFFF); border-top: 1px solid var(--botanical-border, #E2ECE4); font-family: \"Nunito Sans\", sans-serif; max-width: 420px; } .ds-dock-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 48px; padding: 6px 4px; border: none; border-radius: 12px; background: transparent; color: var(--botanical-muted, #5B6B61); font-size: 11px; font-weight: 700; cursor: pointer; transition: color 150ms ease, background-color 150ms ease; } .ds-dock-tab:hover { color: #14201A; } .ds-dock-active { background-color: #DCFCE7; color: #15803D; } .ds-dock-scan { width: 100%; min-height: 44px; padding: 6px 8px; border: none; border-radius: 9999px; background-color: var(--coral, #FF6B4A); color: #14201A; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-family: \"Lexend\", sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; } .ds-dock-scan:hover { background-color: #FF5530; } .ds-dock-scan:active { transform: scale(0.97); }"
     }
   ],
   "narrative": {
-    "northStar": "Market Hall Wayfinding",
-    "overview": "Nook is engineered for bright-aisle supermarket runs, kitchen pantry checks, and monthly household reviews on a self-hosted homelab. Its visual system takes its cues from European market hall signage and vitreous enamel plates: warm cream enamel grounds, deep charcoal transit rails, crisp 1px hairline divisions, and unmistakable pillar color routes that separate Grocery, Pantry Stock, Finance, and House without decorative noise.\n\nInstead of soft pastel cards, floating drop shadows, or oversized pill chrome, Nook organizes operational data into dense, high-contrast hairline checklists and aligned tabular numeric columns. Pending items sit above settled ones, active route bars anchor the top and bottom edges of the screen, and critical one-handed triggers—checking off items, scanning barcodes, and unpacking groceries into stock—remain within immediate thumb reach.",
+    "northStar": "Fresh Botanical Capsules",
+    "overview": "Nook is a self-hosted household and life operating system built for bright-aisle supermarket runs, kitchen pantry checks, and monthly household reviews on mobile and desktop. Its Fresh Botanical Capsules visual system pairs a sunlit mint-tinted daylight canvas with crisp pure-white rounded cards, 1px sage-mineral borders, wide-aperture Lexend + Nunito Sans typography, and high-contrast pill-capsule controls.\n\nInstead of heavy dark chrome, dense tabular grids, or floating drop shadows, Nook separates operational states through clean value stepping and organic geometry. Pending items sit inside luminous white 18px cards with circular green-ring checkboxes, collected items settle softly onto muted mint cards, sticky bottom capsules keep one-handed unpacking and barcode scanning within natural thumb reach, and four calibrated domain hues separate Grocery, Pantry Stock, Finance, and House without visual clutter.",
     "keyCharacteristics": [
-      "Vitreous Enamel Surfaces: Warm cream grounds (#F7F5EE), secondary bay tints (#EFECE2), and crisp row plates (#FAF9F4) eliminate harsh pure-white glare under bright store lighting.",
-      "Zero-Shadow Hairline Structure: Boundaries are drawn strictly with 1px warm mineral rules (#D6D1C4 / #E2DDD0) and 3px route bars—never blurred drop shadows or glowing buttons.",
-      "Pillar Color Routes: Four distinct operational lines—Signal Vermilion (#D9381E), Market Emerald (#047857), Cobalt Route (#1D4ED8), and Plum Route (#6D28D9)—identify each household domain at a glance.",
-      "Locked Tabular Columns: Quantities, unit prices, and euro totals stay right-aligned in tabular-nums across both pending and collected rows so totals scan vertically without horizontal jitter."
+      "Sunlit Botanical Surfaces: Cool mint ground (#F4F9F5), pure white cards (#FFFFFF), and settled mint cards (#EEF7F0) deliver effortless daylight legibility without heavy box shadows.",
+      "Tactile Pill Capsules: Segmented switches, filter chips, quantity steppers, status badges, and primary CTAs share full-pill (9999px) silhouettes anchored to >= 44px touch targets.",
+      "Wide-Aperture Legibility: Lexend display titles and numeric totals pair with Nunito Sans list copy and tabular-nums alignment for fast scanning in motion.",
+      "Calibrated Domain Accents: WCAG-AA Leaf Green (#15803D) and vibrant Leaf Accent (#16A34A) anchor Grocery and Stock, Coral Punch (#FF6B4A) drives Barcode Scanning and urgent restocks, Sky Blue (#0369A1 / #0284C7) governs Finance, and Iris Violet (#7C3AED / #6D28D9) identifies House management."
     ],
     "rules": [
       {
-        "name": "The Pillar Route Rule",
-        "body": "Every primary domain owns one route color (#D9381E Grocery, #047857 Pantry Stock, #1D4ED8 Finance, #6D28D9 House). Route colors appear on 3px active rail/tab borders, progress meters, and domain-specific primary CTAs—never mixed decoratively across domains.",
+        "name": "The Accessible Fill Split Rule",
+        "body": "Use #15803D (leaf-fill) and #0369A1 (finance-fill) whenever white text sits inside a solid pill or button; reserve #16A34A (leaf-accent) for dots, borders, focus rings, and checkmark fills, and pair #FF6B4A (coral-punch) exclusively with #14201A dark pine ink.",
         "section": "colors"
       },
       {
-        "name": "The Settled Contrast Rule",
-        "body": "Collected or completed rows step down from #FAF9F4 to #F2EFE6 and shift text to #43494E rather than fading via low opacity, guaranteeing legible strike-through contrast in bright daylight.",
+        "name": "The Settled Mint Contrast Rule",
+        "body": "Checked-off cart items and completed maintenance tasks shift from #FFFFFF / #E2ECE4 to #EEF7F0 / #CDE5D3 with #475B4E text rather than dimming with low CSS opacity, keeping strikethrough items crisp in sunlight.",
         "section": "colors"
       },
       {
         "name": "The Tabular Lock Rule",
-        "body": "Every numeric column—euro totals, unit prices, quantity steppers, stock counts, and cadence dates—must apply font-variant-numeric: tabular-nums so numbers align vertically across rows.",
+        "body": "Apply font-variant-numeric: tabular-nums (.tabular-nums) to every currency figure, cart percentage, quantity stepper, stock count, warranty serial, and barcode readout so columns align without horizontal jitter.",
         "section": "typography"
       },
       {
-        "name": "The Proportional Signal Rule",
-        "body": "Status markers scale in size and geometry with urgency rather than relying on color alone: a 6px (w-1.5 h-1.5) circle for nominal In Stock / Paid, an 8px (w-2 h-2, 2px radius) square for Running Low, and a 10px (w-2.5 h-2.5, 1px radius) block for Out of Stock / Urgent.",
-        "section": "typography"
-      },
-      {
-        "name": "The Zero-Ghost-Shadow Rule",
-        "body": "Never apply diffuse drop shadows (box-shadow) to cards, buttons, docks, or drawers. Separate layers with 1px borders (#D6D1C4, #E2DDD0, or #14191D on interactive menus) and tonal stepping between #F7F5EE, #EFECE2, #FAF9F4, and #F2EFE6.",
+        "name": "The Clean Botanical Border Rule",
+        "body": "Define card and drawer boundaries with 1px botanical borders (#E2ECE4 or #CDE5D3, shifting to #86EFAC or #C4B5FD on hover) rather than drop shadows or glass blur.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do build surfaces from the four enamel neutrals (#F7F5EE, #EFECE2, #FAF9F4, #F2EFE6) separated by 1px rules (#D6D1C4 / #E2DDD0).",
-      "Do enforce tabular-nums on every price, quantity stepper, stock count, and budget readout.",
-      "Do keep primary interactive buttons, checklist toggles, and route switches at least 44px tall (min-h-[44px]).",
-      "Do pair domain route colors (#D9381E, #047857, #1D4ED8, #6D28D9) with explicit 3px borders or 1px-bordered proportional badges rather than decorative gradients.",
-      "Do provide instant optimistic list updates paired with subtle haptic pulses (navigator.vibrate?.(15..50))."
+      "Do build primary cards from .botanical-card (#FFFFFF + 1px solid #E2ECE4 + 18px radius) and collected rows from .botanical-card-settled (#EEF7F0 + 1px solid #CDE5D3).",
+      "Do use #15803D (leaf-fill) and #0369A1 (finance-fill) behind white button/tab labels, and pair #FF6B4A (coral-punch) exclusively with #14201A dark pine ink.",
+      "Do enforce Lexend on headings, totals, and pill CTAs, Nunito Sans on list copy, and .tabular-nums on every numeric quantity, price, and percentage.",
+      "Do keep primary buttons, switches, filter chips, and row checkboxes at least 44px in tap target height (min-h-[44px]).",
+      "Do keep card and dock surfaces free of drop shadows and pair optimistic state updates with subtle haptic feedback (navigator.vibrate?.(15..50))."
     ],
     "donts": [
-      "Don't add drop shadows (box-shadow) or blurred glass backdrops to cards, buttons, docks, or drawers.",
-      "Don't use 9999px pill radii on buttons, filter chips, or navigation docks; reserve rounded-full strictly for 6px nominal status indicator dots.",
-      "Don't fade completed/collected rows with low CSS opacity; use the #F2EFE6 settled plate and #43494E ink to maintain >= 4.5:1 legibility.",
-      "Don't use pure #FFFFFF as the global viewport background or mix route colors across unrelated domains."
+      "Don't put white text on #FF6B4A coral or #16A34A leaf accent backgrounds where contrast drops below WCAG-AA.",
+      "Don't dim collected or completed cards with low CSS opacity; step down to .botanical-card-settled (#EEF7F0) and #475B4E ink instead.",
+      "Don't add blurred drop shadows or heavy dark header/dock chrome back onto cards, segmented switches, or bottom navigation.",
+      "Don't truncate mobile item titles next to inline steppers; keep mobile quantity controls on the indented sub-row."
     ]
   }
 }
