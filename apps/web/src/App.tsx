@@ -4,6 +4,7 @@ import { GroceryPage } from "./pages/GroceryPage";
 import { FinancePage } from "./pages/FinancePage";
 import { HousePage } from "./pages/HousePage";
 import { SetupPage } from "./pages/SetupPage";
+import { LoginPage } from "./pages/LoginPage";
 import { Header } from "./components/navigation/Header";
 import { BottomDock, NavTab } from "./components/navigation/BottomDock";
 import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
@@ -30,23 +31,7 @@ export function App() {
       setIsInitialized(data.initialized);
 
       if (data.setupRequired) {
-        if (window.location.pathname === "/groceries") {
-          const setupRes = await fetch("/api/auth/setup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              householdName: "Test Household",
-              name: "Daniel",
-              email: "daniel@test.com",
-              password: "AdminPass1234!",
-            }),
-          });
-          if (setupRes.ok) {
-            setIsInitialized(true);
-            return;
-          }
-        }
-
+        setCurrentUser(null);
         if (window.location.pathname !== "/setup") {
           window.history.pushState({}, "", "/setup");
           setCurrentPath("/setup");
@@ -57,24 +42,12 @@ export function App() {
           setCurrentPath("/");
         }
 
-        let meRes = await fetch("/api/auth/me");
-        if (!meRes.ok) {
-          for (const pwd of ["AdminPass1234!", "AdminStrongPassword123!"]) {
-            const loginRes = await fetch("/api/auth/login", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: "daniel@test.com", password: pwd }),
-            });
-            if (loginRes.ok) {
-              meRes = await fetch("/api/auth/me");
-              break;
-            }
-          }
-        }
-
+        const meRes = await fetch("/api/auth/me");
         if (meRes.ok) {
           const meData = await meRes.json();
           setCurrentUser(meData.user);
+        } else {
+          setCurrentUser(null);
         }
       }
     } catch {
@@ -96,7 +69,7 @@ export function App() {
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    window.location.reload();
+    setCurrentUser(null);
   }
 
   function handleTabChange(tab: NavTab) {
@@ -143,7 +116,18 @@ export function App() {
     }
   }
 
-  if (currentPath === "/setup" || (isInitialized === false && !isLoadingAuth)) {
+  if (isLoadingAuth) {
+    return (
+      <div className="min-h-screen bg-[#F4F9F5] text-[#14201A] flex items-center justify-center">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" aria-hidden="true" />
+          <span className="text-lg font-extrabold tracking-[-0.02em] font-display">Nook</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentPath === "/setup" || isInitialized === false) {
     return (
       <SetupPage
         onSetupComplete={() => {
@@ -154,6 +138,10 @@ export function App() {
         }}
       />
     );
+  }
+
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={checkAuthStatus} />;
   }
 
   const effectiveTab: NavTab =
