@@ -5,10 +5,21 @@ async function run() {
   let target = "http://localhost:8000/openapi.json";
   let tempFileCreated = false;
 
+  let isNookRunning = false;
   try {
     const res = await fetch(target, { signal: AbortSignal.timeout(1000) });
-    if (!res.ok) throw new Error("Server not running");
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const data = await res.json();
+      if (data && (data.openapi || data.swagger)) {
+        isNookRunning = true;
+      }
+    }
   } catch {
+    isNookRunning = false;
+  }
+
+  if (!isNookRunning) {
     // API server is not running; build schema in-process
     const { buildServer } = await import("../apps/api/src/server.ts");
     const app = await buildServer({ testing: true });
