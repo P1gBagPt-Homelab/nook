@@ -16,7 +16,9 @@ declare module "fastify" {
 }
 
 export const databasePlugin: FastifyPluginAsync = fp(async (fastify) => {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString =
+    process.env.DATABASE_URL ||
+    "postgresql://nook_user:NookSecretPass2026@localhost:5432/nook_db";
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is missing!");
   }

@@ -4,14 +4,17 @@
   "private": true,
   "description": "Nook — Open-Source Modular Household & Life Operating System",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces --parallel",
     "dev:api": "npm run dev --workspace=@nook/api",
     "dev:web": "npm run dev --workspace=@nook/web",
-    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=@nook/shared",
+    "build": "npm run build:shared && npm run build --workspaces --if-present",
+    "pretest": "npm run build:shared",
+    "prelint:spectral": "npm run build:shared",
     "db:generate": "npm run db:generate --workspace=@nook/api",
     "db:migrate": "npm run db:migrate --workspace=@nook/api",
     "test": "npm run test --workspaces --if-present",
