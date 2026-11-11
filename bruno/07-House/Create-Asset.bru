@@ -1,0 +1,25 @@
+meta {
+  name: Create Asset
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/house/assets
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Smoke Test Kettle",
+    "roomLocation": "Kitchen",
+    "brand": "Smeg"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: isDefined
+  res.body.qrCodeToken: startsWith nook_asset_
+}

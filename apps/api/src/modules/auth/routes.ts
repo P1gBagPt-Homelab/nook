@@ -339,6 +339,55 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
+  // 6b. Household Members List
+  fastify.get(
+    "/members",
+    {
+      preHandler: fastify.authenticate,
+      schema: {
+        description: "List members belonging to the authenticated user's household",
+        tags: ["Auth"],
+        operationId: "listHouseholdMembers",
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              members: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    email: { type: "string" },
+                    role: { type: "string", enum: ["admin", "member", "viewer"] },
+                    mustSetPassword: { type: "boolean" },
+                    createdAt: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    async (request) => {
+      const members = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          mustSetPassword: users.mustSetPassword,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.householdId, request.user!.householdId));
+
+      return { members };
+    }
+  );
+
   // 7. Logout
   fastify.post(
     "/logout",

@@ -5,6 +5,7 @@ export const households = pgTable("households", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   currency: text("currency").default("EUR").notNull(),
+  monthlyBudget: numeric("monthly_budget", { precision: 10, scale: 2 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
@@ -125,7 +126,90 @@ export const expenses = pgTable("expenses", {
   title: text("title").notNull(),
   receiptKey: text("receipt_key"),
   isSplit: boolean("is_split").default(false).notNull(),
+  isSettled: boolean("is_settled").default(false).notNull(),
+  settledAt: timestamp("settled_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [
   index("idx_expenses_household_date").on(t.householdId, t.date),
+]);
+
+export const expenseSettlements = pgTable("expense_settlements", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  fromUserId: uuid("from_user_id").references(() => users.id, { onDelete: "restrict" }).notNull(),
+  toUserId: uuid("to_user_id").references(() => users.id, { onDelete: "restrict" }).notNull(),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  note: text("note"),
+  isCleared: boolean("is_cleared").default(false).notNull(),
+  settledAt: timestamp("settled_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_expense_settlements_household").on(t.householdId),
+]);
+
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  categoryId: uuid("category_id").references(() => expenseCategories.id, { onDelete: "set null" }),
+  title: text("title").notNull(),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  billingCycle: text("billing_cycle", { enum: ["monthly", "yearly", "weekly"] }).default("monthly").notNull(),
+  nextBillingDate: timestamp("next_billing_date", { withTimezone: true }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_subscriptions_household").on(t.householdId),
+]);
+
+// 6. House Management Module: Assets, Maintenance Timers & Chores
+export const assets = pgTable("assets", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  name: text("name").notNull(),
+  roomLocation: text("room_location").default("Home").notNull(),
+  brand: text("brand"),
+  model: text("model"),
+  serialNumber: text("serial_number"),
+  purchaseDate: timestamp("purchase_date", { withTimezone: true }),
+  warrantyUntil: timestamp("warranty_until", { withTimezone: true }),
+  manualKey: text("manual_key"),
+  qrCodeToken: text("qr_code_token").notNull().unique(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_assets_household").on(t.householdId),
+]);
+
+export const maintenanceTasks = pgTable("maintenance_tasks", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  assetId: uuid("asset_id").references(() => assets.id, { onDelete: "cascade" }).notNull(),
+  title: text("title").notNull(),
+  intervalDays: integer("interval_days").default(90).notNull(),
+  lastCompletedAt: timestamp("last_completed_at", { withTimezone: true }),
+  nextDueDate: timestamp("next_due_date", { withTimezone: true }).notNull(),
+  replacementPartTitle: text("replacement_part_title"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_maintenance_household").on(t.householdId),
+  index("idx_maintenance_due").on(t.householdId, t.nextDueDate),
+]);
+
+export const chores = pgTable("chores", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  title: text("title").notNull(),
+  cadence: text("cadence", { enum: ["daily", "weekly", "biweekly", "monthly", "once"] }).default("weekly").notNull(),
+  assignedToUserId: uuid("assigned_to_user_id").references(() => users.id, { onDelete: "set null" }),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  completedByUserId: uuid("completed_by_user_id").references(() => users.id, { onDelete: "set null" }),
+  streakCount: integer("streak_count").default(0).notNull(),
+  dueDate: timestamp("due_date", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_chores_household").on(t.householdId),
 ]);

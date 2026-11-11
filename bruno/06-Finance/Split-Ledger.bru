@@ -1,0 +1,17 @@
+meta {
+  name: Shared Split Ledger
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/finance/splits
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.balances: isArray
+  res.body.members: isArray
+}

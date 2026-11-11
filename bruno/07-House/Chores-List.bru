@@ -1,0 +1,16 @@
+meta {
+  name: Chores List
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/house/chores
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body: isArray
+}

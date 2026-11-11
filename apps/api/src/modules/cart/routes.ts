@@ -373,6 +373,8 @@ export const cartRoutes: FastifyPluginAsync = async (fastify) => {
             categoryId: groceriesCat?.id || null,
             title: "Supermarket Trip",
             amount: body.totalAmount.toString(),
+            receiptKey: body.receiptImageKey || null,
+            isSplit: body.isSplit ?? false,
             date: new Date(),
           });
         }
