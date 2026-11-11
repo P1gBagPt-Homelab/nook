@@ -44,14 +44,17 @@ jobs:
             -p 5432:5432 \
             postgres:16-alpine
           for i in {1..30}; do
-            if docker exec nook-test-postgres pg_isready -U nook_user -d nook_db; then
-              echo "✅ PostgreSQL is ready!"
-              break
+            if docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db >/dev/null 2>&1; then
+              sleep 2
+              if docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db >/dev/null 2>&1; then
+                echo "✅ PostgreSQL is fully ready and accepting connections!"
+                break
+              fi
             fi
             echo "⏳ Waiting for PostgreSQL to be ready ($i/30)..."
             sleep 1
           done
-          docker exec nook-test-postgres pg_isready -U nook_user -d nook_db
+          docker exec nook-test-postgres pg_isready -h 127.0.0.1 -U nook_user -d nook_db
 
       - name: Run Database Migrations
         run: npm run db:migrate --workspace=@nook/api
