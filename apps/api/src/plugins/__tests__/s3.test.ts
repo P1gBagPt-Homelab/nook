@@ -57,4 +57,31 @@ describe("MinIO S3 Plugin", () => {
 
     expect(duration).toBeLessThan(15);
   });
+
+  it("should sign uploadUrl against S3_PUBLIC_ENDPOINT when different from S3_ENDPOINT", async () => {
+    const prevEndpoint = process.env.S3_ENDPOINT;
+    const prevPublic = process.env.S3_PUBLIC_ENDPOINT;
+    process.env.S3_ENDPOINT = "http://minio:9000";
+    process.env.S3_PUBLIC_ENDPOINT = "https://s3.janus-lab.duckdns.org/";
+
+    const publicApp = Fastify({ logger: false });
+    await publicApp.register(s3Plugin);
+    await publicApp.ready();
+
+    try {
+      const result = await publicApp.s3.getPresignedUploadUrl("receipts", "pdf", "application/pdf");
+      const parsedUpload = new URL(result.uploadUrl);
+      expect(parsedUpload.origin).toBe("https://s3.janus-lab.duckdns.org");
+      expect(parsedUpload.searchParams.has("x-amz-checksum-crc32")).toBe(false);
+      expect(result.publicUrl.startsWith("https://s3.janus-lab.duckdns.org/nook-media/receipts/")).toBe(
+        true
+      );
+    } finally {
+      await publicApp.close();
+      if (prevEndpoint === undefined) delete process.env.S3_ENDPOINT;
+      else process.env.S3_ENDPOINT = prevEndpoint;
+      if (prevPublic === undefined) delete process.env.S3_PUBLIC_ENDPOINT;
+      else process.env.S3_PUBLIC_ENDPOINT = prevPublic;
+    }
+  });
 });
