@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Printer, QrCode, X } from "lucide-react";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface QrLabelModalProps {
   asset: {
@@ -16,6 +18,7 @@ interface QrLabelModalProps {
 }
 
 export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
+  const { t } = useTranslation();
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,13 +57,13 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
               <QrCode className="w-4 h-4" />
             </div>
             <span className="text-sm font-extrabold text-[#14201A] font-display">
-              Printable Asset Sticker
+              {t("qr.title")}
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close QR Sticker"
+            aria-label={t("qr.closeAria")}
             className="w-8 h-8 rounded-full bg-[#F4F9F5] flex items-center justify-center text-[#14201A] cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -69,7 +72,9 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
 
         <div className="p-4 rounded-2xl bg-white border-2 border-dashed border-[#C4B5FD] text-center space-y-2.5">
           <div className="inline-block px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#6D28D9] text-[10px] font-extrabold font-display">
-            {asset.roomLocation}
+            {["Kitchen", "Laundry", "Utility", "Living Room", "Bathroom", "Home"].includes(asset.roomLocation)
+              ? t(`asset.room.${asset.roomLocation}` as TranslationKey)
+              : asset.roomLocation}
           </div>
           <div className="text-base font-extrabold text-[#14201A] font-display">
             {asset.name}
@@ -78,7 +83,7 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
           {qrDataUrl && (
             <img
               src={qrDataUrl}
-              alt={`QR code for ${asset.name}`}
+              alt={t("qr.alt", { name: asset.name })}
               className="w-44 h-44 mx-auto rounded-xl border border-[#E2ECE4] p-1 bg-white"
             />
           )}
@@ -104,7 +109,7 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
           className="w-full min-h-[44px] py-2.5 px-4 rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-extrabold font-display flex items-center justify-center gap-2 transition-colors cursor-pointer print:hidden"
         >
           <Printer className="w-4 h-4" />
-          <span>Print Sticker</span>
+          <span>{t("qr.print")}</span>
         </button>
       </div>
     </div>

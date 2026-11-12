@@ -1,6 +1,7 @@
 import { ShoppingBag, Package } from "lucide-react";
 import { ShoppingCartView } from "../components/groceries/ShoppingCartView";
 import { StockInventoryView } from "../components/groceries/StockInventoryView";
+import { useTranslation } from "../i18n/I18nContext";
 
 export interface GroceryPageProps {
   activeSubTab?: "cart" | "stock";
@@ -11,6 +12,7 @@ export function GroceryPage({
   activeSubTab = "cart",
   onSubTabChange,
 }: GroceryPageProps) {
+  const { t } = useTranslation();
   const currentTab = activeSubTab;
 
   function setTab(tab: "cart" | "stock") {
@@ -32,7 +34,7 @@ export function GroceryPage({
           }`}
         >
           <ShoppingBag className="w-4 h-4 stroke-[2.2]" />
-          <span>Shopping Cart</span>
+          <span>{t("grocery.tab.cart")}</span>
         </button>
 
         <button
@@ -45,7 +47,7 @@ export function GroceryPage({
           }`}
         >
           <Package className="w-4 h-4 stroke-[2.2]" />
-          <span>My Stock</span>
+          <span>{t("grocery.tab.stock")}</span>
         </button>
       </div>
 

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { useTranslation } from "../i18n/I18nContext";
+import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
 }
 
 export function LoginPage({ onLoginSuccess }: LoginPageProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,13 +28,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || "Invalid email or password.");
+        throw new Error(data.detail || t("auth.login.invalidCredentials"));
       }
 
       navigator.vibrate?.(35);
       onLoginSuccess();
     } catch (err: any) {
-      setError(err.message || "Unable to sign in. Please try again.");
+      setError(err.message || t("auth.login.genericError"));
     } finally {
       setIsLoading(false);
     }
@@ -40,14 +43,19 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   return (
     <div className="min-h-screen bg-[#F4F9F5] text-[#14201A] flex flex-col">
       <header className="bg-white border-b border-[#E2ECE4]">
-        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
+        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" aria-hidden="true" />
-            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">Nook</span>
+            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">
+              {t("common.nook")}
+            </span>
           </div>
-          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
-            Sign In
-          </span>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher compact />
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
+              {t("auth.login.badge")}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -55,10 +63,10 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
         <div className="botanical-card p-6 space-y-5">
           <div className="border-b border-[#E2ECE4] pb-4">
             <h1 className="text-xl font-extrabold tracking-[-0.025em] text-[#14201A] font-display">
-              Sign in to Nook
+              {t("auth.login.title")}
             </h1>
             <p className="text-xs text-[#5B6B61] font-medium mt-1">
-              Enter your household account credentials to access your lists and inventory.
+              {t("auth.login.subtitle")}
             </p>
           </div>
 
@@ -74,11 +82,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Email Address
+                {t("auth.login.emailLabel")}
               </label>
               <input
                 type="email"
-                placeholder="Email Address *"
+                placeholder={t("auth.login.emailPlaceholder")}
                 required
                 autoComplete="email"
                 value={email}
@@ -89,11 +97,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Password
+                {t("auth.login.passwordLabel")}
               </label>
               <input
                 type="password"
-                placeholder="Password *"
+                placeholder={t("auth.login.passwordPlaceholder")}
                 required
                 autoComplete="current-password"
                 value={password}
@@ -107,14 +115,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               disabled={isLoading}
               className="w-full min-h-[48px] mt-2 py-3 px-4 rounded-full bg-[#15803D] hover:bg-[#166534] active:scale-[0.99] text-white font-bold text-sm font-display flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <span>{isLoading ? "Signing in..." : "Sign In"}</span>
+              <span>{isLoading ? t("auth.login.submitting") : t("auth.login.submit")}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </form>
 
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#5B6B61] font-semibold pt-2 border-t border-[#E2ECE4]">
             <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-            <span>Self-hosted on Project Janus · Private Household Instance</span>
+            <span>{t("common.selfHostedInstance")}</span>
           </div>
         </div>
       </div>

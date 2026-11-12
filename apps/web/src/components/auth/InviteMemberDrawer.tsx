@@ -2,19 +2,22 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, Copy, Loader2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import type { HouseholdMember } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface InviteMemberDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ROLES: { id: "member" | "admin" | "viewer"; label: string }[] = [
-  { id: "member", label: "Member" },
-  { id: "admin", label: "Admin" },
-  { id: "viewer", label: "Viewer" },
+const ROLES: { id: "member" | "admin" | "viewer"; labelKey: TranslationKey }[] = [
+  { id: "member", labelKey: "invite.role.member" },
+  { id: "admin", labelKey: "invite.role.admin" },
+  { id: "viewer", labelKey: "invite.role.viewer" },
 ];
 
 export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"member" | "admin" | "viewer">("member");
@@ -63,7 +66,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.detail || "Failed to generate invite link");
+        throw new Error(data.detail || t("invite.failedGenerate"));
       }
 
       const originUrl = data.inviteToken
@@ -77,7 +80,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
       navigator.vibrate?.(30);
       await fetchMembers();
     } catch (err: any) {
-      setError(err.message || "Could not create invite");
+      setError(err.message || t("invite.couldNotCreate"));
     } finally {
       setIsSubmitting(false);
     }
@@ -105,10 +108,10 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Household Members & Invites
+                {t("invite.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-                Invite family or housemates to share lists, budgets, and chores.
+                {t("invite.subtitle")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
@@ -130,9 +133,11 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
               <div className="p-4 rounded-2xl bg-[#EEF7F0] border border-[#CDE5D3] space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-extrabold text-[#15803D] font-display">
-                    Invite Link Ready
+                    {t("invite.linkReady")}
                   </span>
-                  <span className="text-[11px] font-bold text-[#475B4E]">Expires in 7 days</span>
+                  <span className="text-[11px] font-bold text-[#475B4E]">
+                    {t("invite.expiresIn7Days")}
+                  </span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-white border border-[#CDE5D3] text-[11px] font-semibold text-[#14201A] break-all select-all">
                   {generatedLink}
@@ -145,12 +150,12 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
                   {copied ? (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>Copied to Clipboard</span>
+                      <span>{t("invite.copied")}</span>
                     </>
                   ) : (
                     <>
                       <Copy className="w-4 h-4" />
-                      <span>Copy Invite Link</span>
+                      <span>{t("invite.copyLink")}</span>
                     </>
                   )}
                 </button>
@@ -160,13 +165,13 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
             <form onSubmit={handleInvite} className="space-y-3">
               <div>
                 <label className="block text-[11px] font-bold text-[#5B6B61] mb-1">
-                  Member Name *
+                  {t("invite.nameLabel")}
                 </label>
                 <input
                   type="text"
                   required
                   minLength={2}
-                  placeholder="e.g. Sarah"
+                  placeholder={t("invite.namePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#15803D]"
@@ -175,12 +180,12 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
 
               <div>
                 <label className="block text-[11px] font-bold text-[#5B6B61] mb-1">
-                  Email Address *
+                  {t("invite.emailLabel")}
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="sarah@example.com"
+                  placeholder={t("invite.emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#15803D]"
@@ -189,7 +194,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
 
               <div>
                 <label className="block text-[11px] font-bold text-[#5B6B61] mb-1.5">
-                  Role
+                  {t("invite.roleLabel")}
                 </label>
                 <div className="flex gap-2">
                   {ROLES.map((r) => (
@@ -203,7 +208,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
                           : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                       }`}
                     >
-                      {r.label}
+                      {t(r.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -219,7 +224,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
-                    <span>Generate Invite Link</span>
+                    <span>{t("invite.generateLink")}</span>
                   </>
                 )}
               </button>
@@ -229,7 +234,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
               <div className="pt-3 border-t border-[#E2ECE4] space-y-2.5">
                 <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#5B6B61] font-display">
                   <Users className="w-3.5 h-3.5" />
-                  <span>Current Household ({members.length})</span>
+                  <span>{t("invite.currentHousehold", { count: members.length })}</span>
                 </div>
                 <div className="space-y-2">
                   {members.map((m) => (
@@ -248,12 +253,12 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
                       <div className="flex items-center gap-1.5 shrink-0">
                         {m.mustSetPassword && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E]">
-                            Pending
+                            {t("common.pending")}
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] capitalize">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
                           {m.role === "admin" && <ShieldCheck className="w-3 h-3" />}
-                          {m.role}
+                          {t(`invite.role.${m.role}` as TranslationKey)}
                         </span>
                       </div>
                     </div>

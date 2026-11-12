@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { useTranslation } from "../i18n/I18nContext";
+import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
 
 interface SetupPageProps {
   onSetupComplete: () => void;
 }
 
 export function SetupPage({ onSetupComplete }: SetupPageProps) {
+  const { t } = useTranslation();
   const [householdName, setHouseholdName] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,13 +35,13 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || "Setup failed. Please try again.");
+        throw new Error(data.detail || t("auth.setup.failed"));
       }
 
       navigator.vibrate?.(50);
       onSetupComplete();
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+      setError(err.message || t("auth.setup.unexpectedError"));
     } finally {
       setIsLoading(false);
     }
@@ -47,14 +50,19 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
   return (
     <div className="min-h-screen bg-[#F4F9F5] text-[#14201A] flex flex-col">
       <header className="bg-white border-b border-[#E2ECE4]">
-        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
+        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" aria-hidden="true" />
-            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">Nook</span>
+            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">
+              {t("common.nook")}
+            </span>
           </div>
-          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
-            Initial Setup
-          </span>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher compact />
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
+              {t("auth.setup.badge")}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -62,10 +70,10 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
         <div className="botanical-card p-6 space-y-5">
           <div className="border-b border-[#E2ECE4] pb-4">
             <h1 className="text-xl font-extrabold tracking-[-0.025em] text-[#14201A] font-display">
-              Welcome to Nook
+              {t("auth.setup.title")}
             </h1>
             <p className="text-xs text-[#5B6B61] font-medium mt-1">
-              Initialize your household and administrator account. Registration closes automatically after setup.
+              {t("auth.setup.subtitle")}
             </p>
           </div>
 
@@ -81,11 +89,11 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Household Name
+                {t("auth.setup.householdLabel")}
               </label>
               <input
                 type="text"
-                placeholder="Household Name *"
+                placeholder={t("auth.setup.householdPlaceholder")}
                 required
                 value={householdName}
                 onChange={(e) => setHouseholdName(e.target.value)}
@@ -95,11 +103,11 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Your Full Name
+                {t("auth.setup.nameLabel")}
               </label>
               <input
                 type="text"
-                placeholder="Your Name *"
+                placeholder={t("auth.setup.namePlaceholder")}
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -109,11 +117,11 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Admin Email
+                {t("auth.setup.emailLabel")}
               </label>
               <input
                 type="email"
-                placeholder="Email Address *"
+                placeholder={t("auth.setup.emailPlaceholder")}
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -123,11 +131,11 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Master Password
+                {t("auth.setup.passwordLabel")}
               </label>
               <input
                 type="password"
-                placeholder="Admin Password *"
+                placeholder={t("auth.setup.passwordPlaceholder")}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -140,14 +148,14 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
               disabled={isLoading}
               className="w-full min-h-[48px] mt-2 py-3 px-4 rounded-full bg-[#15803D] hover:bg-[#166534] active:scale-[0.99] text-white font-bold text-sm font-display flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <span>{isLoading ? "Setting up..." : "Create Nook"}</span>
+              <span>{isLoading ? t("auth.setup.submitting") : t("auth.setup.submit")}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </form>
 
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#5B6B61] font-semibold pt-2 border-t border-[#E2ECE4]">
             <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-            <span>Self-hosted on Project Janus · Private Household Instance</span>
+            <span>{t("common.selfHostedInstance")}</span>
           </div>
         </div>
       </div>

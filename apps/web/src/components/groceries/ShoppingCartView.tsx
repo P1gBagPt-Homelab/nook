@@ -15,6 +15,8 @@ import {
   X,
 } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 export interface ShoppingItem {
   id: string;
@@ -44,6 +46,7 @@ export interface ShoppingList {
 }
 
 export function ShoppingCartView() {
+  const { t } = useTranslation();
   const [cart, setCart] = useState<ShoppingList | null>(null);
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,14 +76,14 @@ export function ShoppingCartView() {
       setError(null);
       const res = await fetch("/api/cart/active");
       if (res.status === 401) {
-        throw new Error("Please sign in to access your shopping cart.");
+        throw new Error(t("cart.signInRequired"));
       }
-      if (!res.ok) throw new Error("Failed to load active cart");
+      if (!res.ok) throw new Error(t("cart.loadFailed"));
       const data = await res.json();
       setCart(data.cart);
       setItems(data.items || []);
     } catch (err: any) {
-      setError(err.message || "Could not fetch cart");
+      setError(err.message || t("cart.fetchError"));
     } finally {
       setIsLoading(false);
     }
@@ -256,21 +259,28 @@ export function ShoppingCartView() {
         setIsUnpackDrawerOpen(false);
         navigator.vibrate?.(50);
         setFeedbackMsg(
-          `Transferred ${result.unpackedCount} items from Cart to Home Stock.`
+          t("cart.unpackedFeedback", { count: result.unpackedCount })
         );
         setTimeout(() => setFeedbackMsg(null), 5000);
         await fetchActiveCart();
       }
     } catch (err: any) {
-      alert("Failed to unpack: " + err.message);
+      alert(t("cart.unpackFailed", { message: err.message }));
     } finally {
       setIsUnpacking(false);
     }
   }
 
+  function translateLocation(loc: string): string {
+    if (["Pantry", "Fridge", "Freezer", "Cleaning"].includes(loc)) {
+      return t(`location.${loc}` as TranslationKey);
+    }
+    return loc;
+  }
+
   if (isLoading && !cart) {
     return (
-      <div className="space-y-3" aria-busy="true" aria-label="Loading active shopping cart">
+      <div className="space-y-3" aria-busy="true" aria-label={t("cart.loadingAria")}>
         <div className="flex justify-between items-center py-2">
           <div className="h-6 w-40 bg-[#E2ECE4] rounded-full animate-pulse" />
           <div className="h-7 w-20 bg-[#DCFCE7] rounded-full animate-pulse" />
@@ -301,7 +311,7 @@ export function ShoppingCartView() {
           onClick={fetchActiveCart}
           className="min-h-[44px] px-4 py-1.5 rounded-full bg-[#DC2626] text-white text-xs font-bold cursor-pointer"
         >
-          Retry
+          {t("common.retry")}
         </button>
       </div>
     );
@@ -321,7 +331,7 @@ export function ShoppingCartView() {
           <button
             type="button"
             onClick={() => setFeedbackMsg(null)}
-            aria-label="Dismiss notice"
+            aria-label={t("common.dismissNotice")}
             className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#15803D] cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -334,10 +344,10 @@ export function ShoppingCartView() {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-[21px] font-bold tracking-[-0.025em] text-[#14201A] leading-tight truncate font-display">
-              {cart?.title || "Supermarket Run"}
+              {cart?.title || t("cart.defaultTitle")}
             </h1>
             <p className="text-xs font-semibold text-[#5B6B61] mt-0.5 tabular-nums">
-              {toBuyItems.length} pending · {progressPercent}% collected
+              {t("cart.summary", { pending: toBuyItems.length, percent: progressPercent })}
             </p>
           </div>
           <div className="px-3.5 py-1.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-sm font-extrabold font-display tabular-nums shrink-0">
@@ -361,20 +371,20 @@ export function ShoppingCartView() {
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold text-[#14201A] font-display">
-              Add Item to Cart
+              {t("cart.addItemTitle")}
             </span>
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
               className="min-h-[36px] px-3 rounded-full text-xs font-bold text-[#5B6B61] hover:text-[#14201A] hover:bg-[#F4F9F5] cursor-pointer"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
 
           <input
             type="text"
-            placeholder="Item name..."
+            placeholder={t("cart.itemNamePlaceholder")}
             value={newItemTitle}
             onChange={(e) => setNewItemTitle(e.target.value)}
             className="w-full px-4 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-sm font-semibold text-[#14201A] focus:border-[#15803D]"
@@ -384,7 +394,7 @@ export function ShoppingCartView() {
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Qty
+                {t("cart.qtyLabel")}
               </label>
               <input
                 type="number"
@@ -398,7 +408,7 @@ export function ShoppingCartView() {
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Unit (€)
+                {t("cart.unitPriceLabel")}
               </label>
               <input
                 type="number"
@@ -412,17 +422,17 @@ export function ShoppingCartView() {
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Storage
+                {t("cart.storageLabel")}
               </label>
               <select
                 value={newItemLocation}
                 onChange={(e) => setNewItemLocation(e.target.value)}
                 className="w-full px-2.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#15803D]"
               >
-                <option value="Pantry">Pantry</option>
-                <option value="Fridge">Fridge</option>
-                <option value="Freezer">Freezer</option>
-                <option value="Cleaning">Cleaning</option>
+                <option value="Pantry">{t("location.Pantry")}</option>
+                <option value="Fridge">{t("location.Fridge")}</option>
+                <option value="Freezer">{t("location.Freezer")}</option>
+                <option value="Cleaning">{t("location.Cleaning")}</option>
               </select>
             </div>
           </div>
@@ -434,7 +444,7 @@ export function ShoppingCartView() {
             className="w-full min-h-[44px] py-2.5 rounded-full bg-[#15803D] hover:bg-[#166534] active:scale-[0.99] text-white font-bold font-display text-xs transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4 pointer-events-none" />
-            <span className="pointer-events-none">Add to Cart</span>
+            <span className="pointer-events-none">{t("cart.addToCart")}</span>
           </button>
         </form>
       )}
@@ -443,7 +453,7 @@ export function ShoppingCartView() {
       <div className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
           <span className="text-xs font-extrabold text-[#5B6B61] font-display">
-            To Buy ({toBuyItems.length})
+            {t("cart.toBuy", { count: toBuyItems.length })}
           </span>
           {!showAddForm && (
             <button
@@ -451,7 +461,7 @@ export function ShoppingCartView() {
               onClick={() => setShowAddForm(true)}
               className="min-h-[40px] px-3.5 py-1.5 rounded-full bg-white hover:bg-[#EEF7F0] border border-[#E2ECE4] text-[#14201A] text-xs font-bold transition-colors cursor-pointer font-display"
             >
-              + Add Item
+              {t("cart.addItemButton")}
             </button>
           )}
         </div>
@@ -462,10 +472,10 @@ export function ShoppingCartView() {
               <ShoppingBag className="w-5 h-5" />
             </div>
             <p className="text-sm font-bold text-[#14201A] font-display">
-              Your shopping list is clear
+              {t("cart.emptyTitle")}
             </p>
             <p className="text-xs text-[#5B6B61] mt-1 max-w-xs mx-auto">
-              Tap + Add Item or scan barcodes with the coral Scan capsule to collect items.
+              {t("cart.emptySubtitle")}
             </p>
           </div>
         ) : (
@@ -497,7 +507,7 @@ export function ShoppingCartView() {
                         e.stopPropagation();
                         handleToggleCollect(item);
                       }}
-                      aria-label="Collect item"
+                      aria-label={t("cart.collectAria")}
                       className="min-w-[44px] min-h-[44px] -ml-1.5 flex items-center justify-center shrink-0 cursor-pointer"
                     >
                       <span className="w-[22px] h-[22px] rounded-full border-2 border-[#86EFAC] group-hover:border-[#16A34A] block transition-colors" />
@@ -508,10 +518,10 @@ export function ShoppingCartView() {
                         {item.productTitle || item.customTitle}
                       </div>
                       <div className="text-xs font-semibold text-[#5B6B61] truncate mt-0.5">
-                        {item.targetLocation}
+                        {translateLocation(item.targetLocation)}
                         {item.brand ? ` · ${item.brand}` : ""}
                         {unitPriceNum !== null && qtyNum > 1
-                          ? ` · €${unitPriceNum.toFixed(2)}/ea`
+                          ? ` · €${unitPriceNum.toFixed(2)}/${t("common.eachShort")}`
                           : ""}
                       </div>
                     </div>
@@ -524,7 +534,7 @@ export function ShoppingCartView() {
                       <button
                         type="button"
                         onClick={(e) => handleUpdateQuantity(item, -1, e)}
-                        aria-label="Decrease quantity"
+                        aria-label={t("cart.decreaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-l-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         -
@@ -535,7 +545,7 @@ export function ShoppingCartView() {
                       <button
                         type="button"
                         onClick={(e) => handleUpdateQuantity(item, 1, e)}
-                        aria-label="Increase quantity"
+                        aria-label={t("cart.increaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-r-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         +
@@ -556,8 +566,8 @@ export function ShoppingCartView() {
                       type="button"
                       onClick={(e) => handleDeleteItem(item.id, e)}
                       className="hidden sm:flex min-w-[44px] min-h-[44px] -mr-2 items-center justify-center text-[#5B6B61] hover:text-[#DC2626] transition-colors shrink-0 cursor-pointer"
-                      aria-label="Remove item"
-                      title="Remove"
+                      aria-label={t("cart.removeItemAria")}
+                      title={t("cart.removeTitle")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -572,7 +582,7 @@ export function ShoppingCartView() {
                       <button
                         type="button"
                         onClick={(e) => handleUpdateQuantity(item, -1, e)}
-                        aria-label="Decrease quantity"
+                        aria-label={t("cart.decreaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-l-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         -
@@ -583,7 +593,7 @@ export function ShoppingCartView() {
                       <button
                         type="button"
                         onClick={(e) => handleUpdateQuantity(item, 1, e)}
-                        aria-label="Increase quantity"
+                        aria-label={t("cart.increaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-r-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         +
@@ -594,8 +604,8 @@ export function ShoppingCartView() {
                       type="button"
                       onClick={(e) => handleDeleteItem(item.id, e)}
                       className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[#5B6B61] hover:text-[#DC2626] transition-colors cursor-pointer"
-                      aria-label="Remove item"
-                      title="Remove"
+                      aria-label={t("cart.removeItemAria")}
+                      title={t("cart.removeTitle")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -615,7 +625,7 @@ export function ShoppingCartView() {
             onClick={() => setShowCollected(!showCollected)}
             className="w-full min-h-[40px] px-1 flex items-center justify-between text-xs font-extrabold text-[#15803D] hover:text-[#16A34A] cursor-pointer font-display"
           >
-            <span>Collected in Cart ({collectedItems.length})</span>
+            <span>{t("cart.collectedInCart", { count: collectedItems.length })}</span>
             {showCollected ? (
               <ChevronUp className="w-4 h-4 pointer-events-none" />
             ) : (
@@ -647,7 +657,7 @@ export function ShoppingCartView() {
                         e.stopPropagation();
                         handleToggleCollect(item);
                       }}
-                      aria-label="Collect item"
+                      aria-label={t("cart.collectAria")}
                       className="min-w-[44px] min-h-[44px] -ml-1.5 flex items-center justify-center shrink-0 cursor-pointer"
                     >
                       <span className="w-[22px] h-[22px] rounded-full bg-[#16A34A] text-white flex items-center justify-center">
@@ -660,7 +670,7 @@ export function ShoppingCartView() {
                         {item.productTitle || item.customTitle}
                       </span>
                       <div className="text-xs font-semibold text-[#475B4E]">
-                        {item.targetLocation}
+                        {translateLocation(item.targetLocation)}
                       </div>
                     </div>
 
@@ -680,7 +690,7 @@ export function ShoppingCartView() {
                     <button
                       type="button"
                       onClick={(e) => handleDeleteItem(item.id, e)}
-                      aria-label="Remove collected item"
+                      aria-label={t("cart.removeCollectedAria")}
                       className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-[#475B4E] hover:text-[#DC2626] transition-colors shrink-0 cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4 pointer-events-none" />
@@ -708,7 +718,7 @@ export function ShoppingCartView() {
         >
           <span className="flex items-center gap-2 pointer-events-none">
             <Home className="w-4 h-4" />
-            <span>Arrived Home? Unpack to Stock</span>
+            <span>{t("cart.unpackCta")}</span>
           </span>
           <ArrowRight className="w-4 h-4 opacity-90 pointer-events-none" />
         </button>
@@ -727,10 +737,10 @@ export function ShoppingCartView() {
               </div>
               <div>
                 <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                  Arrived Home? Unpack to Stock
+                  {t("cart.unpackCta")}
                 </Drawer.Title>
                 <p className="text-xs text-[#5B6B61] font-medium">
-                  Transfer {collectedCount} collected items into home storage.
+                  {t("cart.unpackSubtitle", { count: collectedCount })}
                 </p>
               </div>
             </div>
@@ -738,7 +748,9 @@ export function ShoppingCartView() {
             <div className="p-5 space-y-4">
               <div>
                 <div className="text-xs font-bold text-[#5B6B61] mb-2">
-                  Stock Transfer Manifest ({collectedItems.length - excludedItemIds.size} selected)
+                  {t("cart.unpackManifest", {
+                    count: collectedItems.length - excludedItemIds.size,
+                  })}
                 </div>
                 <div className="max-h-44 overflow-y-auto border border-[#E2ECE4] rounded-2xl bg-[#F4F9F5] divide-y divide-[#E2ECE4]">
                   {collectedItems.map((item) => {
@@ -766,7 +778,7 @@ export function ShoppingCartView() {
                           </span>
                         </div>
                         <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EEF7F0] text-[#15803D] font-bold">
-                          {item.targetLocation}
+                          {translateLocation(item.targetLocation)}
                         </span>
                       </div>
                     );
@@ -783,7 +795,7 @@ export function ShoppingCartView() {
                     className="w-4 h-4 rounded accent-[#0284C7]"
                   />
                   <span className="text-xs font-bold text-[#14201A]">
-                    Record trip expense in Finance ledger
+                    {t("cart.recordExpense")}
                   </span>
                 </label>
 
@@ -796,7 +808,7 @@ export function ShoppingCartView() {
                       <input
                         type="number"
                         step="0.01"
-                        placeholder="Total receipt amount"
+                        placeholder={t("cart.totalReceiptPlaceholder")}
                         value={totalExpenseAmount}
                         onChange={(e) => setTotalExpenseAmount(e.target.value)}
                         className="w-full pl-8 pr-3 py-2.5 rounded-2xl bg-white border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
@@ -807,8 +819,8 @@ export function ShoppingCartView() {
                       <Camera className="w-4 h-4 text-[#0369A1]" />
                       <span className="font-bold flex-1">
                         {receiptImageKey
-                          ? "Receipt Photo Attached"
-                          : "Attach Receipt Photo (Optional)"}
+                          ? t("cart.receiptAttached")
+                          : t("cart.attachReceiptOptional")}
                       </span>
                       {isUploadingReceipt && (
                         <Loader2 className="w-4 h-4 animate-spin text-[#0369A1]" />
@@ -833,11 +845,11 @@ export function ShoppingCartView() {
                   className="w-full min-h-[48px] py-3 rounded-full bg-[#15803D] hover:bg-[#166534] active:scale-[0.99] text-white font-bold font-display text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isUnpacking ? (
-                    <span>Unpacking...</span>
+                    <span>{t("cart.unpacking")}</span>
                   ) : (
                     <>
                       <CheckCircle2 className="w-4 h-4 pointer-events-none" />
-                      <span className="pointer-events-none">Put All into Stock</span>
+                      <span className="pointer-events-none">{t("cart.putAllIntoStock")}</span>
                     </>
                   )}
                 </button>
@@ -847,7 +859,7 @@ export function ShoppingCartView() {
                   onClick={() => setIsUnpackDrawerOpen(false)}
                   className="w-full min-h-[44px] py-2 rounded-full text-xs font-bold text-[#5B6B61] hover:text-[#14201A] cursor-pointer"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
               </div>
             </div>

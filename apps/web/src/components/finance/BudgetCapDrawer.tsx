@@ -2,6 +2,7 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, Loader2, SlidersHorizontal } from "lucide-react";
 import type { FinanceCategory } from "./ExpenseDrawer";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface BudgetCapDrawerProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export function BudgetCapDrawer({
   categories,
   onSaved,
 }: BudgetCapDrawerProps) {
+  const { t } = useTranslation();
   const [monthlyBudget, setMonthlyBudget] = useState("");
   const [catBudgets, setCatBudgets] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -78,10 +80,10 @@ export function BudgetCapDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Configure Monthly Budget Caps
+                {t("budgetCap.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-                Set your total household target and optional per-category limits.
+                {t("budgetCap.subtitle")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0">
@@ -92,13 +94,13 @@ export function BudgetCapDrawer({
           <form onSubmit={handleSave} className="p-5 space-y-4">
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Household Monthly Cap (€)
+                {t("budgetCap.householdLabel")}
               </label>
               <input
                 type="number"
                 step="1"
                 min="0"
-                placeholder="e.g. 800 (leave blank for no cap)"
+                placeholder={t("budgetCap.householdPlaceholder")}
                 value={monthlyBudget}
                 onChange={(e) => setMonthlyBudget(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-sm font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
@@ -108,7 +110,7 @@ export function BudgetCapDrawer({
             {categories.length > 0 && (
               <div className="space-y-2.5 pt-2 border-t border-[#E2ECE4]">
                 <span className="text-[11px] font-extrabold text-[#5B6B61] block font-display">
-                  Category Caps (Optional)
+                  {t("budgetCap.categoryCaps")}
                 </span>
                 <div className="grid grid-cols-2 gap-2.5">
                   {categories.map((cat) => (
@@ -120,7 +122,7 @@ export function BudgetCapDrawer({
                         type="number"
                         step="1"
                         min="0"
-                        placeholder="No cap"
+                        placeholder={t("budgetCap.noCapPlaceholder")}
                         value={catBudgets[cat.id] ?? ""}
                         onChange={(e) =>
                           setCatBudgets((prev) => ({ ...prev, [cat.id]: e.target.value }))
@@ -143,7 +145,7 @@ export function BudgetCapDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Save Budget Caps</span>
+                  <span>{t("budgetCap.save")}</span>
                 </>
               )}
             </button>
