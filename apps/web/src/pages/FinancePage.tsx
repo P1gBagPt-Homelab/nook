@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useUrlSubTab } from "../utils/urlParams";
 import {
   Receipt,
   ArrowRightLeft,
@@ -170,9 +171,15 @@ function resolveRowDocuments(
   return [];
 }
 
+const FINANCE_SUB_TABS = ["budget", "split", "bills"] as const;
+
 export function FinancePage() {
   const { t, intlLocale } = useTranslation();
-  const [activeSubTab, setActiveSubTab] = useState<"budget" | "split" | "bills">("budget");
+  const [activeSubTab, setActiveSubTab] = useUrlSubTab(
+    "sub",
+    FINANCE_SUB_TABS,
+    "budget"
+  );
   const [selectedMonth, setSelectedMonth] = useState(() =>
     new Date().toISOString().slice(0, 7)
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useUrlSubTab } from "../utils/urlParams";
 import {
   FileText,
   Clock,
@@ -66,11 +67,15 @@ function formatShortDate(iso: string, locale: string): string {
   });
 }
 
+const HOUSE_SUB_TABS = ["appliances", "maintenance", "chores"] as const;
+
 export function HousePage() {
   const { t, intlLocale } = useTranslation();
-  const [activeSubTab, setActiveSubTab] = useState<
-    "appliances" | "maintenance" | "chores"
-  >("appliances");
+  const [activeSubTab, setActiveSubTab] = useUrlSubTab(
+    "sub",
+    HOUSE_SUB_TABS,
+    "appliances"
+  );
 
   const [assets, setAssets] = useState<AssetItem[]>([]);
   const [maintenance, setMaintenance] = useState<MaintenanceItem[]>([]);

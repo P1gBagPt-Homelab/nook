@@ -12,6 +12,21 @@ import { BottomDock, NavTab } from "./components/navigation/BottomDock";
 import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
 import { ProductCreateDrawer } from "./components/products/ProductCreateDrawer";
 import { NookMark } from "./components/common/NookMark";
+import { getSearchParam, updateSearchParams } from "./utils/urlParams";
+
+function parseInitialTabState(): {
+  activeTab: "grocery" | "finance" | "house";
+  grocerySubTab: "cart" | "stock";
+} {
+  const tab = getSearchParam("tab");
+  if (tab === "finance" || tab === "house") {
+    return { activeTab: tab, grocerySubTab: "cart" };
+  }
+  if (tab === "stock") {
+    return { activeTab: "grocery", grocerySubTab: "stock" };
+  }
+  return { activeTab: "grocery", grocerySubTab: "cart" };
+}
 
 export function App() {
   const { t } = useTranslation();
@@ -20,8 +35,9 @@ export function App() {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const [activeTab, setActiveTab] = useState<NavTab>("grocery");
-  const [grocerySubTab, setGrocerySubTab] = useState<"cart" | "stock">("cart");
+  const initialTabs = parseInitialTabState();
+  const [activeTab, setActiveTab] = useState<NavTab>(initialTabs.activeTab);
+  const [grocerySubTab, setGrocerySubTab] = useState<"cart" | "stock">(initialTabs.grocerySubTab);
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isDigitalizeOpen, setIsDigitalizeOpen] = useState(false);
@@ -66,6 +82,9 @@ export function App() {
 
     const handlePopState = () => {
       setCurrentPath(window.location.pathname);
+      const next = parseInitialTabState();
+      setActiveTab(next.activeTab);
+      setGrocerySubTab(next.grocerySubTab);
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
@@ -80,12 +99,20 @@ export function App() {
     if (tab === "stock") {
       setActiveTab("grocery");
       setGrocerySubTab("stock");
+      updateSearchParams({ tab: "stock", sub: null });
     } else if (tab === "grocery") {
       setActiveTab("grocery");
       setGrocerySubTab("cart");
+      updateSearchParams({ tab: "grocery", sub: null });
     } else {
       setActiveTab(tab);
+      updateSearchParams({ tab, sub: null });
     }
+  }
+
+  function handleGrocerySubTabChange(sub: "cart" | "stock") {
+    setGrocerySubTab(sub);
+    updateSearchParams({ tab: sub === "stock" ? "stock" : "grocery", sub: null });
   }
 
   function handleProductDetected(barcode: string, productData?: any) {
@@ -260,7 +287,7 @@ export function App() {
           {activeTab === "grocery" && (
             <GroceryPage
               activeSubTab={grocerySubTab}
-              onSubTabChange={(sub: "cart" | "stock") => setGrocerySubTab(sub)}
+              onSubTabChange={handleGrocerySubTabChange}
             />
           )}
           {activeTab === "finance" && <FinancePage />}

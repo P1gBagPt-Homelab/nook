@@ -82,8 +82,9 @@ export function ChoreDrawer({
     <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-[#14201A]/50 z-50" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-[24px] z-50 border-t border-[#E2ECE4] max-h-[90vh] overflow-y-auto">
-          <div className="w-10 h-1.5 bg-[#E2ECE4] rounded-full mx-auto mt-3 mb-2" />
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-[24px] z-50 border-t border-[#E2ECE4] max-h-[90vh] flex flex-col focus:outline-none">
+          <div className="w-10 h-1.5 bg-[#E2ECE4] rounded-full mx-auto mt-3 mb-2 shrink-0" />
+          <div className="overflow-y-auto overflow-x-hidden flex-1 min-h-0">
 
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
@@ -181,6 +182,7 @@ export function ChoreDrawer({
               )}
             </button>
           </form>
+          </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
