@@ -1,6 +1,8 @@
 import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { CalendarClock, Check, Loader2 } from "lucide-react";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface SubscriptionDrawerProps {
   isOpen: boolean;
@@ -8,10 +10,10 @@ interface SubscriptionDrawerProps {
   onSaved: () => void;
 }
 
-const CYCLES: { id: "monthly" | "yearly" | "weekly"; label: string }[] = [
-  { id: "monthly", label: "Monthly" },
-  { id: "yearly", label: "Yearly" },
-  { id: "weekly", label: "Weekly" },
+const CYCLES: { id: "monthly" | "yearly" | "weekly"; labelKey: TranslationKey }[] = [
+  { id: "monthly", labelKey: "subscription.cycle.monthly" },
+  { id: "yearly", labelKey: "subscription.cycle.yearly" },
+  { id: "weekly", labelKey: "subscription.cycle.weekly" },
 ];
 
 export function SubscriptionDrawer({
@@ -19,6 +21,7 @@ export function SubscriptionDrawer({
   onClose,
   onSaved,
 }: SubscriptionDrawerProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly" | "weekly">("monthly");
@@ -60,14 +63,14 @@ export function SubscriptionDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to add recurring bill");
+        throw new Error(err.detail || t("subscription.addFailed"));
       }
 
       navigator.vibrate?.(30);
       onSaved();
       onClose();
     } catch (err: any) {
-      setError(err.message || "Could not add bill");
+      setError(err.message || t("subscription.couldNotAdd"));
     } finally {
       setIsSubmitting(false);
     }
@@ -83,10 +86,10 @@ export function SubscriptionDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Add Recurring Bill
+                {t("subscription.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-                Track utilities, internet, rent, or shared subscriptions.
+                {t("subscription.subtitle")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0">
@@ -106,12 +109,12 @@ export function SubscriptionDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Bill / Subscription Name *
+                {t("subscription.nameLabel")}
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Fiber Internet"
+                placeholder={t("subscription.namePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#0369A1]"
@@ -122,7 +125,7 @@ export function SubscriptionDrawer({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Amount (€) *
+                  {t("subscription.amountLabel")}
                 </label>
                 <input
                   type="number"
@@ -137,7 +140,7 @@ export function SubscriptionDrawer({
               </div>
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Next Billing Date *
+                  {t("subscription.nextDateLabel")}
                 </label>
                 <input
                   type="date"
@@ -151,7 +154,7 @@ export function SubscriptionDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                Billing Cadence
+                {t("subscription.cadenceLabel")}
               </label>
               <div className="flex gap-2">
                 {CYCLES.map((c) => (
@@ -165,7 +168,7 @@ export function SubscriptionDrawer({
                         : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                     }`}
                   >
-                    {c.label}
+                    {t(c.labelKey)}
                   </button>
                 ))}
               </div>
@@ -181,7 +184,7 @@ export function SubscriptionDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Add Recurring Bill</span>
+                  <span>{t("subscription.submit")}</span>
                 </>
               )}
             </button>

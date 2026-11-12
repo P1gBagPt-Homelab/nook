@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react";
+import { useTranslation } from "../i18n/I18nContext";
+import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
 
 interface JoinPageProps {
   onJoinSuccess: () => void;
@@ -7,6 +9,7 @@ interface JoinPageProps {
 }
 
 export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
+  const { t } = useTranslation();
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,17 +29,17 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
     setError(null);
 
     if (!token.trim()) {
-      setError("Activation token is missing. Please open your full invite link.");
+      setError(t("auth.join.missingToken"));
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters long.");
+      setError(t("auth.join.passwordMinLength"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("auth.join.passwordMismatch"));
       return;
     }
 
@@ -50,13 +53,13 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || "Unable to activate account. Check your invite link.");
+        throw new Error(data.detail || t("auth.join.activateFailed"));
       }
 
       navigator.vibrate?.(45);
       onJoinSuccess();
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+      setError(err.message || t("auth.setup.unexpectedError"));
     } finally {
       setIsLoading(false);
     }
@@ -65,14 +68,19 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
   return (
     <div className="min-h-screen bg-[#F4F9F5] text-[#14201A] flex flex-col">
       <header className="bg-white border-b border-[#E2ECE4]">
-        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
+        <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" aria-hidden="true" />
-            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">Nook</span>
+            <span className="text-lg font-extrabold tracking-[-0.02em] font-display">
+              {t("common.nook")}
+            </span>
           </div>
-          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
-            Member Invite
-          </span>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher compact />
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D]">
+              {t("auth.join.badge")}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -81,10 +89,10 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
           <div className="border-b border-[#E2ECE4] pb-4 flex items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-extrabold tracking-[-0.025em] text-[#14201A] font-display">
-                Join Your Household
+                {t("auth.join.title")}
               </h1>
               <p className="text-xs text-[#5B6B61] font-medium mt-1">
-                Set your personal password to activate your Nook account and sign in automatically.
+                {t("auth.join.subtitle")}
               </p>
             </div>
             <div className="w-10 h-10 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
@@ -104,7 +112,7 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Invite Token
+                {t("auth.join.tokenLabel")}
               </label>
               <input
                 type="text"
@@ -118,11 +126,11 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                New Password
+                {t("auth.join.passwordLabel")}
               </label>
               <input
                 type="password"
-                placeholder="At least 8 characters *"
+                placeholder={t("auth.join.passwordPlaceholder")}
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -134,11 +142,11 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
 
             <div>
               <label className="block text-xs font-bold text-[#475B4E] mb-1.5">
-                Confirm Password
+                {t("auth.join.confirmLabel")}
               </label>
               <input
                 type="password"
-                placeholder="Repeat your password *"
+                placeholder={t("auth.join.confirmPlaceholder")}
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -153,7 +161,7 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
               disabled={isLoading}
               className="w-full min-h-[48px] mt-2 py-3 px-4 rounded-full bg-[#15803D] hover:bg-[#166534] active:scale-[0.99] text-white font-bold text-sm font-display flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <span>{isLoading ? "Activating..." : "Set Password & Join"}</span>
+              <span>{isLoading ? t("auth.join.submitting") : t("auth.join.submit")}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </form>
@@ -161,14 +169,14 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
           <div className="flex items-center justify-between text-[11px] font-semibold pt-2 border-t border-[#E2ECE4]">
             <div className="flex items-center gap-1.5 text-[#5B6B61]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-              <span>7-Day Single-Use Invite</span>
+              <span>{t("auth.join.footerBadge")}</span>
             </div>
             <button
               type="button"
               onClick={onNavigateLogin}
               className="text-[#15803D] font-bold hover:underline cursor-pointer"
             >
-              Back to Sign In
+              {t("auth.join.backToLogin")}
             </button>
           </div>
         </div>

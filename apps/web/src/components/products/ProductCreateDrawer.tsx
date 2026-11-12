@@ -2,6 +2,8 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Camera, Check, Loader2 } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 export interface ProductCreateDrawerProps {
   isOpen: boolean;
@@ -17,25 +19,25 @@ export interface ProductCreateDrawerProps {
   onSave: (product: any, addToCart: boolean) => void;
 }
 
-const CATEGORIES = [
-  { id: "Produce", label: "Produce" },
-  { id: "Dairy", label: "Dairy" },
-  { id: "Bakery", label: "Bakery" },
-  { id: "Meat", label: "Meat & Fish" },
-  { id: "Pantry", label: "Pantry Dry" },
-  { id: "Beverage", label: "Beverage" },
-  { id: "Frozen", label: "Frozen" },
-  { id: "Household", label: "Cleaning" },
+const CATEGORIES: { id: string; labelKey: TranslationKey }[] = [
+  { id: "Produce", labelKey: "product.cat.Produce" },
+  { id: "Dairy", labelKey: "product.cat.Dairy" },
+  { id: "Bakery", labelKey: "product.cat.Bakery" },
+  { id: "Meat", labelKey: "product.cat.Meat" },
+  { id: "Pantry", labelKey: "product.cat.Pantry" },
+  { id: "Beverage", labelKey: "product.cat.Beverage" },
+  { id: "Frozen", labelKey: "product.cat.Frozen" },
+  { id: "Household", labelKey: "product.cat.Household" },
 ];
 
-const UNITS = [
-  { id: "pcs", label: "Pieces (pcs)" },
-  { id: "L", label: "Liters (L)" },
-  { id: "ml", label: "Milliliters (ml)" },
-  { id: "kg", label: "Kilograms (kg)" },
-  { id: "g", label: "Grams (g)" },
-  { id: "pack", label: "Pack" },
-  { id: "bunch", label: "Bunch" },
+const UNITS: { id: string; labelKey: TranslationKey }[] = [
+  { id: "pcs", labelKey: "product.unit.pcs" },
+  { id: "L", labelKey: "product.unit.L" },
+  { id: "ml", labelKey: "product.unit.ml" },
+  { id: "kg", labelKey: "product.unit.kg" },
+  { id: "g", labelKey: "product.unit.g" },
+  { id: "pack", labelKey: "product.unit.pack" },
+  { id: "bunch", labelKey: "product.unit.bunch" },
 ];
 
 export function ProductCreateDrawer({
@@ -45,6 +47,7 @@ export function ProductCreateDrawer({
   initialData,
   onSave,
 }: ProductCreateDrawerProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState(initialData?.title || "");
   const [brand, setBrand] = useState(initialData?.brand || "");
   const [category, setCategory] = useState(initialData?.category || "Produce");
@@ -111,10 +114,10 @@ export function ProductCreateDrawer({
         onClose();
       } else {
         const err = await res.json();
-        alert(err.detail || "Failed to save product");
+        alert(err.detail || t("product.saveFailed"));
       }
     } catch (err: any) {
-      alert("Error: " + err.message);
+      alert(t("product.errorPrefix", { message: err.message }));
     } finally {
       setIsSubmitting(false);
     }
@@ -130,10 +133,12 @@ export function ProductCreateDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Digitalize New Product
+                {t("product.title")}
               </Drawer.Title>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[11px] font-semibold text-[#5B6B61]">Barcode:</span>
+                <span className="text-[11px] font-semibold text-[#5B6B61]">
+                  {t("product.barcode")}
+                </span>
                 <span className="text-[11px] font-bold bg-[#F4F9F5] text-[#14201A] px-2.5 py-0.5 rounded-full border border-[#E2ECE4] tabular-nums">
                   {barcode}
                 </span>
@@ -141,7 +146,7 @@ export function ProductCreateDrawer({
             </div>
             {initialData?.title && (
               <span className="text-[11px] font-bold bg-[#DCFCE7] text-[#15803D] px-2.5 py-0.5 rounded-full">
-                Open Food Facts
+                {t("scanner.source.off")}
               </span>
             )}
           </div>
@@ -155,7 +160,7 @@ export function ProductCreateDrawer({
                   <>
                     <Camera className="w-5 h-5 text-[#FF6B4A]" />
                     <span className="text-[11px] text-[#5B6B61] mt-1 font-bold">
-                      Snap Photo
+                      {t("product.snapPhoto")}
                     </span>
                   </>
                 )}
@@ -176,11 +181,11 @@ export function ProductCreateDrawer({
               <div className="flex-1 space-y-2.5">
                 <div>
                   <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                    Title *
+                    {t("product.titleLabel")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Terra Nostra Milk"
+                    placeholder={t("product.titlePlaceholder")}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#15803D]"
@@ -190,11 +195,11 @@ export function ProductCreateDrawer({
 
                 <div>
                   <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                    Brand (Optional)
+                    {t("product.brandLabel")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Terra Nostra"
+                    placeholder={t("product.brandPlaceholder")}
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-semibold text-[#14201A] focus:border-[#15803D]"
@@ -205,7 +210,7 @@ export function ProductCreateDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                Category
+                {t("product.categoryLabel")}
               </label>
               <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                 {CATEGORIES.map((cat) => (
@@ -219,7 +224,7 @@ export function ProductCreateDrawer({
                         : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                     }`}
                   >
-                    {cat.label}
+                    {t(cat.labelKey)}
                   </button>
                 ))}
               </div>
@@ -228,7 +233,7 @@ export function ProductCreateDrawer({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Price (€)
+                  {t("product.priceLabel")}
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-2.5 text-[#5B6B61] font-bold text-xs">
@@ -247,7 +252,7 @@ export function ProductCreateDrawer({
 
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Unit
+                  {t("product.unitLabel")}
                 </label>
                 <select
                   value={unit}
@@ -256,7 +261,7 @@ export function ProductCreateDrawer({
                 >
                   {UNITS.map((u) => (
                     <option key={u.id} value={u.id}>
-                      {u.label}
+                      {t(u.labelKey)}
                     </option>
                   ))}
                 </select>
@@ -275,7 +280,7 @@ export function ProductCreateDrawer({
                 ) : (
                   <>
                     <Check className="w-4 h-4 stroke-[3]" />
-                    <span>Save & Add to Shopping List</span>
+                    <span>{t("product.saveAndAdd")}</span>
                   </>
                 )}
               </button>
@@ -286,7 +291,7 @@ export function ProductCreateDrawer({
                 disabled={!title.trim() || isSubmitting || isUploading}
                 className="w-full min-h-[44px] py-2.5 rounded-full bg-[#F4F9F5] hover:bg-[#EEF7F0] border border-[#E2ECE4] text-[#14201A] font-bold text-xs transition-colors disabled:opacity-50 cursor-pointer"
               >
-                Save to Catalog Only
+                {t("product.saveOnly")}
               </button>
             </div>
           </div>

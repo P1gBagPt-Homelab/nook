@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Drawer } from "vaul";
 import { X, Zap, RefreshCw, KeyRound, Plus, Loader2, Tag } from "lucide-react";
 import { useBarcodeScanner } from "../../hooks/useBarcodeScanner";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface BarcodeScannerModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export function BarcodeScannerModal({
   onProductDetected,
   onAddDirectToCart,
 }: BarcodeScannerModalProps) {
+  const { t } = useTranslation();
   const [manualCode, setManualCode] = useState("");
   const [showManualInput, setShowManualInput] = useState(false);
   const [scanResult, setScanResult] = useState<{
@@ -83,14 +85,14 @@ export function BarcodeScannerModal({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B4A]" aria-hidden="true" />
               <Drawer.Title className="text-base font-bold text-white tracking-tight font-display">
-                In-Store Barcode Scanner
+                {t("scanner.title")}
               </Drawer.Title>
             </div>
             <button
               type="button"
               onClick={onClose}
               className="min-w-[40px] min-h-[40px] rounded-full bg-[#1C2F24] text-[#A7C4B2] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Close scanner"
+              aria-label={t("scanner.closeAria")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -106,7 +108,7 @@ export function BarcodeScannerModal({
               />
             ) : (
               <div className="p-6 text-center text-[#A7C4B2] text-xs font-semibold">
-                Camera unavailable or permission blocked. Use manual barcode entry below.
+                {t("scanner.cameraUnavailable")}
               </div>
             )}
 
@@ -129,8 +131,8 @@ export function BarcodeScannerModal({
               <button
                 type="button"
                 onClick={toggleTorch}
-                title="Toggle Torch"
-                aria-label="Toggle Torch"
+                title={t("scanner.toggleTorch")}
+                aria-label={t("scanner.toggleTorch")}
                 className={`min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center transition-colors cursor-pointer ${
                   torchOn
                     ? "bg-[#FACC15] text-[#14201A]"
@@ -142,8 +144,8 @@ export function BarcodeScannerModal({
               <button
                 type="button"
                 onClick={flipCamera}
-                title="Flip Camera"
-                aria-label="Flip Camera"
+                title={t("scanner.flipCamera")}
+                aria-label={t("scanner.flipCamera")}
                 className="min-w-[40px] min-h-[40px] rounded-full bg-[#0F1B14]/80 text-white hover:bg-[#0F1B14] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -153,7 +155,7 @@ export function BarcodeScannerModal({
             {isSearching && (
               <div className="absolute inset-0 bg-[#0F1B14]/85 flex flex-col items-center justify-center text-white gap-2">
                 <Loader2 className="w-6 h-6 text-[#FF6B4A] animate-spin" />
-                <span className="text-xs font-bold">Looking up barcode...</span>
+                <span className="text-xs font-bold">{t("scanner.lookingUp")}</span>
               </div>
             )}
           </div>
@@ -167,14 +169,14 @@ export function BarcodeScannerModal({
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#15803D] text-white font-bold">
                   {scanResult.product
                     ? scanResult.source === "local"
-                      ? "Household Catalog"
-                      : "Open Food Facts"
-                    : "New Item"}
+                      ? t("scanner.source.local")
+                      : t("scanner.source.off")
+                    : t("scanner.source.new")}
                 </span>
               </div>
 
               <div className="text-sm font-bold text-white font-display">
-                {scanResult.product?.title || "Unregistered Product"}
+                {scanResult.product?.title || t("scanner.unregistered")}
               </div>
 
               {scanResult.product?.brand && (
@@ -191,12 +193,12 @@ export function BarcodeScannerModal({
                 {scanResult.product?.id ? (
                   <>
                     <Plus className="w-4 h-4" />
-                    <span>Add to Shopping Cart</span>
+                    <span>{t("scanner.addToCart")}</span>
                   </>
                 ) : (
                   <>
                     <Tag className="w-4 h-4" />
-                    <span>Digitalize & Set Price / Photo</span>
+                    <span>{t("scanner.digitalize")}</span>
                   </>
                 )}
               </button>
@@ -211,13 +213,13 @@ export function BarcodeScannerModal({
                 className="min-h-[44px] inline-flex items-center gap-1.5 text-xs text-[#A7C4B2] hover:text-white font-bold transition-colors cursor-pointer"
               >
                 <KeyRound className="w-3.5 h-3.5 text-[#FF6B4A]" />
-                <span>Barcode damaged or unreadable? Enter manually</span>
+                <span>{t("scanner.manualPrompt")}</span>
               </button>
             ) : (
               <form onSubmit={handleManualSubmit} className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Enter barcode number..."
+                  placeholder={t("scanner.manualPlaceholder")}
                   value={manualCode}
                   onChange={(e) => setManualCode(e.target.value)}
                   className="flex-1 px-4 py-2.5 rounded-full bg-[#16271D] border border-[#243E2F] text-xs font-semibold text-white placeholder-[#A7C4B2] focus:border-[#FF6B4A] tabular-nums"
@@ -227,14 +229,14 @@ export function BarcodeScannerModal({
                   type="submit"
                   className="min-h-[44px] px-4 py-2 rounded-full bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A] text-xs font-bold font-display transition-colors cursor-pointer"
                 >
-                  Lookup
+                  {t("scanner.lookup")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowManualInput(false)}
                   className="min-h-[44px] px-3 py-2 text-xs font-bold text-[#A7C4B2] hover:text-white cursor-pointer"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
               </form>
             )}

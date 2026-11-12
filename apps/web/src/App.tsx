@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ShoppingBag, Package, Camera, PieChart, Home } from "lucide-react";
+import { useTranslation } from "./i18n/I18nContext";
 import { GroceryPage } from "./pages/GroceryPage";
 import { FinancePage } from "./pages/FinancePage";
 import { HousePage } from "./pages/HousePage";
@@ -12,6 +13,7 @@ import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
 import { ProductCreateDrawer } from "./components/products/ProductCreateDrawer";
 
 export function App() {
+  const { t } = useTranslation();
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -173,29 +175,29 @@ export function App() {
   }[] = [
     {
       id: "grocery",
-      label: "Grocery Cart",
-      meta: "Trip & checkoff",
+      label: t("nav.groceryCart"),
+      meta: t("nav.groceryMeta"),
       activeClass: "bg-[#DCFCE7] text-[#15803D]",
       icon: ShoppingBag,
     },
     {
       id: "stock",
-      label: "Pantry Stock",
-      meta: "Fridge & cupboard",
+      label: t("nav.pantryStock"),
+      meta: t("nav.pantryMeta"),
       activeClass: "bg-[#DCFCE7] text-[#15803D]",
       icon: Package,
     },
     {
       id: "finance",
-      label: "Finance",
-      meta: "Budgets & split",
+      label: t("nav.finance"),
+      meta: t("nav.financeMeta"),
       activeClass: "bg-[#E0F2FE] text-[#0369A1]",
       icon: PieChart,
     },
     {
       id: "house",
-      label: "House",
-      meta: "Assets & chores",
+      label: t("nav.house"),
+      meta: t("nav.houseMeta"),
       activeClass: "bg-[#EDE9FE] text-[#6D28D9]",
       icon: Home,
     },
@@ -208,7 +210,7 @@ export function App() {
       <div className="flex-1 min-h-0 overflow-y-auto md:overflow-visible w-full max-w-6xl mx-auto md:grid md:grid-cols-[248px_1fr] md:gap-6 md:px-6 md:py-6 md:items-start">
         {/* Desktop Botanical Floating Card Sidebar */}
         <aside
-          aria-label="Desktop Route Navigation"
+          aria-label={t("nav.desktopLabel")}
           className="hidden md:flex md:flex-col botanical-card h-fit sticky top-[84px] p-3.5 space-y-3"
         >
           <div className="space-y-1.5">
@@ -243,12 +245,12 @@ export function App() {
               className="w-full min-h-[44px] px-4 py-2.5 rounded-full bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A] text-xs font-extrabold flex items-center justify-center gap-2 transition-colors cursor-pointer font-display"
             >
               <Camera className="w-4 h-4" />
-              <span>Scan Barcode</span>
+              <span>{t("nav.scanBarcode")}</span>
             </button>
           </div>
 
           <div className="pt-2.5 border-t border-[#E2ECE4] text-[11px] font-semibold text-[#5B6B61] px-1">
-            Project Janus · Self-Hosted
+            {t("common.selfHostedFooter")}
           </div>
         </aside>
 

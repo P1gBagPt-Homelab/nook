@@ -1,6 +1,8 @@
 import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, Clock, Loader2 } from "lucide-react";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface MaintenanceDrawerProps {
   isOpen: boolean;
@@ -10,11 +12,11 @@ interface MaintenanceDrawerProps {
   onSaved: () => void;
 }
 
-const INTERVAL_PRESETS = [
-  { days: 30, label: "30d" },
-  { days: 90, label: "90d" },
-  { days: 180, label: "6 mo" },
-  { days: 365, label: "1 yr" },
+const INTERVAL_PRESETS: { days: number; labelKey: TranslationKey }[] = [
+  { days: 30, labelKey: "maintenance.preset.30" },
+  { days: 90, labelKey: "maintenance.preset.90" },
+  { days: 180, labelKey: "maintenance.preset.180" },
+  { days: 365, labelKey: "maintenance.preset.365" },
 ];
 
 export function MaintenanceDrawer({
@@ -24,6 +26,7 @@ export function MaintenanceDrawer({
   defaultAssetId,
   onSaved,
 }: MaintenanceDrawerProps) {
+  const { t } = useTranslation();
   const [assetId, setAssetId] = useState("");
   const [title, setTitle] = useState("");
   const [intervalDays, setIntervalDays] = useState("90");
@@ -67,14 +70,14 @@ export function MaintenanceDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to schedule maintenance timer");
+        throw new Error(err.detail || t("maintenance.scheduleFailed"));
       }
 
       navigator.vibrate?.(30);
       onSaved();
       onClose();
     } catch (err: any) {
-      setError(err.message || "Could not create timer");
+      setError(err.message || t("maintenance.createFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -90,10 +93,10 @@ export function MaintenanceDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Schedule Maintenance Timer
+                {t("maintenance.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-                Get alerts for filters, descaling, and warranty upkeep.
+                {t("maintenance.subtitle")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#EDE9FE] text-[#7C3AED] flex items-center justify-center shrink-0">
@@ -113,7 +116,7 @@ export function MaintenanceDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Appliance *
+                {t("maintenance.applianceLabel")}
               </label>
               <select
                 required
@@ -131,12 +134,12 @@ export function MaintenanceDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Service Task *
+                {t("maintenance.taskLabel")}
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Replace Water Filter"
+                placeholder={t("maintenance.taskPlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#7C3AED]"
@@ -146,7 +149,7 @@ export function MaintenanceDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                Repeat Interval (Days)
+                {t("maintenance.intervalLabel")}
               </label>
               <div className="flex gap-1.5 mb-2">
                 {INTERVAL_PRESETS.map((p) => (
@@ -160,7 +163,7 @@ export function MaintenanceDrawer({
                         : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4]"
                     }`}
                   >
-                    {p.label}
+                    {t(p.labelKey)}
                   </button>
                 ))}
               </div>
@@ -185,11 +188,11 @@ export function MaintenanceDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Replacement Part for Shopping Cart (Optional)
+                {t("maintenance.partLabel")}
               </label>
               <input
                 type="text"
-                placeholder="e.g. Bosch UltraClarity Water Filter"
+                placeholder={t("maintenance.partPlaceholder")}
                 value={replacementPartTitle}
                 onChange={(e) => setReplacementPartTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-semibold text-[#14201A] focus:border-[#7C3AED]"
@@ -206,7 +209,7 @@ export function MaintenanceDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Save Maintenance Timer</span>
+                  <span>{t("maintenance.save")}</span>
                 </>
               )}
             </button>

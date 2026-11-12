@@ -2,6 +2,8 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, FileText, Loader2, Upload } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface AssetDrawerProps {
   isOpen: boolean;
@@ -12,6 +14,7 @@ interface AssetDrawerProps {
 const ROOMS = ["Kitchen", "Laundry", "Utility", "Living Room", "Bathroom", "Home"];
 
 export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [roomLocation, setRoomLocation] = useState("Kitchen");
   const [brand, setBrand] = useState("");
@@ -49,7 +52,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
       setManualFileName(file.name);
       navigator.vibrate?.(25);
     } catch (err: any) {
-      setError(err.message || "PDF manual upload failed");
+      setError(err.message || t("asset.pdfUploadFailed"));
     }
   }
 
@@ -78,14 +81,14 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to register appliance");
+        throw new Error(err.detail || t("asset.registerFailed"));
       }
 
       navigator.vibrate?.(35);
       onSaved();
       onClose();
     } catch (err: any) {
-      setError(err.message || "Could not save appliance");
+      setError(err.message || t("asset.saveFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -100,10 +103,10 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
 
           <div className="px-5 py-3 border-b border-[#E2ECE4]">
             <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-              Register Appliance Dossier
+              {t("asset.title")}
             </Drawer.Title>
             <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-              Store serial numbers, warranty dates, and PDF manuals in MinIO.
+              {t("asset.subtitle")}
             </p>
           </div>
 
@@ -119,12 +122,12 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Appliance / Asset Name *
+                {t("asset.nameLabel")}
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Bosch Series 6 Dishwasher"
+                placeholder={t("asset.namePlaceholder")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#7C3AED]"
@@ -134,7 +137,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                Room Location
+                {t("asset.roomLabel")}
               </label>
               <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                 {ROOMS.map((room) => (
@@ -148,7 +151,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
                         : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                     }`}
                   >
-                    {room}
+                    {t(`asset.room.${room}` as TranslationKey)}
                   </button>
                 ))}
               </div>
@@ -157,11 +160,11 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Brand
+                  {t("asset.brandLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Bosch"
+                  placeholder={t("asset.brandPlaceholder")}
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-semibold text-[#14201A] focus:border-[#7C3AED]"
@@ -169,11 +172,11 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
               </div>
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Model Number
+                  {t("asset.modelLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. SMS6ZCI49E"
+                  placeholder={t("asset.modelPlaceholder")}
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-semibold text-[#14201A] tabular-nums focus:border-[#7C3AED]"
@@ -184,11 +187,11 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Serial Number
+                  {t("asset.serialLabel")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. SN-4920184"
+                  placeholder={t("asset.serialPlaceholder")}
                   value={serialNumber}
                   onChange={(e) => setSerialNumber(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-semibold text-[#14201A] tabular-nums focus:border-[#7C3AED]"
@@ -196,7 +199,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
               </div>
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Warranty Until
+                  {t("asset.warrantyLabel")}
                 </label>
                 <input
                   type="date"
@@ -220,12 +223,10 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-extrabold text-[#14201A] truncate font-display">
-                    {manualFileName || "Upload PDF User Manual"}
+                    {manualFileName || t("asset.uploadPdfTitle")}
                   </div>
                   <div className="text-[11px] text-[#5B6B61] font-medium">
-                    {manualKey
-                      ? "PDF uploaded to MinIO vault"
-                      : "Tap to attach PDF manual (optional)"}
+                    {manualKey ? t("asset.pdfUploaded") : t("asset.pdfHint")}
                   </div>
                 </div>
               </div>
@@ -248,7 +249,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Save Appliance Dossier</span>
+                  <span>{t("asset.save")}</span>
                 </>
               )}
             </button>

@@ -7,6 +7,8 @@ import {
   Plus,
   X,
 } from "lucide-react";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 export interface StockItem {
   id: string;
@@ -25,6 +27,7 @@ export interface StockItem {
 }
 
 export function StockInventoryView() {
+  const { t } = useTranslation();
   const [stockItems, setStockItems] = useState<StockItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,13 +47,13 @@ export function StockInventoryView() {
           : `/api/stock?location=${encodeURIComponent(selectedLocation)}`;
       const res = await fetch(url);
       if (res.status === 401) {
-        throw new Error("Please sign in to access home stock.");
+        throw new Error(t("stock.signInRequired"));
       }
-      if (!res.ok) throw new Error("Failed to load home stock");
+      if (!res.ok) throw new Error(t("stock.loadFailed"));
       const data = await res.json();
       setStockItems(data || []);
     } catch (err: any) {
-      setError(err.message || "Failed to load stock");
+      setError(err.message || t("stock.loadFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +138,7 @@ export function StockInventoryView() {
       });
 
       if (res.ok) {
-        setFeedback(`Added "${item.title}" to Shopping Cart.`);
+        setFeedback(t("stock.addedToCart", { title: item.title }));
         setTimeout(() => setFeedback(null), 3500);
       }
     } catch (err) {
@@ -179,7 +182,7 @@ export function StockInventoryView() {
           <button
             type="button"
             onClick={() => setFeedback(null)}
-            aria-label="Dismiss notice"
+            aria-label={t("common.dismissNotice")}
             className="min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -191,17 +194,17 @@ export function StockInventoryView() {
       <div className="px-1 pt-1 flex items-center justify-between gap-3">
         <div>
           <h1 className="text-[21px] font-bold tracking-[-0.025em] text-[#14201A] leading-tight font-display">
-            Home Stock Inventory
+            {t("stock.title")}
           </h1>
           <p className="text-xs font-semibold text-[#5B6B61] mt-0.5 tabular-nums">
-            {stockItems.length} products tracked across zones
+            {t("stock.trackedCount", { count: stockItems.length })}
           </p>
         </div>
 
         {runningLowCount > 0 && (
           <div className="px-3 py-1.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-xs font-bold flex items-center gap-1.5 tabular-nums shrink-0 font-display">
             <AlertTriangle className="w-3.5 h-3.5 text-[#D97706]" />
-            <span>{runningLowCount} to restock</span>
+            <span>{t("stock.toRestock", { count: runningLowCount })}</span>
           </div>
         )}
       </div>
@@ -212,7 +215,7 @@ export function StockInventoryView() {
           <Search className="w-4 h-4 text-[#5B6B61] absolute left-3.5 top-3.5 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search pantry, fridge, spices..."
+            placeholder={t("stock.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full min-h-[44px] pl-10 pr-4 py-2 rounded-full bg-white border border-[#E2ECE4] text-xs font-semibold text-[#14201A] placeholder-[#5B6B61] focus:border-[#15803D]"
@@ -231,14 +234,14 @@ export function StockInventoryView() {
                   : "bg-white text-[#5B6B61] hover:text-[#14201A] border-[#E2ECE4]"
               }`}
             >
-              {loc}
+              {t(`location.${loc}` as TranslationKey)}
             </button>
           ))}
         </div>
       </div>
 
       {isLoading ? (
-        <div className="space-y-2.5" aria-busy="true" aria-label="Loading stock items">
+        <div className="space-y-2.5" aria-busy="true" aria-label={t("stock.loadingAria")}>
           {[1, 2, 3].map((row) => (
             <div key={row} className="botanical-card p-4 flex items-center justify-between gap-3">
               <div className="space-y-2 flex-1">
@@ -257,7 +260,7 @@ export function StockInventoryView() {
             onClick={fetchStock}
             className="min-h-[44px] px-4 py-1.5 rounded-full bg-[#DC2626] text-white text-xs font-bold cursor-pointer"
           >
-            Retry
+            {t("common.retry")}
           </button>
         </div>
       ) : filteredItems.length === 0 ? (
@@ -266,10 +269,10 @@ export function StockInventoryView() {
             <Package className="w-5 h-5" />
           </div>
           <p className="text-sm font-bold text-[#14201A] font-display">
-            No stock items in this location
+            {t("stock.emptyTitle")}
           </p>
           <p className="text-xs text-[#5B6B61] mt-1 max-w-xs mx-auto">
-            Items unpacked from your shopping cart will appear here automatically.
+            {t("stock.emptySubtitle")}
           </p>
         </div>
       ) : (
@@ -280,17 +283,17 @@ export function StockInventoryView() {
 
             const statusConfig = {
               in_stock: {
-                label: "In Stock",
+                label: t("stock.status.in_stock"),
                 marker: "w-2 h-2 rounded-full bg-[#16A34A]",
                 badge: "bg-[#DCFCE7] text-[#15803D]",
               },
               running_low: {
-                label: "Running Low",
+                label: t("stock.status.running_low"),
                 marker: "w-2.5 h-2.5 rounded-full bg-[#D97706]",
                 badge: "bg-[#FEF3C7] text-[#92400E]",
               },
               out_of_stock: {
-                label: "Out of Stock",
+                label: t("stock.status.out_of_stock"),
                 marker: "w-2.5 h-2.5 rounded-[3px] bg-[#DC2626]",
                 badge: "bg-[#FEE2E2] text-[#991B1B]",
               },
@@ -299,6 +302,11 @@ export function StockInventoryView() {
               marker: "w-2 h-2 rounded-full bg-[#5B6B61]",
               badge: "bg-[#F4F9F5] text-[#14201A]",
             };
+
+            const translatedLocation =
+              ["Pantry", "Fridge", "Freezer", "Cleaning"].includes(item.location)
+                ? t(`location.${item.location}` as TranslationKey)
+                : item.location;
 
             return (
               <div
@@ -310,7 +318,7 @@ export function StockInventoryView() {
                     {item.title}
                   </div>
                   <div className="text-xs font-semibold text-[#5B6B61] mt-0.5 truncate">
-                    {item.location} · {item.category}
+                    {translatedLocation} · {item.category}
                     {item.brand ? ` · ${item.brand}` : ""}
                   </div>
                 </div>
@@ -319,7 +327,7 @@ export function StockInventoryView() {
                   type="button"
                   onClick={() => handleCycleStatus(item)}
                   className={`min-h-[36px] px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 font-display ${statusConfig.badge}`}
-                  title="Click to cycle stock status"
+                  title={t("stock.cycleStatusTitle")}
                 >
                   <span className={statusConfig.marker} aria-hidden="true" />
                   <span>{statusConfig.label}</span>
@@ -331,7 +339,7 @@ export function StockInventoryView() {
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(item, -1)}
-                        aria-label="Decrease stock quantity"
+                        aria-label={t("stock.decreaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-l-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         -
@@ -342,7 +350,7 @@ export function StockInventoryView() {
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(item, 1)}
-                        aria-label="Increase stock quantity"
+                        aria-label={t("stock.increaseQtyAria")}
                         className="min-w-[44px] min-h-[44px] rounded-r-full flex items-center justify-center text-[#14201A] hover:bg-[#DCFCE7] text-sm font-extrabold cursor-pointer"
                       >
                         +
@@ -362,18 +370,18 @@ export function StockInventoryView() {
                           ? "bg-[#FF6B4A] hover:bg-[#FF5530] text-[#14201A]"
                           : "bg-[#F4F9F5] hover:bg-[#EEF7F0] border border-[#E2ECE4] text-[#14201A]"
                       }`}
-                      title="Add to Shopping Cart"
+                      title={t("stock.addToCartTitle")}
                     >
                       <Plus className="w-3.5 h-3.5 stroke-[2.6] shrink-0" />
-                      <span>Add to Cart</span>
+                      <span>{t("stock.addToCart")}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
                       className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5B6B61] hover:text-[#DC2626] transition-colors cursor-pointer"
-                      aria-label="Delete stock item"
-                      title="Delete Stock Item"
+                      aria-label={t("stock.deleteAria")}
+                      title={t("stock.deleteTitle")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

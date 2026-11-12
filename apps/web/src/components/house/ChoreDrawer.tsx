@@ -2,6 +2,8 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, CheckSquare, Loader2 } from "lucide-react";
 import type { HouseholdMember } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
+import type { TranslationKey } from "../../i18n/locales/en";
 
 interface ChoreDrawerProps {
   isOpen: boolean;
@@ -12,13 +14,13 @@ interface ChoreDrawerProps {
 
 const CADENCES: {
   id: "daily" | "weekly" | "biweekly" | "monthly" | "once";
-  label: string;
+  labelKey: TranslationKey;
 }[] = [
-  { id: "daily", label: "Daily" },
-  { id: "weekly", label: "Weekly" },
-  { id: "biweekly", label: "Biweekly" },
-  { id: "monthly", label: "Monthly" },
-  { id: "once", label: "Once" },
+  { id: "daily", labelKey: "chore.cadence.daily" },
+  { id: "weekly", labelKey: "chore.cadence.weekly" },
+  { id: "biweekly", labelKey: "chore.cadence.biweekly" },
+  { id: "monthly", labelKey: "chore.cadence.monthly" },
+  { id: "once", labelKey: "chore.cadence.once" },
 ];
 
 export function ChoreDrawer({
@@ -27,6 +29,7 @@ export function ChoreDrawer({
   members,
   onSaved,
 }: ChoreDrawerProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [cadence, setCadence] = useState<"daily" | "weekly" | "biweekly" | "monthly" | "once">("weekly");
   const [assignedToUserId, setAssignedToUserId] = useState("");
@@ -61,14 +64,14 @@ export function ChoreDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to add chore");
+        throw new Error(err.detail || t("chore.addFailed"));
       }
 
       navigator.vibrate?.(30);
       onSaved();
       onClose();
     } catch (err: any) {
-      setError(err.message || "Could not create chore");
+      setError(err.message || t("chore.createFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -84,10 +87,10 @@ export function ChoreDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                Add Household Chore
+                {t("chore.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-                Assign recurring upkeep tasks and build completion streaks.
+                {t("chore.subtitle")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#EDE9FE] text-[#7C3AED] flex items-center justify-center shrink-0">
@@ -107,12 +110,12 @@ export function ChoreDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                Chore Title *
+                {t("chore.titleLabel")}
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Take out recycling bins"
+                placeholder={t("chore.titlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#7C3AED]"
@@ -122,7 +125,7 @@ export function ChoreDrawer({
 
             <div>
               <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                Cadence
+                {t("chore.cadenceLabel")}
               </label>
               <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                 {CADENCES.map((c) => (
@@ -136,7 +139,7 @@ export function ChoreDrawer({
                         : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                     }`}
                   >
-                    {c.label}
+                    {t(c.labelKey)}
                   </button>
                 ))}
               </div>
@@ -145,14 +148,14 @@ export function ChoreDrawer({
             {members.length > 0 && (
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                  Assign To
+                  {t("chore.assignLabel")}
                 </label>
                 <select
                   value={assignedToUserId}
                   onChange={(e) => setAssignedToUserId(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#7C3AED]"
                 >
-                  <option value="">Anyone in Household</option>
+                  <option value="">{t("chore.anyone")}</option>
                   {members.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name}
@@ -172,7 +175,7 @@ export function ChoreDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Add Chore</span>
+                  <span>{t("chore.submit")}</span>
                 </>
               )}
             </button>

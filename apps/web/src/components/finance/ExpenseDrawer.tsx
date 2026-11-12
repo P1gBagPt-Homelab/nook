@@ -2,6 +2,7 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Camera, Check, Loader2, Users } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
+import { useTranslation } from "../../i18n/I18nContext";
 
 export interface FinanceCategory {
   id: string;
@@ -23,6 +24,7 @@ export function ExpenseDrawer({
   categories,
   onSaved,
 }: ExpenseDrawerProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
@@ -58,7 +60,7 @@ export function ExpenseDrawer({
       setReceiptKey(res.fileKey);
       navigator.vibrate?.(25);
     } catch (err: any) {
-      setError(err.message || "Receipt upload failed");
+      setError(err.message || t("expense.uploadFailed"));
     }
   }
 
@@ -87,14 +89,14 @@ export function ExpenseDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to log expense");
+        throw new Error(err.detail || t("expense.logFailed"));
       }
 
       navigator.vibrate?.(30);
       onSaved();
       onClose();
     } catch (err: any) {
-      setError(err.message || "Could not save expense");
+      setError(err.message || t("expense.saveFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -109,10 +111,10 @@ export function ExpenseDrawer({
 
           <div className="px-5 py-3 border-b border-[#E2ECE4]">
             <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-              Log Expense & Receipt
+              {t("expense.title")}
             </Drawer.Title>
             <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
-              Snap a receipt photo directly to MinIO and assign to your monthly budget.
+              {t("expense.subtitle")}
             </p>
           </div>
 
@@ -134,7 +136,7 @@ export function ExpenseDrawer({
                   <>
                     <Camera className="w-5 h-5 text-[#0284C7]" />
                     <span className="text-[11px] text-[#5B6B61] mt-1 font-bold text-center px-1">
-                      Receipt Snap
+                      {t("expense.receiptSnap")}
                     </span>
                   </>
                 )}
@@ -155,12 +157,12 @@ export function ExpenseDrawer({
               <div className="flex-1 space-y-2.5">
                 <div>
                   <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                    Title *
+                    {t("expense.titleLabel")}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Continente Groceries"
+                    placeholder={t("expense.titlePlaceholder")}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#0369A1]"
@@ -171,7 +173,7 @@ export function ExpenseDrawer({
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                      Amount (€) *
+                      {t("expense.amountLabel")}
                     </label>
                     <input
                       type="number"
@@ -186,7 +188,7 @@ export function ExpenseDrawer({
                   </div>
                   <div>
                     <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                      Date
+                      {t("expense.dateLabel")}
                     </label>
                     <input
                       type="date"
@@ -202,7 +204,7 @@ export function ExpenseDrawer({
             {categories.length > 0 && (
               <div>
                 <label className="text-[11px] font-bold text-[#5B6B61] block mb-1.5">
-                  Category
+                  {t("expense.categoryLabel")}
                 </label>
                 <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                   {categories.map((cat) => (
@@ -236,10 +238,10 @@ export function ExpenseDrawer({
                 <Users className="w-4 h-4 shrink-0" />
                 <div>
                   <div className="text-xs font-extrabold font-display">
-                    Split Equally with Household
+                    {t("expense.splitTitle")}
                   </div>
                   <div className="text-[11px] opacity-80">
-                    Tracks who owes whom in the Shared Ledger
+                    {t("expense.splitSubtitle")}
                   </div>
                 </div>
               </div>
@@ -264,7 +266,7 @@ export function ExpenseDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Save Expense</span>
+                  <span>{t("expense.save")}</span>
                 </>
               )}
             </button>
