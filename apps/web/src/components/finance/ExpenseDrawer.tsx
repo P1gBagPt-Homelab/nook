@@ -1,9 +1,10 @@
 import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
-import { Camera, Check, Loader2, Users } from "lucide-react";
+import { Check, FileText, Loader2, Paperclip, Users, X } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
 import { translateApiError, translateFinanceCategory } from "../../i18n/helpers";
+import { isImageDocument } from "./documentUtils";
 
 export interface FinanceCategory {
   id: string;
@@ -12,10 +13,22 @@ export interface FinanceCategory {
   monthlyBudget: string | null;
 }
 
+export interface EditableExpense {
+  id: string;
+  title: string;
+  amount: string;
+  date: string;
+  categoryId: string | null;
+  receiptKey: string | null;
+  receiptUrl: string | null;
+  isSplit: boolean;
+}
+
 interface ExpenseDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   categories: FinanceCategory[];
+  expense?: EditableExpense | null;
   onSaved: () => void;
 }
 
@@ -23,6 +36,7 @@ export function ExpenseDrawer({
   isOpen,
   onClose,
   categories,
+  expense,
   onSaved,
 }: ExpenseDrawerProps) {
   const { t } = useTranslation();
@@ -33,6 +47,8 @@ export function ExpenseDrawer({
   const [isSplit, setIsSplit] = useState(false);
   const [receiptKey, setReceiptKey] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [documentName, setDocumentName] = useState<string | null>(null);
+  const [isImagePreview, setIsImagePreview] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,29 +56,62 @@ export function ExpenseDrawer({
 
   useEffect(() => {
     if (isOpen) {
-      setTitle("");
-      setAmount("");
-      setCategoryId(categories[0]?.id || "");
-      setDate(new Date().toISOString().slice(0, 10));
-      setIsSplit(false);
-      setReceiptKey(null);
-      setPreviewUrl(null);
+      if (expense) {
+        setTitle(expense.title);
+        setAmount(parseFloat(expense.amount).toString());
+        setCategoryId(expense.categoryId || "");
+        setDate(expense.date ? expense.date.slice(0, 10) : new Date().toISOString().slice(0, 10));
+        setIsSplit(expense.isSplit);
+        setReceiptKey(expense.receiptKey);
+        setPreviewUrl(expense.receiptUrl);
+        setDocumentName(expense.receiptKey ? t("expense.documentAttached") : null);
+        setIsImagePreview(isImageDocument(expense.receiptUrl || expense.receiptKey));
+      } else {
+        setTitle("");
+        setAmount("");
+        setCategoryId(categories[0]?.id || "");
+        setDate(new Date().toISOString().slice(0, 10));
+        setIsSplit(false);
+        setReceiptKey(null);
+        setPreviewUrl(null);
+        setDocumentName(null);
+        setIsImagePreview(false);
+      }
       setError(null);
     }
-  }, [isOpen, categories]);
+  }, [isOpen, categories, expense, t]);
 
   async function handleReceiptCapture(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setError(null);
+    const isImage = file.type.startsWith("image/") || isImageDocument(file.name);
     try {
-      setPreviewUrl(URL.createObjectURL(file));
+      setIsImagePreview(isImage);
+      setDocumentName(file.name);
+      if (isImage) {
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setPreviewUrl(null);
+      }
       const res = await uploadPhoto(file, "receipts");
       setReceiptKey(res.fileKey);
+      if (isImage) {
+        setPreviewUrl(res.publicUrl);
+      }
       navigator.vibrate?.(25);
     } catch (err: any) {
       setError(translateApiError(t, err?.message, "expense.uploadFailed"));
     }
+  }
+
+  function handleRemoveDocument(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setReceiptKey(null);
+    setPreviewUrl(null);
+    setDocumentName(null);
+    setIsImagePreview(false);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -75,8 +124,11 @@ export function ExpenseDrawer({
     setError(null);
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/finance/expenses", {
-        method: "POST",
+      const endpoint = expense
+        ? `/api/finance/expenses/${expense.id}`
+        : "/api/finance/expenses";
+      const res = await fetch(endpoint, {
+        method: expense ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
@@ -112,7 +164,7 @@ export function ExpenseDrawer({
 
           <div className="px-5 py-3 border-b border-[#E2ECE4]">
             <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-              {t("expense.title")}
+              {expense ? t("expense.editTitle") : t("expense.title")}
             </Drawer.Title>
             <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
               {t("expense.subtitle")}
@@ -130,34 +182,54 @@ export function ExpenseDrawer({
             )}
 
             <div className="flex items-start gap-3">
-              <label className="relative w-24 h-24 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-[#0284C7] transition-colors shrink-0">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt={t("expense.receiptAlt")}
-                    className="w-full h-full object-cover"
+              <div className="relative shrink-0">
+                <label className="relative w-24 h-24 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-[#0284C7] transition-colors">
+                  {previewUrl && isImagePreview ? (
+                    <img
+                      src={previewUrl}
+                      alt={t("expense.receiptAlt")}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : receiptKey || documentName ? (
+                    <div className="flex flex-col items-center justify-center p-2 text-center">
+                      <div className="w-8 h-8 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center mb-1">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] text-[#14201A] font-bold line-clamp-2 break-all">
+                        {documentName || t("expense.documentAttached")}
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <Paperclip className="w-5 h-5 text-[#0284C7]" />
+                      <span className="text-[11px] text-[#5B6B61] mt-1 font-bold text-center px-1">
+                        {t("expense.receiptSnap")}
+                      </span>
+                    </>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-[#14201A]/60 flex items-center justify-center text-white">
+                      <Loader2 className="w-5 h-5 animate-spin text-[#E0F2FE]" />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf,.pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.heic"
+                    className="hidden"
+                    onChange={handleReceiptCapture}
                   />
-                ) : (
-                  <>
-                    <Camera className="w-5 h-5 text-[#0284C7]" />
-                    <span className="text-[11px] text-[#5B6B61] mt-1 font-bold text-center px-1">
-                      {t("expense.receiptSnap")}
-                    </span>
-                  </>
+                </label>
+                {(receiptKey || previewUrl || documentName) && !isUploading && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveDocument}
+                    aria-label={t("expense.removeDocumentAria")}
+                    className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#14201A] text-white flex items-center justify-center shadow-sm hover:bg-[#DC2626] transition-colors cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 )}
-                {isUploading && (
-                  <div className="absolute inset-0 bg-[#14201A]/60 flex items-center justify-center text-white">
-                    <Loader2 className="w-5 h-5 animate-spin text-[#E0F2FE]" />
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="hidden"
-                  onChange={handleReceiptCapture}
-                />
-              </label>
+              </div>
 
               <div className="flex-1 space-y-2.5">
                 <div>

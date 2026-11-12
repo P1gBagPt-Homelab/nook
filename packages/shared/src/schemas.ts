@@ -84,6 +84,7 @@ export const createSubscriptionSchema = z.object({
   billingCycle: z.enum(["monthly", "yearly", "weekly"]).default("monthly"),
   nextBillingDate: z.string().min(1),
   categoryId: z.string().uuid().nullable().optional(),
+  receiptKey: z.string().nullable().optional(),
   isActive: z.boolean().default(true),
 });
 

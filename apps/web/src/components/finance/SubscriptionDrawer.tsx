@@ -1,13 +1,27 @@
 import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
-import { CalendarClock, Check, Loader2 } from "lucide-react";
+import { CalendarClock, Check, FileText, Loader2, Upload, X } from "lucide-react";
+import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
 import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
+import { getDocumentFileName } from "./documentUtils";
+
+export interface EditableSubscription {
+  id: string;
+  title: string;
+  amount: string;
+  billingCycle: "monthly" | "yearly" | "weekly";
+  nextBillingDate: string;
+  receiptKey: string | null;
+  receiptUrl: string | null;
+  isActive: boolean;
+}
 
 interface SubscriptionDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  subscription?: EditableSubscription | null;
   onSaved: () => void;
 }
 
@@ -20,6 +34,7 @@ const CYCLES: { id: "monthly" | "yearly" | "weekly"; labelKey: TranslationKey }[
 export function SubscriptionDrawer({
   isOpen,
   onClose,
+  subscription,
   onSaved,
 }: SubscriptionDrawerProps) {
   const { t } = useTranslation();
@@ -27,18 +42,62 @@ export function SubscriptionDrawer({
   const [amount, setAmount] = useState("");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly" | "weekly">("monthly");
   const [nextBillingDate, setNextBillingDate] = useState("");
+  const [receiptKey, setReceiptKey] = useState<string | null>(null);
+  const [documentName, setDocumentName] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { uploadPhoto, isUploading } = usePhotoUpload();
+
   useEffect(() => {
     if (isOpen) {
-      setTitle("");
-      setAmount("");
-      setBillingCycle("monthly");
-      setNextBillingDate(new Date().toISOString().slice(0, 10));
+      if (subscription) {
+        setTitle(subscription.title);
+        setAmount(parseFloat(subscription.amount).toString());
+        setBillingCycle(subscription.billingCycle);
+        setNextBillingDate(
+          subscription.nextBillingDate
+            ? subscription.nextBillingDate.slice(0, 10)
+            : new Date().toISOString().slice(0, 10)
+        );
+        setReceiptKey(subscription.receiptKey);
+        setDocumentName(
+          subscription.receiptKey
+            ? getDocumentFileName(subscription.receiptUrl || subscription.receiptKey)
+            : null
+        );
+      } else {
+        setTitle("");
+        setAmount("");
+        setBillingCycle("monthly");
+        setNextBillingDate(new Date().toISOString().slice(0, 10));
+        setReceiptKey(null);
+        setDocumentName(null);
+      }
       setError(null);
     }
-  }, [isOpen]);
+  }, [isOpen, subscription]);
+
+  async function handleDocumentUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    try {
+      const res = await uploadPhoto(file, "receipts");
+      setReceiptKey(res.fileKey);
+      setDocumentName(file.name);
+      navigator.vibrate?.(25);
+    } catch (err: any) {
+      setError(translateApiError(t, err?.message, "expense.uploadFailed"));
+    }
+  }
+
+  function handleRemoveDocument(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setReceiptKey(null);
+    setDocumentName(null);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,15 +109,19 @@ export function SubscriptionDrawer({
     setError(null);
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/finance/subscriptions", {
-        method: "POST",
+      const endpoint = subscription
+        ? `/api/finance/subscriptions/${subscription.id}`
+        : "/api/finance/subscriptions";
+      const res = await fetch(endpoint, {
+        method: subscription ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
           amount: numericAmount,
           billingCycle,
           nextBillingDate: new Date(`${nextBillingDate}T12:00:00Z`).toISOString(),
-          isActive: true,
+          receiptKey: receiptKey || null,
+          isActive: subscription ? subscription.isActive : true,
         }),
       });
 
@@ -87,7 +150,7 @@ export function SubscriptionDrawer({
           <div className="px-5 py-3 border-b border-[#E2ECE4] flex items-center justify-between">
             <div>
               <Drawer.Title className="text-base font-bold text-[#14201A] font-display">
-                {t("subscription.title")}
+                {subscription ? t("subscription.editTitle") : t("subscription.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] font-medium mt-0.5">
                 {t("subscription.subtitle")}
@@ -175,9 +238,52 @@ export function SubscriptionDrawer({
               </div>
             </div>
 
+            <div className="relative">
+              <label className="w-full min-h-[56px] px-4 py-3 rounded-2xl bg-[#F4F9F5] border border-dashed border-[#7DD3FC] hover:border-[#0369A1] flex items-center justify-between gap-3 cursor-pointer transition-colors">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0">
+                    {isUploading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : receiptKey ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <FileText className="w-4 h-4" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-extrabold text-[#14201A] truncate font-display">
+                      {documentName || t("subscription.documentTitle")}
+                    </div>
+                    <div className="text-[11px] text-[#5B6B61] font-medium">
+                      {receiptKey
+                        ? t("subscription.documentUploaded")
+                        : t("subscription.documentHint")}
+                    </div>
+                  </div>
+                </div>
+                {!receiptKey && <Upload className="w-4 h-4 text-[#0369A1] shrink-0" />}
+                <input
+                  type="file"
+                  accept="image/*,application/pdf,.pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.heic"
+                  className="hidden"
+                  onChange={handleDocumentUpload}
+                />
+              </label>
+              {receiptKey && !isUploading && (
+                <button
+                  type="button"
+                  onClick={handleRemoveDocument}
+                  aria-label={t("expense.removeDocumentAria")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#E2ECE4] hover:bg-[#FEE2E2] text-[#14201A] hover:text-[#DC2626] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={!title.trim() || !amount || isSubmitting}
+              disabled={!title.trim() || !amount || isSubmitting || isUploading}
               className="w-full min-h-[48px] py-3 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white font-bold font-display text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
@@ -185,7 +291,7 @@ export function SubscriptionDrawer({
               ) : (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>{t("subscription.submit")}</span>
+                  <span>{subscription ? t("subscription.save") : t("subscription.submit")}</span>
                 </>
               )}
             </button>

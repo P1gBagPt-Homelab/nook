@@ -12,10 +12,24 @@ import {
   PauseCircle,
   PlayCircle,
   Users,
+  FileText,
+  Pencil,
 } from "lucide-react";
-import { ExpenseDrawer, FinanceCategory } from "../components/finance/ExpenseDrawer";
+import {
+  EditableExpense,
+  ExpenseDrawer,
+  FinanceCategory,
+} from "../components/finance/ExpenseDrawer";
 import { BudgetCapDrawer } from "../components/finance/BudgetCapDrawer";
-import { SubscriptionDrawer } from "../components/finance/SubscriptionDrawer";
+import {
+  EditableSubscription,
+  SubscriptionDrawer,
+} from "../components/finance/SubscriptionDrawer";
+import {
+  getDocumentFileName,
+  isImageDocument,
+  isPdfDocument,
+} from "../components/finance/documentUtils";
 import { useTranslation } from "../i18n/I18nContext";
 import {
   translateExpenseTitle,
@@ -64,6 +78,8 @@ interface SubscriptionRow {
   amount: string;
   billingCycle: "monthly" | "yearly" | "weekly";
   nextBillingDate: string;
+  receiptKey: string | null;
+  receiptUrl: string | null;
   isActive: boolean;
   monthlyEquivalent: number;
 }
@@ -126,8 +142,12 @@ export function FinancePage() {
   const [error, setError] = useState<string | null>(null);
 
   const [isExpenseOpen, setIsExpenseOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<EditableExpense | null>(null);
   const [isBudgetOpen, setIsBudgetOpen] = useState(false);
   const [isSubOpen, setIsSubOpen] = useState(false);
+  const [editingSubscription, setEditingSubscription] = useState<EditableSubscription | null>(
+    null
+  );
   const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(null);
   const [isSettling, setIsSettling] = useState(false);
 
@@ -342,7 +362,10 @@ export function FinancePage() {
             <div className="pt-2 flex gap-2">
               <button
                 type="button"
-                onClick={() => setIsExpenseOpen(true)}
+                onClick={() => {
+                  setEditingExpense(null);
+                  setIsExpenseOpen(true);
+                }}
                 className="flex-1 min-h-[44px] py-2.5 px-4 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-extrabold font-display flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -455,17 +478,30 @@ export function FinancePage() {
                             onClick={() => setReceiptPreviewUrl(exp.receiptUrl)}
                             className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
                           >
-                            <Receipt className="w-3 h-3" />
+                            <FileText className="w-3 h-3" />
                             <span>{t("finance.receipt")}</span>
                           </button>
                         )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-sm font-extrabold text-[#14201A] font-display tabular-nums">
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-sm font-extrabold text-[#14201A] font-display tabular-nums mr-1">
                         €{parseFloat(exp.amount).toFixed(2)}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingExpense(exp);
+                          setIsExpenseOpen(true);
+                        }}
+                        aria-label={t("finance.attachDocumentAria", {
+                          title: translateExpenseTitle(t, exp.title),
+                        })}
+                        className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#5B6B61] hover:text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDeleteExpense(exp.id)}
@@ -572,7 +608,10 @@ export function FinancePage() {
               </span>
               <button
                 type="button"
-                onClick={() => setIsExpenseOpen(true)}
+                onClick={() => {
+                  setEditingExpense(null);
+                  setIsExpenseOpen(true);
+                }}
                 className="min-h-[36px] px-3.5 py-1 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-bold font-display inline-flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -620,9 +659,21 @@ export function FinancePage() {
                           {exp.isSettled ? t("finance.settled") : t("finance.open")}
                         </span>
                       </div>
-                      <div className="text-xs text-[#5B6B61] font-semibold mt-0.5 tabular-nums">
-                        {formatDate(exp.date, intlLocale)} ·{" "}
-                        {t("finance.paidBy", { name: exp.paidByName || t("common.member") })}
+                      <div className="flex items-center gap-2 text-xs text-[#5B6B61] font-semibold mt-0.5 tabular-nums">
+                        <span>
+                          {formatDate(exp.date, intlLocale)} ·{" "}
+                          {t("finance.paidBy", { name: exp.paidByName || t("common.member") })}
+                        </span>
+                        {exp.receiptUrl && (
+                          <button
+                            type="button"
+                            onClick={() => setReceiptPreviewUrl(exp.receiptUrl)}
+                            className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                          >
+                            <FileText className="w-3 h-3" />
+                            <span>{t("finance.receipt")}</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                     <span className="text-sm font-extrabold font-display tabular-nums text-[#14201A] shrink-0">
@@ -662,7 +713,10 @@ export function FinancePage() {
 
             <button
               type="button"
-              onClick={() => setIsSubOpen(true)}
+              onClick={() => {
+                setEditingSubscription(null);
+                setIsSubOpen(true);
+              }}
               className="w-full min-h-[44px] py-2.5 px-4 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-extrabold font-display flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -709,17 +763,40 @@ export function FinancePage() {
                           {t(`subscription.cycle.${sub.billingCycle}` as TranslationKey)}
                         </span>
                       </div>
-                      <div className="text-xs text-[#5B6B61] font-semibold mt-0.5 tabular-nums">
-                        {t("finance.nextBilling", { date: formatDate(sub.nextBillingDate, intlLocale) })} · €
-                        {sub.monthlyEquivalent.toFixed(2)}
-                        {t("common.perMonthEq")}
+                      <div className="flex items-center gap-2 text-xs text-[#5B6B61] font-semibold mt-0.5 tabular-nums flex-wrap">
+                        <span>
+                          {t("finance.nextBilling", { date: formatDate(sub.nextBillingDate, intlLocale) })} · €
+                          {sub.monthlyEquivalent.toFixed(2)}
+                          {t("common.perMonthEq")}
+                        </span>
+                        {sub.receiptUrl && (
+                          <button
+                            type="button"
+                            onClick={() => setReceiptPreviewUrl(sub.receiptUrl)}
+                            className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                          >
+                            <FileText className="w-3 h-3" />
+                            <span>{t("finance.receipt")}</span>
+                          </button>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-1 shrink-0">
                       <span className="text-sm font-extrabold font-display tabular-nums text-[#14201A] mr-1">
                         €{parseFloat(sub.amount).toFixed(2)}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingSubscription(sub);
+                          setIsSubOpen(true);
+                        }}
+                        aria-label={t("finance.attachDocumentAria", { title: sub.title })}
+                        className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#5B6B61] hover:text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleToggleSubscription(sub)}
@@ -755,8 +832,12 @@ export function FinancePage() {
 
       <ExpenseDrawer
         isOpen={isExpenseOpen}
-        onClose={() => setIsExpenseOpen(false)}
+        onClose={() => {
+          setIsExpenseOpen(false);
+          setEditingExpense(null);
+        }}
         categories={categories}
+        expense={editingExpense}
         onSaved={fetchAllFinance}
       />
 
@@ -770,7 +851,11 @@ export function FinancePage() {
 
       <SubscriptionDrawer
         isOpen={isSubOpen}
-        onClose={() => setIsSubOpen(false)}
+        onClose={() => {
+          setIsSubOpen(false);
+          setEditingSubscription(null);
+        }}
+        subscription={editingSubscription}
         onSaved={fetchAllFinance}
       />
 
@@ -806,11 +891,38 @@ export function FinancePage() {
                 </button>
               </div>
             </div>
-            <img
-              src={receiptPreviewUrl}
-              alt={t("finance.uploadedReceiptAlt")}
-              className="w-full max-h-[65vh] object-contain rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4]"
-            />
+            {isImageDocument(receiptPreviewUrl) ? (
+              <img
+                src={receiptPreviewUrl}
+                alt={t("finance.uploadedReceiptAlt")}
+                className="w-full max-h-[65vh] object-contain rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4]"
+              />
+            ) : isPdfDocument(receiptPreviewUrl) ? (
+              <iframe
+                src={receiptPreviewUrl}
+                title={t("finance.receiptPhoto")}
+                className="w-full h-[65vh] rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4]"
+              />
+            ) : (
+              <div className="p-6 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center mx-auto">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div className="text-xs font-extrabold text-[#14201A] break-all">
+                  {getDocumentFileName(receiptPreviewUrl)}
+                </div>
+                <p className="text-xs text-[#5B6B61]">{t("finance.documentPreviewHint")}</p>
+                <a
+                  href={receiptPreviewUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-bold font-display transition-colors"
+                >
+                  <span>{t("finance.openOriginal")}</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}

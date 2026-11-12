@@ -182,6 +182,8 @@ describe("Finance Module - Budgets, Expenses, Subscriptions & Split Ledger", () 
     expect(createRes.statusCode).toBe(201);
     subId = createRes.json().id;
     expect(createRes.json().monthlyEquivalent).toBe(40);
+    expect(createRes.json().receiptKey).toBeNull();
+    expect(createRes.json().receiptUrl).toBeNull();
 
     const yearlyRes = await app.inject({
       method: "POST",
@@ -192,11 +194,14 @@ describe("Finance Module - Budgets, Expenses, Subscriptions & Split Ledger", () 
         amount: 120.0,
         billingCycle: "yearly",
         nextBillingDate: new Date().toISOString(),
+        receiptKey: "receipts/insurance-policy.pdf",
         isActive: true,
       },
     });
     expect(yearlyRes.statusCode).toBe(201);
     expect(yearlyRes.json().monthlyEquivalent).toBe(10);
+    expect(yearlyRes.json().receiptKey).toBe("receipts/insurance-policy.pdf");
+    expect(yearlyRes.json().receiptUrl).toContain("receipts/insurance-policy.pdf");
 
     const listRes = await app.inject({
       method: "GET",
@@ -210,10 +215,12 @@ describe("Finance Module - Budgets, Expenses, Subscriptions & Split Ledger", () 
       method: "PATCH",
       url: `/api/finance/subscriptions/${subId}`,
       headers: { cookie: adminCookie },
-      payload: { amount: 45.0 },
+      payload: { amount: 45.0, receiptKey: "receipts/fiber-invoice.pdf" },
     });
     expect(patchRes.statusCode).toBe(200);
     expect(patchRes.json().monthlyEquivalent).toBe(45);
+    expect(patchRes.json().receiptKey).toBe("receipts/fiber-invoice.pdf");
+    expect(patchRes.json().receiptUrl).toContain("receipts/fiber-invoice.pdf");
   });
 
   it("should compute accurate monthly overview with budget percent and burn rate", async () => {
