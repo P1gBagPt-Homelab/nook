@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useTranslation } from "../i18n/I18nContext";
 import { translateApiError } from "../i18n/helpers";
 import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
+import { NookMark } from "../components/common/NookMark";
 
 interface SetupPageProps {
   onSetupComplete: () => void;
@@ -53,7 +54,7 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
       <header className="bg-white border-b border-[#E2ECE4]">
         <div className="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" aria-hidden="true" />
+            <NookMark className="w-7 h-7" />
             <span className="text-lg font-extrabold tracking-[-0.02em] font-display">
               {t("common.nook")}
             </span>

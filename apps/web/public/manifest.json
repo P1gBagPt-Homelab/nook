@@ -1,13 +1,37 @@
 {
-  "name": "Nook",
+  "name": "Nook — Household OS",
   "short_name": "Nook",
-  "description": "Your Open-Source Household & Life Operating System",
+  "description": "Calm, self-hosted household & life operating system for groceries, pantry stock, appliance dossiers, and shared finance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFAF8",
-  "theme_color": "#FAFAF8",
+  "orientation": "portrait",
+  "background_color": "#F4F9F5",
+  "theme_color": "#15803D",
+  "categories": ["lifestyle", "productivity", "finance", "utilities"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

@@ -1,0 +1,30 @@
+interface NookMarkProps {
+  className?: string;
+}
+
+/**
+ * Nook brand capsule mark ("Fresh Botanical Capsules").
+ */
+export function NookMark({ className = "w-7 h-7" }: NookMarkProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+      className={`shrink-0 ${className}`}
+    >
+      <rect x="1" y="1" width="30" height="30" rx="8" fill="#15803D" />
+      <path
+        d="M7 15C7 10.5817 10.5817 7 15 7H17C21.4183 7 25 10.5817 25 15V23C25 24.1046 24.1046 25 23 25H9C7.89543 25 7 24.1046 7 23V15Z"
+        fill="#FFFFFF"
+      />
+      <path
+        d="M16 11C19.3137 11 22 13.6863 22 17C22 18.1046 21.1046 19 20 19H13C11.8954 19 11 18.1046 11 17C11 13.6863 13.6863 11 16 11Z"
+        fill="#16A34A"
+      />
+      <rect x="10" y="21" width="8" height="2.5" rx="1.25" fill="#14201A" />
+      <circle cx="21" cy="22.25" r="1.5" fill="#FF6B4A" />
+    </svg>
+  );
+}

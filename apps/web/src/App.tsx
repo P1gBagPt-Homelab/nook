@@ -11,6 +11,7 @@ import { Header } from "./components/navigation/Header";
 import { BottomDock, NavTab } from "./components/navigation/BottomDock";
 import { BarcodeScannerModal } from "./components/scanner/BarcodeScannerModal";
 import { ProductCreateDrawer } from "./components/products/ProductCreateDrawer";
+import { NookMark } from "./components/common/NookMark";
 
 export function App() {
   const { t } = useTranslation();
@@ -122,9 +123,9 @@ export function App() {
   if (isLoadingAuth) {
     return (
       <div className="min-h-screen bg-[#F4F9F5] text-[#14201A] flex items-center justify-center">
-        <div className="flex items-center gap-2.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" aria-hidden="true" />
-          <span className="text-lg font-extrabold tracking-[-0.02em] font-display">Nook</span>
+        <div className="flex items-center gap-3 animate-pulse">
+          <NookMark className="w-9 h-9" />
+          <span className="text-xl font-extrabold tracking-[-0.02em] font-display">Nook</span>
         </div>
       </div>
     );
