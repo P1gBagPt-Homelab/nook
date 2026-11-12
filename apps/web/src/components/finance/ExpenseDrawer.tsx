@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Camera, Check, Loader2, Users } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError, translateFinanceCategory } from "../../i18n/helpers";
 
 export interface FinanceCategory {
   id: string;
@@ -60,7 +61,7 @@ export function ExpenseDrawer({
       setReceiptKey(res.fileKey);
       navigator.vibrate?.(25);
     } catch (err: any) {
-      setError(err.message || t("expense.uploadFailed"));
+      setError(translateApiError(t, err?.message, "expense.uploadFailed"));
     }
   }
 
@@ -89,7 +90,7 @@ export function ExpenseDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || t("expense.logFailed"));
+        throw new Error(translateApiError(t, err.detail, "expense.logFailed"));
       }
 
       navigator.vibrate?.(30);
@@ -131,7 +132,11 @@ export function ExpenseDrawer({
             <div className="flex items-start gap-3">
               <label className="relative w-24 h-24 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-[#0284C7] transition-colors shrink-0">
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Receipt" className="w-full h-full object-cover" />
+                  <img
+                    src={previewUrl}
+                    alt={t("expense.receiptAlt")}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <>
                     <Camera className="w-5 h-5 text-[#0284C7]" />
@@ -218,7 +223,7 @@ export function ExpenseDrawer({
                           : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                       }`}
                     >
-                      {cat.name}
+                      {translateFinanceCategory(t, cat.name)}
                     </button>
                   ))}
                 </div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Check, CheckSquare, Loader2 } from "lucide-react";
 import type { HouseholdMember } from "@nook/shared";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 interface ChoreDrawerProps {
@@ -64,7 +65,7 @@ export function ChoreDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || t("chore.addFailed"));
+        throw new Error(translateApiError(t, err.detail, "chore.addFailed"));
       }
 
       navigator.vibrate?.(30);

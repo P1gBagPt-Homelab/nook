@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react";
 import { useTranslation } from "../i18n/I18nContext";
+import { translateApiError } from "../i18n/helpers";
 import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
 
 interface JoinPageProps {
@@ -53,7 +54,7 @@ export function JoinPage({ onJoinSuccess, onNavigateLogin }: JoinPageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || t("auth.join.activateFailed"));
+        throw new Error(translateApiError(t, data.detail, "auth.join.activateFailed"));
       }
 
       navigator.vibrate?.(45);

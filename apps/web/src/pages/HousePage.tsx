@@ -18,6 +18,7 @@ import { QrLabelModal } from "../components/house/QrLabelModal";
 import { MaintenanceDrawer } from "../components/house/MaintenanceDrawer";
 import { ChoreDrawer } from "../components/house/ChoreDrawer";
 import { useTranslation } from "../i18n/I18nContext";
+import { translateLocation } from "../i18n/helpers";
 import type { TranslationKey } from "../i18n/locales/en";
 
 interface AssetItem {
@@ -287,9 +288,7 @@ export function HousePage() {
                           {asset.name}
                         </h2>
                         <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#6D28D9]">
-                          {["Kitchen", "Laundry", "Utility", "Living Room", "Bathroom", "Home"].includes(asset.roomLocation)
-                            ? t(`asset.room.${asset.roomLocation}` as TranslationKey)
-                            : asset.roomLocation}
+                          {translateLocation(t, asset.roomLocation)}
                         </span>
                       </div>
                       {(asset.brand || asset.model) && (
@@ -298,7 +297,11 @@ export function HousePage() {
                         </p>
                       )}
                       <div className="flex items-center gap-2 flex-wrap mt-1 text-[11px] font-semibold text-[#5B6B61] tabular-nums">
-                        {asset.serialNumber && <span>S/N: {asset.serialNumber}</span>}
+                        {asset.serialNumber && (
+                          <span>
+                            {t("common.serialPrefix")} {asset.serialNumber}
+                          </span>
+                        )}
                         {asset.warrantyUntil && (
                           <span>
                             · {t("house.warrantyUntil", { date: formatShortDate(asset.warrantyUntil, intlLocale) })}
@@ -440,7 +443,7 @@ export function HousePage() {
                           </span>
                         </div>
                         <div className="text-xs font-semibold text-[#5B6B61] mt-1 tabular-nums">
-                          {task.assetName} ({task.roomLocation}) ·{" "}
+                          {task.assetName} ({translateLocation(t, task.roomLocation)}) ·{" "}
                           {t("house.everyDays", { days: task.intervalDays })} ·{" "}
                           {t("house.nextDate", { date: formatShortDate(task.nextDueDate, intlLocale) })}
                         </div>

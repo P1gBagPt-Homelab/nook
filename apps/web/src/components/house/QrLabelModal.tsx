@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Printer, QrCode, X } from "lucide-react";
 import { useTranslation } from "../../i18n/I18nContext";
-import type { TranslationKey } from "../../i18n/locales/en";
+import { translateLocation } from "../../i18n/helpers";
 
 interface QrLabelModalProps {
   asset: {
@@ -72,9 +72,7 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
 
         <div className="p-4 rounded-2xl bg-white border-2 border-dashed border-[#C4B5FD] text-center space-y-2.5">
           <div className="inline-block px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#6D28D9] text-[10px] font-extrabold font-display">
-            {["Kitchen", "Laundry", "Utility", "Living Room", "Bathroom", "Home"].includes(asset.roomLocation)
-              ? t(`asset.room.${asset.roomLocation}` as TranslationKey)
-              : asset.roomLocation}
+            {translateLocation(t, asset.roomLocation)}
           </div>
           <div className="text-base font-extrabold text-[#14201A] font-display">
             {asset.name}
@@ -95,7 +93,7 @@ export function QrLabelModal({ asset, onClose }: QrLabelModalProps) {
           )}
           {asset.serialNumber && (
             <div className="text-[11px] font-semibold text-[#5B6B61] tabular-nums">
-              S/N: {asset.serialNumber}
+              {t("common.serialPrefix")} {asset.serialNumber}
             </div>
           )}
           <div className="text-[11px] font-bold text-[#6D28D9] tabular-nums">

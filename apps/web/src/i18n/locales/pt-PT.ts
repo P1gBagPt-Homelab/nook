@@ -15,6 +15,29 @@ export const ptPT: Translations = {
   "common.eachShort": "un",
   "common.perMonthShort": "/mês",
   "common.perMonthEq": "/mês eq.",
+  "common.serialPrefix": "N.º Série:",
+
+  // Known API-seeded values & errors
+  "api.cart.weeklyGroceries": "Compras Semanais",
+  "api.cart.supermarketTrip": "Ida ao Supermercado",
+  "api.finance.cat.Groceries": "Mercearia",
+  "api.finance.cat.Utilities": "Serviços",
+  "api.finance.cat.Household": "Casa",
+  "api.finance.cat.Dining": "Restauração",
+  "api.error.setupClosed":
+    "A configuração inicial já foi concluída. O registo público está encerrado.",
+  "api.error.emailExists": "Já existe um utilizador com este endereço de e-mail.",
+  "api.error.invalidToken": "O código de ativação é inválido ou expirou.",
+  "api.error.itemNotFound": "Artigo do carrinho não encontrado.",
+  "api.error.stockNotFound": "Artigo em stock não encontrado.",
+  "api.error.productIdRequired": "É necessário selecionar um produto para adicionar ao stock.",
+  "api.error.presignedUrlFailed": "Falha ao obter ligação de carregamento.",
+  "api.error.s3UploadFailed": "Falha ao carregar o ficheiro.",
+
+  // Short units
+  "unit.short.pcs": "un",
+  "unit.short.pack": "emb.",
+  "unit.short.bunch": "molho",
 
   // Navigation & Header
   "nav.primaryLabel": "Navegação Principal",
@@ -217,6 +240,8 @@ export const ptPT: Translations = {
   "product.saveOnly": "Guardar Apenas no Catálogo",
   "product.saveFailed": "Falha ao guardar o produto",
   "product.errorPrefix": "Erro: {{message}}",
+  "product.previewAlt": "Pré-visualização do produto",
+  "product.cat.General": "Geral",
   "product.cat.Produce": "Frescos",
   "product.cat.Dairy": "Laticínios",
   "product.cat.Bakery": "Padaria",
@@ -290,6 +315,7 @@ export const ptPT: Translations = {
   "expense.subtitle":
     "Fotografe o talão diretamente para o MinIO e atribua ao orçamento mensal.",
   "expense.receiptSnap": "Foto do Talão",
+  "expense.receiptAlt": "Pré-visualização do talão",
   "expense.titleLabel": "Descrição *",
   "expense.titlePlaceholder": "ex. Compras Continente",
   "expense.amountLabel": "Valor (€) *",

@@ -2,6 +2,7 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { CalendarClock, Check, Loader2 } from "lucide-react";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 interface SubscriptionDrawerProps {
@@ -63,7 +64,7 @@ export function SubscriptionDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || t("subscription.addFailed"));
+        throw new Error(translateApiError(t, err.detail, "subscription.addFailed"));
       }
 
       navigator.vibrate?.(30);

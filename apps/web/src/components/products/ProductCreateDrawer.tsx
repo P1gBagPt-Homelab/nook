@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Camera, Check, Loader2 } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 export interface ProductCreateDrawerProps {
@@ -113,8 +114,8 @@ export function ProductCreateDrawer({
         onSave(saved, addToCart);
         onClose();
       } else {
-        const err = await res.json();
-        alert(err.detail || t("product.saveFailed"));
+        const err = await res.json().catch(() => ({}));
+        alert(translateApiError(t, err.detail, "product.saveFailed"));
       }
     } catch (err: any) {
       alert(t("product.errorPrefix", { message: err.message }));
@@ -155,7 +156,11 @@ export function ProductCreateDrawer({
             <div className="flex items-start gap-3">
               <label className="relative w-24 h-24 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-[#16A34A] transition-colors shrink-0">
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                  <img
+                    src={previewUrl}
+                    alt={t("product.previewAlt")}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <>
                     <Camera className="w-5 h-5 text-[#FF6B4A]" />

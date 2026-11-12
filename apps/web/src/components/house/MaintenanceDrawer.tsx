@@ -2,6 +2,7 @@ import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
 import { Check, Clock, Loader2 } from "lucide-react";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError, translateLocation } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 interface MaintenanceDrawerProps {
@@ -70,7 +71,7 @@ export function MaintenanceDrawer({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || t("maintenance.scheduleFailed"));
+        throw new Error(translateApiError(t, err.detail, "maintenance.scheduleFailed"));
       }
 
       navigator.vibrate?.(30);
@@ -126,7 +127,7 @@ export function MaintenanceDrawer({
               >
                 {assets.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name} ({a.roomLocation})
+                    {a.name} ({translateLocation(t, a.roomLocation)})
                   </option>
                 ))}
               </select>
