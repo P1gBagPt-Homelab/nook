@@ -19,18 +19,34 @@ declare module "fastify" {
 
 export const s3Plugin: FastifyPluginAsync = fp(async (fastify) => {
   const endpoint = process.env.S3_ENDPOINT || "http://minio:9000";
-  const publicEndpoint = process.env.S3_PUBLIC_ENDPOINT || endpoint;
+  const publicEndpoint = (process.env.S3_PUBLIC_ENDPOINT || endpoint).replace(/\/+$/, "");
   const bucket = process.env.S3_BUCKET || "nook-media";
+
+  const credentials = {
+    accessKeyId: process.env.S3_ACCESS_KEY || "minioadmin",
+    secretAccessKey: process.env.S3_SECRET_KEY || "minioadmin",
+  };
+  const region = process.env.S3_REGION || "us-east-1";
 
   const s3Client = new S3Client({
     endpoint,
-    region: process.env.S3_REGION || "us-east-1",
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY || "minioadmin",
-      secretAccessKey: process.env.S3_SECRET_KEY || "minioadmin",
-    },
+    region,
+    credentials,
     forcePathStyle: true, // Mandatory for self-hosted MinIO
+    requestChecksumCalculation: "WHEN_REQUIRED",
   });
+
+  // Browser uploads must be signed against the public HTTPS endpoint so Host & scheme match
+  const presignClient =
+    publicEndpoint === endpoint.replace(/\/+$/, "")
+      ? s3Client
+      : new S3Client({
+          endpoint: publicEndpoint,
+          region,
+          credentials,
+          forcePathStyle: true,
+          requestChecksumCalculation: "WHEN_REQUIRED",
+        });
 
   fastify.decorate("s3", {
     client: s3Client,
@@ -44,7 +60,7 @@ export const s3Plugin: FastifyPluginAsync = fp(async (fastify) => {
       });
 
       // URL expires in 5 minutes (300 seconds)
-      const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+      const uploadUrl = await getSignedUrl(presignClient, command, { expiresIn: 300 });
       const publicUrl = `${publicEndpoint}/${bucket}/${fileKey}`;
 
       return { uploadUrl, fileKey, publicUrl };
