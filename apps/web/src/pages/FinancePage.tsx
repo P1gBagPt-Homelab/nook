@@ -14,6 +14,7 @@ import {
   Users,
   FileText,
   Pencil,
+  Paperclip,
 } from "lucide-react";
 import {
   EditableExpense,
@@ -26,6 +27,12 @@ import {
   SubscriptionDrawer,
 } from "../components/finance/SubscriptionDrawer";
 import {
+  PaymentTargetSubscription,
+  SubscriptionPaymentDrawer,
+  SubscriptionPaymentInfo,
+} from "../components/finance/SubscriptionPaymentDrawer";
+import {
+  FinanceDocumentItem,
   getDocumentFileName,
   isImageDocument,
   isPdfDocument,
@@ -68,6 +75,7 @@ interface ExpenseRow {
   categoryColor: string | null;
   receiptKey: string | null;
   receiptUrl: string | null;
+  documents?: FinanceDocumentItem[];
   isSplit: boolean;
   isSettled: boolean;
 }
@@ -82,6 +90,13 @@ interface SubscriptionRow {
   receiptUrl: string | null;
   isActive: boolean;
   monthlyEquivalent: number;
+  currentPayment: SubscriptionPaymentInfo | null;
+  yearPayments: {
+    periodKey: string;
+    isPaid: boolean;
+    amount: string;
+    documentCount: number;
+  }[];
 }
 
 interface SplitLedgerResponse {
@@ -108,6 +123,7 @@ interface SplitLedgerResponse {
     paidByName: string | null;
     isSettled: boolean;
     receiptUrl: string | null;
+    documents?: FinanceDocumentItem[];
   }[];
   settlements: {
     id: string;
@@ -123,6 +139,35 @@ function formatDate(iso: string, locale: string): string {
     month: "short",
     day: "numeric",
   });
+}
+
+function getShortMonthNames(year: string, locale: string): { key: string; label: string }[] {
+  return Array.from({ length: 12 }, (_, idx) => {
+    const m = String(idx + 1).padStart(2, "0");
+    const label = new Date(Date.UTC(Number(year), idx, 15)).toLocaleDateString(locale, {
+      month: "short",
+      timeZone: "UTC",
+    });
+    return { key: `${year}-${m}`, label };
+  });
+}
+
+function resolveRowDocuments(
+  docs?: FinanceDocumentItem[],
+  receiptUrl?: string | null,
+  receiptKey?: string | null
+): FinanceDocumentItem[] {
+  if (docs && docs.length > 0) return docs;
+  if (receiptUrl) {
+    return [
+      {
+        fileKey: receiptKey || receiptUrl,
+        fileName: getDocumentFileName(receiptUrl),
+        url: receiptUrl,
+      },
+    ];
+  }
+  return [];
 }
 
 export function FinancePage() {
@@ -148,8 +193,19 @@ export function FinancePage() {
   const [editingSubscription, setEditingSubscription] = useState<EditableSubscription | null>(
     null
   );
-  const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(null);
+  const [paymentTarget, setPaymentTarget] = useState<{
+    subscription: PaymentTargetSubscription;
+    periodKey: string;
+  } | null>(null);
+  const [previewDocs, setPreviewDocs] = useState<FinanceDocumentItem[]>([]);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const [isSettling, setIsSettling] = useState(false);
+
+  function openDocumentsPreview(docs: FinanceDocumentItem[], index = 0) {
+    if (docs.length === 0) return;
+    setPreviewDocs(docs);
+    setPreviewIndex(index);
+  }
 
   const fetchAllFinance = useCallback(async () => {
     try {
@@ -163,7 +219,7 @@ export function FinancePage() {
         fetch(`/api/finance/overview?month=${selectedMonth}`),
         fetch("/api/finance/categories"),
         fetch(`/api/finance/expenses?${expenseParams.toString()}`),
-        fetch("/api/finance/subscriptions"),
+        fetch(`/api/finance/subscriptions?month=${selectedMonth}`),
         fetch("/api/finance/splits"),
       ]);
 
@@ -472,16 +528,27 @@ export function FinancePage() {
                         {exp.paidByName && (
                           <span>· {t("finance.paidBy", { name: exp.paidByName })}</span>
                         )}
-                        {exp.receiptUrl && (
-                          <button
-                            type="button"
-                            onClick={() => setReceiptPreviewUrl(exp.receiptUrl)}
-                            className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
-                          >
-                            <FileText className="w-3 h-3" />
-                            <span>{t("finance.receipt")}</span>
-                          </button>
-                        )}
+                        {(() => {
+                          const rowDocs = resolveRowDocuments(
+                            exp.documents,
+                            exp.receiptUrl
+                          );
+                          if (rowDocs.length === 0) return null;
+                          return (
+                            <button
+                              type="button"
+                              onClick={() => openDocumentsPreview(rowDocs)}
+                              className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                            >
+                              <FileText className="w-3 h-3" />
+                              <span>
+                                {rowDocs.length > 1
+                                  ? t("finance.documentsCount", { count: rowDocs.length })
+                                  : t("finance.receipt")}
+                              </span>
+                            </button>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -664,16 +731,27 @@ export function FinancePage() {
                           {formatDate(exp.date, intlLocale)} ·{" "}
                           {t("finance.paidBy", { name: exp.paidByName || t("common.member") })}
                         </span>
-                        {exp.receiptUrl && (
-                          <button
-                            type="button"
-                            onClick={() => setReceiptPreviewUrl(exp.receiptUrl)}
-                            className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
-                          >
-                            <FileText className="w-3 h-3" />
-                            <span>{t("finance.receipt")}</span>
-                          </button>
-                        )}
+                        {(() => {
+                          const rowDocs = resolveRowDocuments(
+                            exp.documents,
+                            exp.receiptUrl
+                          );
+                          if (rowDocs.length === 0) return null;
+                          return (
+                            <button
+                              type="button"
+                              onClick={() => openDocumentsPreview(rowDocs)}
+                              className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                            >
+                              <FileText className="w-3 h-3" />
+                              <span>
+                                {rowDocs.length > 1
+                                  ? t("finance.documentsCount", { count: rowDocs.length })
+                                  : t("finance.receipt")}
+                              </span>
+                            </button>
+                          );
+                        })()}
                       </div>
                     </div>
                     <span className="text-sm font-extrabold font-display tabular-nums text-[#14201A] shrink-0">
@@ -687,7 +765,13 @@ export function FinancePage() {
         </div>
       )}
 
-      {activeSubTab === "bills" && (
+      {activeSubTab === "bills" && (() => {
+        const activeSubs = subscriptions.filter((s) => s.isActive);
+        const paidCount = activeSubs.filter((s) => s.currentPayment?.isPaid).length;
+        const selectedYear = selectedMonth.slice(0, 4);
+        const yearMonths = getShortMonthNames(selectedYear, intlLocale);
+
+        return (
         <div className="space-y-4 md:grid md:grid-cols-[300px_1fr] md:items-start md:gap-4 md:space-y-0">
           <div className="botanical-card p-5 space-y-3">
             <div className="flex items-start justify-between gap-2">
@@ -711,6 +795,14 @@ export function FinancePage() {
               </span>
             </div>
 
+            <div className="text-xs font-bold text-[#15803D] bg-[#DCFCE7] px-3 py-1.5 rounded-xl inline-block">
+              {t("finance.paidCount", {
+                paid: paidCount,
+                total: activeSubs.length,
+                month: selectedMonth,
+              })}
+            </div>
+
             <button
               type="button"
               onClick={() => {
@@ -725,8 +817,17 @@ export function FinancePage() {
           </div>
 
           <div className="space-y-2.5">
-            <div className="text-xs font-extrabold text-[#5B6B61] px-1 font-display">
-              {t("finance.activeSubscriptions", { count: subscriptions.length })}
+            <div className="flex items-center justify-between gap-2 px-1">
+              <span className="text-xs font-extrabold text-[#5B6B61] font-display">
+                {t("finance.activeSubscriptions", { count: subscriptions.length })}
+              </span>
+              <input
+                type="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                aria-label={t("finance.filterMonthAria")}
+                className="px-3 py-1.5 rounded-full bg-white border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
+              />
             </div>
 
             {subscriptions.length === 0 ? (
@@ -742,93 +843,160 @@ export function FinancePage() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-2.5">
-                {subscriptions.map((sub) => (
+              <div className="space-y-3">
+                {subscriptions.map((sub) => {
+                  const cp = sub.currentPayment;
+                  const isPaidThisMonth = Boolean(cp?.isPaid);
+                  const monthDocs = cp?.documents ?? [];
+                  const yearMap = new Map(sub.yearPayments.map((p) => [p.periodKey, p]));
+
+                  return (
                   <div
                     key={sub.id}
-                    className={`p-3.5 flex items-center justify-between gap-3 ${
+                    className={`p-3.5 space-y-3 ${
                       sub.isActive ? "botanical-card" : "botanical-card-settled"
                     }`}
                   >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-sm font-bold truncate ${
-                            sub.isActive ? "text-[#14201A]" : "text-[#475B4E] line-through"
-                          }`}
-                        >
-                          {sub.title}
-                        </span>
-                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#E0F2FE] text-[#0369A1]">
-                          {t(`subscription.cycle.${sub.billingCycle}` as TranslationKey)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-[#5B6B61] font-semibold mt-0.5 tabular-nums flex-wrap">
-                        <span>
-                          {t("finance.nextBilling", { date: formatDate(sub.nextBillingDate, intlLocale) })} · €
-                          {sub.monthlyEquivalent.toFixed(2)}
-                          {t("common.perMonthEq")}
-                        </span>
-                        {sub.receiptUrl && (
-                          <button
-                            type="button"
-                            onClick={() => setReceiptPreviewUrl(sub.receiptUrl)}
-                            className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span
+                            className={`text-sm font-bold truncate ${
+                              sub.isActive ? "text-[#14201A]" : "text-[#475B4E] line-through"
+                            }`}
                           >
-                            <FileText className="w-3 h-3" />
-                            <span>{t("finance.receipt")}</span>
-                          </button>
-                        )}
+                            {sub.title}
+                          </span>
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#E0F2FE] text-[#0369A1]">
+                            {t(`subscription.cycle.${sub.billingCycle}` as TranslationKey)}
+                          </span>
+                          <span
+                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                              isPaidThisMonth
+                                ? "bg-[#DCFCE7] text-[#15803D]"
+                                : "bg-[#FEF3C7] text-[#92400E]"
+                            }`}
+                          >
+                            {isPaidThisMonth ? t("finance.statusPaid") : t("finance.statusUnpaid")}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-[#5B6B61] font-semibold mt-1 tabular-nums flex-wrap">
+                          <span>
+                            {t("finance.nextBilling", { date: formatDate(sub.nextBillingDate, intlLocale) })} · €
+                            {sub.monthlyEquivalent.toFixed(2)}
+                            {t("common.perMonthEq")}
+                          </span>
+                          {monthDocs.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => openDocumentsPreview(monthDocs)}
+                              className="inline-flex items-center gap-1 text-[#0369A1] font-bold hover:underline cursor-pointer"
+                            >
+                              <FileText className="w-3 h-3" />
+                              <span>
+                                {monthDocs.length > 1
+                                  ? t("finance.documentsCount", { count: monthDocs.length })
+                                  : t("finance.receipt")}
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <span className="text-sm font-extrabold font-display tabular-nums text-[#14201A] mr-1">
+                          €{parseFloat(cp?.amount ?? sub.amount).toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingSubscription(sub);
+                            setIsSubOpen(true);
+                          }}
+                          aria-label={t("finance.attachDocumentAria", { title: sub.title })}
+                          className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#5B6B61] hover:text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSubscription(sub)}
+                          aria-label={
+                            sub.isActive
+                              ? t("finance.pauseAria", { title: sub.title })
+                              : t("finance.resumeAria", { title: sub.title })
+                          }
+                          className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          {sub.isActive ? (
+                            <PauseCircle className="w-4 h-4" />
+                          ) : (
+                            <PlayCircle className="w-4 h-4" />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSubscription(sub.id)}
+                          aria-label={t("finance.deleteItemAria", { title: sub.title })}
+                          className="w-9 h-9 rounded-full hover:bg-[#FEE2E2] text-[#5B6B61] hover:text-[#DC2626] flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className="text-sm font-extrabold font-display tabular-nums text-[#14201A] mr-1">
-                        €{parseFloat(sub.amount).toFixed(2)}
-                      </span>
+                    {/* 12-Month Calendar Grid + Manage Month Action */}
+                    <div className="pt-2 border-t border-[#E2ECE4] space-y-2">
+                      <div className="grid grid-cols-6 gap-1.5">
+                        {yearMonths.map((m) => {
+                          const p = yearMap.get(m.key);
+                          const paid = Boolean(p?.isPaid);
+                          const hasDocs = (p?.documentCount ?? 0) > 0;
+                          const isSelected = m.key === selectedMonth;
+                          return (
+                            <button
+                              key={m.key}
+                              type="button"
+                              onClick={() => {
+                                setSelectedMonth(m.key);
+                                setPaymentTarget({ subscription: sub, periodKey: m.key });
+                              }}
+                              className={`px-1.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer border ${
+                                paid
+                                  ? "bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]"
+                                  : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:border-[#0369A1]"
+                              } ${isSelected ? "ring-2 ring-[#0369A1] ring-offset-1" : ""}`}
+                            >
+                              <span className="capitalize">{m.label}</span>
+                              {hasDocs && <Paperclip className="w-2.5 h-2.5 shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+
                       <button
                         type="button"
-                        onClick={() => {
-                          setEditingSubscription(sub);
-                          setIsSubOpen(true);
-                        }}
-                        aria-label={t("finance.attachDocumentAria", { title: sub.title })}
-                        className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#5B6B61] hover:text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleToggleSubscription(sub)}
-                        aria-label={
-                          sub.isActive
-                            ? t("finance.pauseAria", { title: sub.title })
-                            : t("finance.resumeAria", { title: sub.title })
+                        onClick={() =>
+                          setPaymentTarget({ subscription: sub, periodKey: selectedMonth })
                         }
-                        className="w-9 h-9 rounded-full hover:bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center transition-colors cursor-pointer"
+                        className={`w-full min-h-[38px] py-1.5 px-3 rounded-full text-xs font-extrabold font-display transition-colors cursor-pointer ${
+                          isPaidThisMonth
+                            ? "bg-[#F4F9F5] hover:bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD]"
+                            : "bg-[#0369A1] hover:bg-[#075985] text-white"
+                        }`}
                       >
-                        {sub.isActive ? (
-                          <PauseCircle className="w-4 h-4" />
-                        ) : (
-                          <PlayCircle className="w-4 h-4" />
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteSubscription(sub.id)}
-                        aria-label={t("finance.deleteItemAria", { title: sub.title })}
-                        className="w-9 h-9 rounded-full hover:bg-[#FEE2E2] text-[#5B6B61] hover:text-[#DC2626] flex items-center justify-center transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
+                        {isPaidThisMonth ? t("finance.manageMonth") : t("finance.markPaid")}
                       </button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       <ExpenseDrawer
         isOpen={isExpenseOpen}
@@ -859,48 +1027,81 @@ export function FinancePage() {
         onSaved={fetchAllFinance}
       />
 
-      {receiptPreviewUrl && (
+      <SubscriptionPaymentDrawer
+        isOpen={paymentTarget !== null}
+        onClose={() => setPaymentTarget(null)}
+        subscription={paymentTarget?.subscription ?? null}
+        periodKey={paymentTarget?.periodKey ?? selectedMonth}
+        onSaved={fetchAllFinance}
+      />
+
+      {previewDocs.length > 0 && (() => {
+        const activeDoc = previewDocs[previewIndex] || previewDocs[0];
+        const activeUrl = activeDoc?.url || "";
+        return (
         <div
           className="fixed inset-0 z-50 bg-[#14201A]/75 flex items-center justify-center p-4"
-          onClick={() => setReceiptPreviewUrl(null)}
+          onClick={() => setPreviewDocs([])}
         >
           <div
             className="botanical-card max-w-md w-full p-4 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-extrabold text-[#14201A] font-display">
-                {t("finance.receiptPhoto")}
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-extrabold text-[#14201A] font-display truncate">
+                {activeDoc?.fileName || t("finance.receiptPhoto")}
               </span>
-              <div className="flex items-center gap-2">
-                <a
-                  href={receiptPreviewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs font-bold text-[#0369A1] inline-flex items-center gap-1 hover:underline"
-                >
-                  <span>{t("finance.openOriginal")}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+              <div className="flex items-center gap-2 shrink-0">
+                {activeUrl && (
+                  <a
+                    href={activeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-bold text-[#0369A1] inline-flex items-center gap-1 hover:underline"
+                  >
+                    <span>{t("finance.openOriginal")}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
                 <button
                   type="button"
-                  onClick={() => setReceiptPreviewUrl(null)}
+                  onClick={() => setPreviewDocs([])}
                   className="w-8 h-8 rounded-full bg-[#F4F9F5] flex items-center justify-center text-[#14201A] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            {isImageDocument(receiptPreviewUrl) ? (
+
+            {previewDocs.length > 1 && (
+              <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                {previewDocs.map((doc, idx) => (
+                  <button
+                    key={`${doc.fileKey}-${idx}`}
+                    type="button"
+                    onClick={() => setPreviewIndex(idx)}
+                    className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border transition-colors cursor-pointer ${
+                      idx === previewIndex
+                        ? "bg-[#0369A1] text-white border-[#0369A1]"
+                        : "bg-[#F4F9F5] text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
+                    }`}
+                  >
+                    {idx + 1}. {doc.fileName}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {isImageDocument(activeUrl || activeDoc?.fileName) ? (
               <img
-                src={receiptPreviewUrl}
-                alt={t("finance.uploadedReceiptAlt")}
+                src={activeUrl}
+                alt={activeDoc?.fileName || t("finance.uploadedReceiptAlt")}
                 className="w-full max-h-[65vh] object-contain rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4]"
               />
-            ) : isPdfDocument(receiptPreviewUrl) ? (
+            ) : isPdfDocument(activeUrl || activeDoc?.fileName) ? (
               <iframe
-                src={receiptPreviewUrl}
-                title={t("finance.receiptPhoto")}
+                src={activeUrl}
+                title={activeDoc?.fileName || t("finance.receiptPhoto")}
                 className="w-full h-[65vh] rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4]"
               />
             ) : (
@@ -909,23 +1110,26 @@ export function FinancePage() {
                   <FileText className="w-6 h-6" />
                 </div>
                 <div className="text-xs font-extrabold text-[#14201A] break-all">
-                  {getDocumentFileName(receiptPreviewUrl)}
+                  {activeDoc?.fileName || getDocumentFileName(activeUrl)}
                 </div>
                 <p className="text-xs text-[#5B6B61]">{t("finance.documentPreviewHint")}</p>
-                <a
-                  href={receiptPreviewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-bold font-display transition-colors"
-                >
-                  <span>{t("finance.openOriginal")}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                {activeUrl && (
+                  <a
+                    href={activeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0369A1] hover:bg-[#075985] text-white text-xs font-bold font-display transition-colors"
+                  >
+                    <span>{t("finance.openOriginal")}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
             )}
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

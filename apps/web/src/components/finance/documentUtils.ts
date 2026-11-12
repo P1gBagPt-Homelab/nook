@@ -1,3 +1,11 @@
+export interface FinanceDocumentItem {
+  id?: string | null;
+  fileKey: string;
+  fileName: string;
+  mimeType?: string | null;
+  url?: string | null;
+}
+
 const IMAGE_EXT_REGEX = /\.(png|jpe?g|webp|gif|bmp|svg|avif|heic)$/i;
 const PDF_EXT_REGEX = /\.pdf$/i;
 

@@ -1,11 +1,13 @@
 import { FastifyPluginAsync } from "fastify";
-import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, like, lt } from "drizzle-orm";
 import { db } from "../../lib/db";
 import {
   expenseCategories,
   expenses,
   expenseSettlements,
+  financeDocuments,
   households,
+  subscriptionPayments,
   subscriptions,
   users,
 } from "../../lib/db/schema";
@@ -18,6 +20,7 @@ import {
   updateExpenseCategorySchema,
   updateExpenseSchema,
   updateSubscriptionSchema,
+  upsertSubscriptionPaymentSchema,
 } from "@nook/shared";
 import {
   buildS3PublicUrl,
@@ -25,6 +28,12 @@ import {
   sendNotFoundError,
   sendValidationError,
 } from "../../lib/http-helpers";
+import {
+  buildDocumentList,
+  formatFinanceDocument,
+  normalizeDocumentInputs,
+  syncFinanceDocuments,
+} from "./documents";
 import { computeSplitLedger, normalizeMonthlyBurn } from "./split-ledger";
 
 const DEFAULT_CATEGORIES = [
@@ -387,10 +396,30 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
         .where(and(...conditions))
         .orderBy(desc(expenses.date), desc(expenses.createdAt));
 
-      return rows.map((row) => ({
-        ...row,
-        receiptUrl: buildS3PublicUrl(row.receiptKey),
-      }));
+      const expenseIds = rows.map((r) => r.id);
+      const docsByExpense = new Map<string, ReturnType<typeof formatFinanceDocument>[]>();
+      if (expenseIds.length > 0) {
+        const docs = await db
+          .select()
+          .from(financeDocuments)
+          .where(inArray(financeDocuments.expenseId, expenseIds));
+        for (const doc of docs) {
+          if (!doc.expenseId) continue;
+          const list = docsByExpense.get(doc.expenseId) || [];
+          list.push(formatFinanceDocument(doc));
+          docsByExpense.set(doc.expenseId, list);
+        }
+      }
+
+      return rows.map((row) => {
+        const documents =
+          docsByExpense.get(row.id) || buildDocumentList([], row.receiptKey);
+        return {
+          ...row,
+          receiptUrl: documents[0]?.url ?? buildS3PublicUrl(row.receiptKey),
+          documents,
+        };
+      });
     }
   );
 
@@ -428,24 +457,44 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
-      const [expense] = await db
-        .insert(expenses)
-        .values({
-          householdId,
-          paidByUserId: request.user!.id,
-          categoryId: body.categoryId || null,
-          title: body.title,
-          amount: body.amount.toFixed(2),
-          receiptKey: body.receiptKey || null,
-          date: body.date ? new Date(body.date) : new Date(),
-          isSplit: body.isSplit,
-          isSettled: false,
-        })
-        .returning();
+      const normalizedDocs =
+        normalizeDocumentInputs(body.documents, body.receiptKey) ?? [];
+      const primaryReceiptKey = normalizedDocs[0]?.fileKey ?? body.receiptKey ?? null;
 
+      const { expense, insertedDocs } = await db.transaction(async (tx) => {
+        const [createdExpense] = await tx
+          .insert(expenses)
+          .values({
+            householdId,
+            paidByUserId: request.user!.id,
+            categoryId: body.categoryId || null,
+            title: body.title,
+            amount: body.amount.toFixed(2),
+            receiptKey: primaryReceiptKey,
+            date: body.date ? new Date(body.date) : new Date(),
+            isSplit: body.isSplit,
+            isSettled: false,
+          })
+          .returning();
+
+        const docs =
+          normalizedDocs.length > 0
+            ? await syncFinanceDocuments(
+                tx,
+                householdId,
+                { expenseId: createdExpense.id },
+                normalizedDocs
+              )
+            : [];
+
+        return { expense: createdExpense, insertedDocs: docs };
+      });
+
+      const documents = buildDocumentList(insertedDocs, expense.receiptKey);
       return reply.status(201).send({
         ...expense,
-        receiptUrl: buildS3PublicUrl(expense.receiptKey),
+        receiptUrl: documents[0]?.url ?? buildS3PublicUrl(expense.receiptKey),
+        documents,
       });
     }
   );
@@ -473,31 +522,52 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const body = parseResult.data;
-      const [updated] = await db
-        .update(expenses)
-        .set({
-          ...(body.title !== undefined && { title: body.title }),
-          ...(body.amount !== undefined && { amount: body.amount.toFixed(2) }),
-          ...(body.categoryId !== undefined && { categoryId: body.categoryId || null }),
-          ...(body.receiptKey !== undefined && { receiptKey: body.receiptKey || null }),
-          ...(body.date !== undefined && { date: new Date(body.date) }),
-          ...(body.isSplit !== undefined && { isSplit: body.isSplit }),
-        })
-        .where(
-          and(
-            eq(expenses.id, id),
-            eq(expenses.householdId, request.user!.householdId)
-          )
-        )
-        .returning();
+      const householdId = request.user!.householdId;
+      const normalizedDocs = normalizeDocumentInputs(body.documents, body.receiptKey);
+      const nextReceiptKey =
+        normalizedDocs !== undefined ? (normalizedDocs[0]?.fileKey ?? null) : undefined;
 
-      if (!updated) {
+      const result = await db.transaction(async (tx) => {
+        const [updated] = await tx
+          .update(expenses)
+          .set({
+            ...(body.title !== undefined && { title: body.title }),
+            ...(body.amount !== undefined && { amount: body.amount.toFixed(2) }),
+            ...(body.categoryId !== undefined && { categoryId: body.categoryId || null }),
+            ...(nextReceiptKey !== undefined && { receiptKey: nextReceiptKey }),
+            ...(body.date !== undefined && { date: new Date(body.date) }),
+            ...(body.isSplit !== undefined && { isSplit: body.isSplit }),
+          })
+          .where(and(eq(expenses.id, id), eq(expenses.householdId, householdId)))
+          .returning();
+
+        if (!updated) return null;
+
+        const docs =
+          normalizedDocs !== undefined
+            ? await syncFinanceDocuments(
+                tx,
+                householdId,
+                { expenseId: updated.id },
+                normalizedDocs
+              )
+            : await tx
+                .select()
+                .from(financeDocuments)
+                .where(eq(financeDocuments.expenseId, updated.id));
+
+        return { updated, docs };
+      });
+
+      if (!result) {
         return sendNotFoundError(reply, "Expense not found.");
       }
 
+      const documents = buildDocumentList(result.docs, result.updated.receiptKey);
       return {
-        ...updated,
-        receiptUrl: buildS3PublicUrl(updated.receiptKey),
+        ...result.updated,
+        receiptUrl: documents[0]?.url ?? buildS3PublicUrl(result.updated.receiptKey),
+        documents,
       };
     }
   );
@@ -531,32 +601,96 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // 5. Subscriptions CRUD
+  // 5. Subscriptions CRUD & Monthly Payments
   fastify.get(
     "/subscriptions",
     {
       preHandler: fastify.authenticate,
       schema: {
-        description: "List recurring household subscriptions and utilities",
+        description: "List recurring household subscriptions and utilities with monthly payment status",
         tags: ["Finance"],
         operationId: "listSubscriptions",
+        querystring: {
+          type: "object",
+          properties: {
+            month: { type: "string", description: "Month filter in YYYY-MM format" },
+          },
+        },
       },
     },
     async (request) => {
+      const householdId = request.user!.householdId;
+      const { month } = request.query as { month?: string };
+      const { monthKey } = parseMonthRange(month);
+      const yearPrefix = `${monthKey.slice(0, 4)}-`;
+
       const rows = await db
         .select()
         .from(subscriptions)
-        .where(eq(subscriptions.householdId, request.user!.householdId))
+        .where(eq(subscriptions.householdId, householdId))
         .orderBy(subscriptions.nextBillingDate);
 
-      return rows.map((sub) => ({
-        ...sub,
-        receiptUrl: buildS3PublicUrl(sub.receiptKey),
-        monthlyEquivalent:
-          Math.round(
-            normalizeMonthlyBurn(parseFloat(sub.amount), sub.billingCycle) * 100
-          ) / 100,
-      }));
+      const yearPaymentRows = await db
+        .select()
+        .from(subscriptionPayments)
+        .where(
+          and(
+            eq(subscriptionPayments.householdId, householdId),
+            like(subscriptionPayments.periodKey, `${yearPrefix}%`)
+          )
+        );
+
+      const paymentIds = yearPaymentRows.map((p) => p.id);
+      const docsByPayment = new Map<string, ReturnType<typeof formatFinanceDocument>[]>();
+      if (paymentIds.length > 0) {
+        const docRows = await db
+          .select()
+          .from(financeDocuments)
+          .where(inArray(financeDocuments.subscriptionPaymentId, paymentIds));
+        for (const doc of docRows) {
+          if (!doc.subscriptionPaymentId) continue;
+          const list = docsByPayment.get(doc.subscriptionPaymentId) || [];
+          list.push(formatFinanceDocument(doc));
+          docsByPayment.set(doc.subscriptionPaymentId, list);
+        }
+      }
+
+      const paymentsBySub = new Map<string, typeof yearPaymentRows>();
+      for (const payment of yearPaymentRows) {
+        const list = paymentsBySub.get(payment.subscriptionId) || [];
+        list.push(payment);
+        paymentsBySub.set(payment.subscriptionId, list);
+      }
+
+      return rows.map((sub) => {
+        const subPayments = paymentsBySub.get(sub.id) || [];
+        const current = subPayments.find((p) => p.periodKey === monthKey) || null;
+        return {
+          ...sub,
+          receiptUrl: buildS3PublicUrl(sub.receiptKey),
+          monthlyEquivalent:
+            Math.round(
+              normalizeMonthlyBurn(parseFloat(sub.amount), sub.billingCycle) * 100
+            ) / 100,
+          currentPayment: current
+            ? {
+                id: current.id,
+                periodKey: current.periodKey,
+                amount: current.amount,
+                isPaid: current.isPaid,
+                paidAt: current.paidAt,
+                expenseId: current.expenseId,
+                documents: docsByPayment.get(current.id) || [],
+              }
+            : null,
+          yearPayments: subPayments.map((p) => ({
+            periodKey: p.periodKey,
+            isPaid: p.isPaid,
+            amount: p.amount,
+            documentCount: (docsByPayment.get(p.id) || []).length,
+          })),
+        };
+      });
     }
   );
 
@@ -691,6 +825,218 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
+  fastify.put(
+    "/subscriptions/:id/payments/:periodKey",
+    {
+      preHandler: fastify.authenticate,
+      schema: {
+        description:
+          "Record or update a monthly payment and proof-of-payment documents for a fixed bill",
+        tags: ["Finance"],
+        operationId: "upsertSubscriptionPayment",
+        params: {
+          type: "object",
+          required: ["id", "periodKey"],
+          properties: {
+            id: { type: "string" },
+            periodKey: { type: "string" },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id, periodKey } = request.params as { id: string; periodKey: string };
+      if (!/^\d{4}-\d{2}$/.test(periodKey)) {
+        return reply.status(400).send({
+          type: "https://nook.app/errors/validation-error",
+          title: "Bad Request",
+          status: 400,
+          detail: "periodKey must be in YYYY-MM format",
+        });
+      }
+
+      const parseResult = upsertSubscriptionPaymentSchema.safeParse(request.body || {});
+      if (!parseResult.success) {
+        return sendValidationError(reply, parseResult.error);
+      }
+
+      const householdId = request.user!.householdId;
+      const body = parseResult.data;
+
+      const [sub] = await db
+        .select()
+        .from(subscriptions)
+        .where(and(eq(subscriptions.id, id), eq(subscriptions.householdId, householdId)));
+
+      if (!sub) {
+        return sendNotFoundError(reply, "Subscription not found.");
+      }
+
+      const result = await db.transaction(async (tx) => {
+        const [existing] = await tx
+          .select()
+          .from(subscriptionPayments)
+          .where(
+            and(
+              eq(subscriptionPayments.subscriptionId, sub.id),
+              eq(subscriptionPayments.periodKey, periodKey)
+            )
+          );
+
+        const nextIsPaid = body.isPaid ?? existing?.isPaid ?? true;
+        const nextAmount =
+          body.amount !== undefined
+            ? body.amount.toFixed(2)
+            : (existing?.amount ?? sub.amount);
+        const nextPaidAt = nextIsPaid
+          ? body.paidAt
+            ? new Date(body.paidAt)
+            : (existing?.paidAt ?? new Date())
+          : null;
+        const shouldSyncToBudget =
+          body.logToBudget !== undefined
+            ? body.logToBudget && nextIsPaid
+            : nextIsPaid && (existing ? existing.expenseId !== null : true);
+
+        let paymentId: string;
+        let linkedExpenseId: string | null = existing?.expenseId ?? null;
+
+        if (existing) {
+          const [updatedPayment] = await tx
+            .update(subscriptionPayments)
+            .set({
+              amount: nextAmount,
+              isPaid: nextIsPaid,
+              paidAt: nextPaidAt,
+              paidByUserId: nextIsPaid ? request.user!.id : null,
+              updatedAt: new Date(),
+            })
+            .where(eq(subscriptionPayments.id, existing.id))
+            .returning();
+          paymentId = updatedPayment.id;
+        } else {
+          const [createdPayment] = await tx
+            .insert(subscriptionPayments)
+            .values({
+              householdId,
+              subscriptionId: sub.id,
+              periodKey,
+              amount: nextAmount,
+              isPaid: nextIsPaid,
+              paidAt: nextPaidAt,
+              paidByUserId: nextIsPaid ? request.user!.id : null,
+            })
+            .returning();
+          paymentId = createdPayment.id;
+        }
+
+        const paymentDocs =
+          body.documents !== undefined
+            ? await syncFinanceDocuments(
+                tx,
+                householdId,
+                { subscriptionPaymentId: paymentId },
+                body.documents
+              )
+            : await tx
+                .select()
+                .from(financeDocuments)
+                .where(eq(financeDocuments.subscriptionPaymentId, paymentId));
+
+        const docInputsForExpense = paymentDocs.map((d) => ({
+          fileKey: d.fileKey,
+          fileName: d.fileName,
+          mimeType: d.mimeType,
+        }));
+        const primaryReceiptKey = docInputsForExpense[0]?.fileKey ?? null;
+
+        if (shouldSyncToBudget) {
+          const paidDateMatchesPeriod =
+            nextPaidAt && nextPaidAt.toISOString().slice(0, 7) === periodKey;
+          const expenseDate = paidDateMatchesPeriod
+            ? nextPaidAt!
+            : new Date(`${periodKey}-01T12:00:00.000Z`);
+
+          if (linkedExpenseId) {
+            const [updatedExp] = await tx
+              .update(expenses)
+              .set({
+                title: sub.title,
+                amount: nextAmount,
+                categoryId: sub.categoryId,
+                date: expenseDate,
+                receiptKey: primaryReceiptKey,
+              })
+              .where(and(eq(expenses.id, linkedExpenseId), eq(expenses.householdId, householdId)))
+              .returning();
+
+            if (updatedExp) {
+              await syncFinanceDocuments(
+                tx,
+                householdId,
+                { expenseId: updatedExp.id },
+                docInputsForExpense
+              );
+            } else {
+              linkedExpenseId = null;
+            }
+          }
+
+          if (!linkedExpenseId) {
+            const [createdExp] = await tx
+              .insert(expenses)
+              .values({
+                householdId,
+                paidByUserId: request.user!.id,
+                categoryId: sub.categoryId,
+                title: sub.title,
+                amount: nextAmount,
+                date: expenseDate,
+                receiptKey: primaryReceiptKey,
+                isSplit: false,
+                isSettled: false,
+              })
+              .returning();
+            linkedExpenseId = createdExp.id;
+            if (docInputsForExpense.length > 0) {
+              await syncFinanceDocuments(
+                tx,
+                householdId,
+                { expenseId: createdExp.id },
+                docInputsForExpense
+              );
+            }
+            await tx
+              .update(subscriptionPayments)
+              .set({ expenseId: linkedExpenseId })
+              .where(eq(subscriptionPayments.id, paymentId));
+          }
+        } else if (linkedExpenseId) {
+          await tx
+            .delete(expenses)
+            .where(and(eq(expenses.id, linkedExpenseId), eq(expenses.householdId, householdId)));
+          await tx
+            .update(subscriptionPayments)
+            .set({ expenseId: null })
+            .where(eq(subscriptionPayments.id, paymentId));
+          linkedExpenseId = null;
+        }
+
+        const [finalPayment] = await tx
+          .select()
+          .from(subscriptionPayments)
+          .where(eq(subscriptionPayments.id, paymentId));
+
+        return {
+          ...finalPayment,
+          documents: paymentDocs.map(formatFinanceDocument),
+        };
+      });
+
+      return result;
+    }
+  );
+
   // 6. Household Shared Split Ledger & Settle
   fastify.get(
     "/splits",
@@ -739,12 +1085,31 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
 
       const memberNameById = new Map(ledger.members.map((m) => [m.id, m.name]));
 
+      const splitIds = splitExpenses.map((e) => e.id);
+      const docsBySplit = new Map<string, ReturnType<typeof formatFinanceDocument>[]>();
+      if (splitIds.length > 0) {
+        const docs = await db
+          .select()
+          .from(financeDocuments)
+          .where(inArray(financeDocuments.expenseId, splitIds));
+        for (const doc of docs) {
+          if (!doc.expenseId) continue;
+          const list = docsBySplit.get(doc.expenseId) || [];
+          list.push(formatFinanceDocument(doc));
+          docsBySplit.set(doc.expenseId, list);
+        }
+      }
+
       return {
         ...ledger,
-        splitExpenses: splitExpenses.map((e) => ({
-          ...e,
-          receiptUrl: buildS3PublicUrl(e.receiptKey),
-        })),
+        splitExpenses: splitExpenses.map((e) => {
+          const documents = docsBySplit.get(e.id) || buildDocumentList([], e.receiptKey);
+          return {
+            ...e,
+            receiptUrl: documents[0]?.url ?? buildS3PublicUrl(e.receiptKey),
+            documents,
+          };
+        }),
         settlements: recentSettlements.map((s) => ({
           ...s,
           fromUserName: memberNameById.get(s.fromUserId) || "Member",

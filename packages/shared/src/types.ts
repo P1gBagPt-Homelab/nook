@@ -14,6 +14,8 @@ import {
   updateExpenseSchema,
   createSubscriptionSchema,
   updateSubscriptionSchema,
+  upsertSubscriptionPaymentSchema,
+  financeDocumentInputSchema,
   settleSplitSchema,
   createAssetSchema,
   updateAssetSchema,
@@ -43,6 +45,8 @@ export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
 export type UpdateExpenseInput = z.infer<typeof updateExpenseSchema>;
 export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>;
 export type UpdateSubscriptionInput = z.infer<typeof updateSubscriptionSchema>;
+export type UpsertSubscriptionPaymentInput = z.infer<typeof upsertSubscriptionPaymentSchema>;
+export type FinanceDocumentInput = z.infer<typeof financeDocumentInputSchema>;
 export type SettleSplitInput = z.infer<typeof settleSplitSchema>;
 
 export type CreateAssetInput = z.infer<typeof createAssetSchema>;

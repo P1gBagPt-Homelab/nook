@@ -279,7 +279,8 @@ export const ptPT: Translations = {
   "finance.splitBadge": "Partilhada",
   "finance.paidBy": "Pago por {{name}}",
   "finance.receipt": "Documento",
-  "finance.attachDocumentAria": "Editar ou anexar documento para {{title}}",
+  "finance.documentsCount": "{{count}} Documentos",
+  "finance.attachDocumentAria": "Editar ou anexar documentos para {{title}}",
   "finance.deleteItemAria": "Eliminar {{title}}",
   "finance.sharedLedgerTitle": "Livro de Contas Partilhadas",
   "finance.sharedLedgerSubtitle":
@@ -305,6 +306,11 @@ export const ptPT: Translations = {
   "finance.noBillsSubtitle":
     "Acompanhe água, luz, internet e subscrições para prever o seu gasto mensal.",
   "finance.nextBilling": "Próxima: {{date}}",
+  "finance.paidCount": "{{paid}} de {{total}} pagas em {{month}}",
+  "finance.statusPaid": "Pago",
+  "finance.statusUnpaid": "Por pagar",
+  "finance.markPaid": "Marcar Pago",
+  "finance.manageMonth": "Gerir Mês",
   "finance.pauseAria": "Pausar {{title}}",
   "finance.resumeAria": "Retomar {{title}}",
   "finance.receiptPhoto": "Comprovativo de Pagamento",
@@ -313,14 +319,14 @@ export const ptPT: Translations = {
   "finance.documentPreviewHint": "Pré-visualização indisponível para este tipo de ficheiro. Abra o ficheiro original para ver ou transferir.",
 
   // Finance Drawers
-  "expense.title": "Registar Despesa e Documento",
+  "expense.title": "Registar Despesa e Documentos",
   "expense.editTitle": "Editar Despesa",
   "expense.subtitle":
-    "Anexe um talão, PDF ou comprovativo de pagamento opcional ao orçamento mensal.",
-  "expense.receiptSnap": "Talão / PDF",
+    "Anexe talões, PDFs ou comprovativos de pagamento opcionais ao orçamento mensal.",
+  "expense.receiptSnap": "Adicionar Documentos",
   "expense.receiptAlt": "Pré-visualização do comprovativo",
   "expense.documentAttached": "Documento anexado",
-  "expense.documentHint": "Opcional · Imagem, PDF ou ficheiro",
+  "expense.documentHint": "Opcional · Carregue uma ou mais imagens, PDFs ou ficheiros",
   "expense.removeDocumentAria": "Remover documento anexado",
   "expense.titleLabel": "Descrição *",
   "expense.titlePlaceholder": "ex. Compras Continente",
@@ -360,6 +366,13 @@ export const ptPT: Translations = {
   "subscription.save": "Guardar Alterações",
   "subscription.addFailed": "Falha ao adicionar conta recorrente",
   "subscription.couldNotAdd": "Não foi possível adicionar a conta",
+  "subscriptionPayment.title": "Pagamento Mensal da Conta",
+  "subscriptionPayment.paidToggle": "Pago este mês",
+  "subscriptionPayment.paidSubtitle": "Indica se esta conta já foi paga neste mês",
+  "subscriptionPayment.budgetToggle": "Mostrar em Orçamento e Compras",
+  "subscriptionPayment.budgetSubtitle": "Incluir este pagamento e comprovativos nas despesas mensais",
+  "subscriptionPayment.save": "Guardar Registo Mensal",
+  "subscriptionPayment.saveFailed": "Falha ao guardar pagamento mensal",
 
   // House Page
   "house.tab.appliances": "Eletrodomésticos",

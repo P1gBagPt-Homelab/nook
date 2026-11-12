@@ -1,10 +1,10 @@
 import { Drawer } from "vaul";
 import { useState, useEffect } from "react";
-import { Check, FileText, Loader2, Paperclip, Users, X } from "lucide-react";
-import { usePhotoUpload } from "../../hooks/usePhotoUpload";
+import { Check, Loader2, Users } from "lucide-react";
 import { useTranslation } from "../../i18n/I18nContext";
 import { translateApiError, translateFinanceCategory } from "../../i18n/helpers";
-import { isImageDocument } from "./documentUtils";
+import { FinanceDocumentItem } from "./documentUtils";
+import { MultiDocumentPicker } from "./MultiDocumentPicker";
 
 export interface FinanceCategory {
   id: string;
@@ -21,6 +21,7 @@ export interface EditableExpense {
   categoryId: string | null;
   receiptKey: string | null;
   receiptUrl: string | null;
+  documents?: FinanceDocumentItem[];
   isSplit: boolean;
 }
 
@@ -45,14 +46,10 @@ export function ExpenseDrawer({
   const [categoryId, setCategoryId] = useState<string>("");
   const [date, setDate] = useState("");
   const [isSplit, setIsSplit] = useState(false);
-  const [receiptKey, setReceiptKey] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [documentName, setDocumentName] = useState<string | null>(null);
-  const [isImagePreview, setIsImagePreview] = useState(false);
+  const [documents, setDocuments] = useState<FinanceDocumentItem[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { uploadPhoto, isUploading } = usePhotoUpload();
 
   useEffect(() => {
     if (isOpen) {
@@ -62,57 +59,30 @@ export function ExpenseDrawer({
         setCategoryId(expense.categoryId || "");
         setDate(expense.date ? expense.date.slice(0, 10) : new Date().toISOString().slice(0, 10));
         setIsSplit(expense.isSplit);
-        setReceiptKey(expense.receiptKey);
-        setPreviewUrl(expense.receiptUrl);
-        setDocumentName(expense.receiptKey ? t("expense.documentAttached") : null);
-        setIsImagePreview(isImageDocument(expense.receiptUrl || expense.receiptKey));
+        if (expense.documents && expense.documents.length > 0) {
+          setDocuments(expense.documents);
+        } else if (expense.receiptKey) {
+          setDocuments([
+            {
+              fileKey: expense.receiptKey,
+              fileName: expense.receiptKey.split("/").pop() || t("expense.documentAttached"),
+              url: expense.receiptUrl,
+            },
+          ]);
+        } else {
+          setDocuments([]);
+        }
       } else {
         setTitle("");
         setAmount("");
         setCategoryId(categories[0]?.id || "");
         setDate(new Date().toISOString().slice(0, 10));
         setIsSplit(false);
-        setReceiptKey(null);
-        setPreviewUrl(null);
-        setDocumentName(null);
-        setIsImagePreview(false);
+        setDocuments([]);
       }
       setError(null);
     }
   }, [isOpen, categories, expense, t]);
-
-  async function handleReceiptCapture(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setError(null);
-    const isImage = file.type.startsWith("image/") || isImageDocument(file.name);
-    try {
-      setIsImagePreview(isImage);
-      setDocumentName(file.name);
-      if (isImage) {
-        setPreviewUrl(URL.createObjectURL(file));
-      } else {
-        setPreviewUrl(null);
-      }
-      const res = await uploadPhoto(file, "receipts");
-      setReceiptKey(res.fileKey);
-      if (isImage) {
-        setPreviewUrl(res.publicUrl);
-      }
-      navigator.vibrate?.(25);
-    } catch (err: any) {
-      setError(translateApiError(t, err?.message, "expense.uploadFailed"));
-    }
-  }
-
-  function handleRemoveDocument(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    setReceiptKey(null);
-    setPreviewUrl(null);
-    setDocumentName(null);
-    setIsImagePreview(false);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -134,7 +104,11 @@ export function ExpenseDrawer({
           title: title.trim(),
           amount: numericAmount,
           categoryId: categoryId || null,
-          receiptKey: receiptKey || null,
+          documents: documents.map((d) => ({
+            fileKey: d.fileKey,
+            fileName: d.fileName,
+            mimeType: d.mimeType ?? null,
+          })),
           date: date ? new Date(`${date}T12:00:00Z`).toISOString() : undefined,
           isSplit,
         }),
@@ -181,100 +155,47 @@ export function ExpenseDrawer({
               </div>
             )}
 
-            <div className="flex items-start gap-3">
-              <div className="relative shrink-0">
-                <label className="relative w-24 h-24 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-[#0284C7] transition-colors">
-                  {previewUrl && isImagePreview ? (
-                    <img
-                      src={previewUrl}
-                      alt={t("expense.receiptAlt")}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : receiptKey || documentName ? (
-                    <div className="flex flex-col items-center justify-center p-2 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center mb-1">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] text-[#14201A] font-bold line-clamp-2 break-all">
-                        {documentName || t("expense.documentAttached")}
-                      </span>
-                    </div>
-                  ) : (
-                    <>
-                      <Paperclip className="w-5 h-5 text-[#0284C7]" />
-                      <span className="text-[11px] text-[#5B6B61] mt-1 font-bold text-center px-1">
-                        {t("expense.receiptSnap")}
-                      </span>
-                    </>
-                  )}
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-[#14201A]/60 flex items-center justify-center text-white">
-                      <Loader2 className="w-5 h-5 animate-spin text-[#E0F2FE]" />
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*,application/pdf,.pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.heic"
-                    className="hidden"
-                    onChange={handleReceiptCapture}
-                  />
+            <div>
+              <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
+                {t("expense.titleLabel")}
+              </label>
+              <input
+                type="text"
+                required
+                placeholder={t("expense.titlePlaceholder")}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#0369A1]"
+                autoFocus
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
+                  {t("expense.amountLabel")}
                 </label>
-                {(receiptKey || previewUrl || documentName) && !isUploading && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveDocument}
-                    aria-label={t("expense.removeDocumentAria")}
-                    className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#14201A] text-white flex items-center justify-center shadow-sm hover:bg-[#DC2626] transition-colors cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  required
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
+                />
               </div>
-
-              <div className="flex-1 space-y-2.5">
-                <div>
-                  <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                    {t("expense.titleLabel")}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder={t("expense.titlePlaceholder")}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] focus:border-[#0369A1]"
-                    autoFocus
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                      {t("expense.amountLabel")}
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0.01"
-                      required
-                      placeholder="0.00"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
-                      {t("expense.dateLabel")}
-                    </label>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full px-2.5 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
-                    />
-                  </div>
-                </div>
+              <div>
+                <label className="text-[11px] font-bold text-[#5B6B61] block mb-1">
+                  {t("expense.dateLabel")}
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-2xl bg-[#F4F9F5] border border-[#E2ECE4] text-xs font-bold text-[#14201A] tabular-nums focus:border-[#0369A1]"
+                />
               </div>
             </div>
 
@@ -301,6 +222,13 @@ export function ExpenseDrawer({
                 </div>
               </div>
             )}
+
+            <MultiDocumentPicker
+              documents={documents}
+              onChange={setDocuments}
+              onError={setError}
+              onUploadingChange={setIsUploading}
+            />
 
             <button
               type="button"
