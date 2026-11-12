@@ -3,6 +3,7 @@ import { LogOut, ShieldCheck, ChevronDown, UserPlus } from "lucide-react";
 import { NavTab } from "./BottomDock";
 import { InviteMemberDrawer } from "../auth/InviteMemberDrawer";
 import { LanguageSwitcher } from "../common/LanguageSwitcher";
+import { NookMark } from "../common/NookMark";
 import { useTranslation } from "../../i18n/I18nContext";
 import type { TranslationKey } from "../../i18n/locales/en";
 
@@ -50,11 +51,12 @@ export function Header({ user, activeTab = "grocery", onLogout }: HeaderProps) {
     <header className="sticky top-0 z-30 bg-white border-b border-[#E2ECE4]">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className={`w-2.5 h-2.5 rounded-full ${route.dot} shrink-0`} aria-hidden="true" />
+          <NookMark className="w-7 h-7" />
           <span className="text-lg font-extrabold tracking-[-0.02em] text-[#14201A] leading-none font-display">
             {t("common.nook")}
           </span>
-          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${route.badge}`}>
+          <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${route.badge}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${route.dot} shrink-0`} aria-hidden="true" />
             {t(route.labelKey)}
           </span>
         </div>

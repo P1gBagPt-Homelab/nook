@@ -22,6 +22,30 @@
 }
 
 :root {
+  /* Canvas & Surfaces ("Fresh Botanical Capsules") */
+  --bg-canvas: #F4F9F5;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #EEF7F0;
+  --bg-canvas-dark: #0F1B14;
+  --border-subtle: #E2ECE4;
+
+  /* Typography Ink */
+  --text-primary: #14201A;
+  --text-muted: #475B4E;
+
+  /* Brand & Domain Accents */
+  --accent-green: #15803D;
+  --accent-leaf: #16A34A;
+  --badge-green-bg: #DCFCE7;
+  --accent-coral: #FF6B4A; /* Always pair with --text-primary (#14201A) */
+  --accent-finance: #0369A1;
+  --accent-finance-bright: #0284C7;
+  --accent-house: #7C3AED;
+
+  /* Shape Language */
+  --radius-pill: 9999px;
+  --radius-card: 18px;
+
   --botanical-ground: #F4F9F5;
   --botanical-surface: #FFFFFF;
   --botanical-ink: #14201A;
