@@ -551,6 +551,7 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
 
       return rows.map((sub) => ({
         ...sub,
+        receiptUrl: buildS3PublicUrl(sub.receiptKey),
         monthlyEquivalent:
           Math.round(
             normalizeMonthlyBurn(parseFloat(sub.amount), sub.billingCycle) * 100
@@ -585,12 +586,14 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
           amount: body.amount.toFixed(2),
           billingCycle: body.billingCycle,
           nextBillingDate: new Date(body.nextBillingDate),
+          receiptKey: body.receiptKey || null,
           isActive: body.isActive,
         })
         .returning();
 
       return reply.status(201).send({
         ...created,
+        receiptUrl: buildS3PublicUrl(created.receiptKey),
         monthlyEquivalent:
           Math.round(
             normalizeMonthlyBurn(parseFloat(created.amount), created.billingCycle) * 100
@@ -632,6 +635,7 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
             nextBillingDate: new Date(body.nextBillingDate),
           }),
           ...(body.categoryId !== undefined && { categoryId: body.categoryId || null }),
+          ...(body.receiptKey !== undefined && { receiptKey: body.receiptKey || null }),
           ...(body.isActive !== undefined && { isActive: body.isActive }),
           updatedAt: new Date(),
         })
@@ -649,6 +653,7 @@ export const financeRoutes: FastifyPluginAsync = async (fastify) => {
 
       return {
         ...updated,
+        receiptUrl: buildS3PublicUrl(updated.receiptKey),
         monthlyEquivalent:
           Math.round(
             normalizeMonthlyBurn(parseFloat(updated.amount), updated.billingCycle) * 100

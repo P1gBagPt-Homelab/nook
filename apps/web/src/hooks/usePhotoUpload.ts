@@ -9,9 +9,14 @@ export function usePhotoUpload() {
     setIsUploading(true);
     try {
       const defaultExt = folder === "manuals" ? "pdf" : "webp";
-      const defaultMime = folder === "manuals" ? "application/pdf" : "image/webp";
       const rawExt = file.name.split(".").pop()?.toLowerCase() || defaultExt;
       const extension = rawExt.slice(0, 5);
+      const defaultMime =
+        extension === "pdf"
+          ? "application/pdf"
+          : folder === "manuals"
+            ? "application/pdf"
+            : "image/webp";
       const contentType = file.type || defaultMime;
 
       // 1. Ask Fastify API for a secure Presigned URL

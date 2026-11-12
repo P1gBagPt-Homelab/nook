@@ -154,6 +154,7 @@ export const subscriptions = pgTable("subscriptions", {
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   billingCycle: text("billing_cycle", { enum: ["monthly", "yearly", "weekly"] }).default("monthly").notNull(),
   nextBillingDate: timestamp("next_billing_date", { withTimezone: true }).notNull(),
+  receiptKey: text("receipt_key"),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
