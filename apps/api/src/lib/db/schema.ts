@@ -162,6 +162,37 @@ export const subscriptions = pgTable("subscriptions", {
   index("idx_subscriptions_household").on(t.householdId),
 ]);
 
+export const subscriptionPayments = pgTable("subscription_payments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  subscriptionId: uuid("subscription_id").references(() => subscriptions.id, { onDelete: "cascade" }).notNull(),
+  periodKey: text("period_key").notNull(), // YYYY-MM
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  isPaid: boolean("is_paid").default(true).notNull(),
+  paidAt: timestamp("paid_at", { withTimezone: true }),
+  paidByUserId: uuid("paid_by_user_id").references(() => users.id, { onDelete: "set null" }),
+  expenseId: uuid("expense_id").references(() => expenses.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  uniqueIndex("idx_sub_payments_period").on(t.subscriptionId, t.periodKey),
+  index("idx_sub_payments_household_period").on(t.householdId, t.periodKey),
+]);
+
+export const financeDocuments = pgTable("finance_documents", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  expenseId: uuid("expense_id").references(() => expenses.id, { onDelete: "cascade" }),
+  subscriptionPaymentId: uuid("subscription_payment_id").references(() => subscriptionPayments.id, { onDelete: "cascade" }),
+  fileKey: text("file_key").notNull(),
+  fileName: text("file_name").notNull(),
+  mimeType: text("mime_type"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_finance_docs_expense").on(t.expenseId),
+  index("idx_finance_docs_sub_payment").on(t.subscriptionPaymentId),
+]);
+
 // 6. House Management Module: Assets, Maintenance Timers & Chores
 export const assets = pgTable("assets", {
   id: uuid("id").defaultRandom().primaryKey(),

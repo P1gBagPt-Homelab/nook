@@ -67,11 +67,18 @@ export const createExpenseCategorySchema = z.object({
 
 export const updateExpenseCategorySchema = createExpenseCategorySchema.partial();
 
+export const financeDocumentInputSchema = z.object({
+  fileKey: z.string().min(1),
+  fileName: z.string().min(1).max(255),
+  mimeType: z.string().max(128).nullable().optional(),
+});
+
 export const createExpenseSchema = z.object({
   title: z.string().min(1).max(128),
   amount: z.number().positive(),
   categoryId: z.string().uuid().nullable().optional(),
   receiptKey: z.string().nullable().optional(),
+  documents: z.array(financeDocumentInputSchema).optional(),
   date: z.string().optional(),
   isSplit: z.boolean().default(false),
 });
@@ -89,6 +96,14 @@ export const createSubscriptionSchema = z.object({
 });
 
 export const updateSubscriptionSchema = createSubscriptionSchema.partial();
+
+export const upsertSubscriptionPaymentSchema = z.object({
+  amount: z.number().positive().optional(),
+  isPaid: z.boolean().optional(),
+  paidAt: z.string().nullable().optional(),
+  logToBudget: z.boolean().optional(),
+  documents: z.array(financeDocumentInputSchema).optional(),
+});
 
 export const settleSplitSchema = z.object({
   fromUserId: z.string().uuid().optional(),
