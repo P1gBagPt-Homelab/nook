@@ -80,6 +80,16 @@ h1, h2, h3, .font-display {
   outline-offset: 2px;
 }
 
+/* Vaul drawer: avoid permanent GPU layer blur & focus ring on dialog container */
+[data-vaul-drawer] {
+  will-change: auto !important;
+}
+
+[data-vaul-drawer]:focus,
+[data-vaul-drawer]:focus-visible {
+  outline: none;
+}
+
 /* Subtle botanical scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
