@@ -13,6 +13,29 @@ export const en = {
   "common.eachShort": "ea",
   "common.perMonthShort": "/mo",
   "common.perMonthEq": "/mo eq.",
+  "common.serialPrefix": "S/N:",
+
+  // Known API-seeded values & errors
+  "api.cart.weeklyGroceries": "Weekly Groceries",
+  "api.cart.supermarketTrip": "Supermarket Trip",
+  "api.finance.cat.Groceries": "Groceries",
+  "api.finance.cat.Utilities": "Utilities",
+  "api.finance.cat.Household": "Household",
+  "api.finance.cat.Dining": "Dining",
+  "api.error.setupClosed":
+    "Setup has already been completed. Public registration is permanently closed.",
+  "api.error.emailExists": "A user with this email address already exists.",
+  "api.error.invalidToken": "Activation token is invalid or has expired.",
+  "api.error.itemNotFound": "Shopping item not found.",
+  "api.error.stockNotFound": "Stock item not found.",
+  "api.error.productIdRequired": "Product is required to add stock.",
+  "api.error.presignedUrlFailed": "Failed to get upload URL.",
+  "api.error.s3UploadFailed": "File upload failed.",
+
+  // Short units
+  "unit.short.pcs": "pcs",
+  "unit.short.pack": "pack",
+  "unit.short.bunch": "bunch",
 
   // Navigation & Header
   "nav.primaryLabel": "Primary Navigation",
@@ -212,6 +235,8 @@ export const en = {
   "product.saveOnly": "Save to Catalog Only",
   "product.saveFailed": "Failed to save product",
   "product.errorPrefix": "Error: {{message}}",
+  "product.previewAlt": "Product preview",
+  "product.cat.General": "General",
   "product.cat.Produce": "Produce",
   "product.cat.Dairy": "Dairy",
   "product.cat.Bakery": "Bakery",
@@ -283,6 +308,7 @@ export const en = {
   "expense.title": "Log Expense & Receipt",
   "expense.subtitle": "Snap a receipt photo directly to MinIO and assign to your monthly budget.",
   "expense.receiptSnap": "Receipt Snap",
+  "expense.receiptAlt": "Receipt preview",
   "expense.titleLabel": "Title *",
   "expense.titlePlaceholder": "e.g. Continente Groceries",
   "expense.amountLabel": "Amount (€) *",

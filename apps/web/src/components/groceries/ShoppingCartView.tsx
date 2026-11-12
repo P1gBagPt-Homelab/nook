@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
-import type { TranslationKey } from "../../i18n/locales/en";
+import { translateCartTitle, translateLocation, translateUnit } from "../../i18n/helpers";
 
 export interface ShoppingItem {
   id: string;
@@ -271,13 +271,6 @@ export function ShoppingCartView() {
     }
   }
 
-  function translateLocation(loc: string): string {
-    if (["Pantry", "Fridge", "Freezer", "Cleaning"].includes(loc)) {
-      return t(`location.${loc}` as TranslationKey);
-    }
-    return loc;
-  }
-
   if (isLoading && !cart) {
     return (
       <div className="space-y-3" aria-busy="true" aria-label={t("cart.loadingAria")}>
@@ -344,7 +337,7 @@ export function ShoppingCartView() {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-[21px] font-bold tracking-[-0.025em] text-[#14201A] leading-tight truncate font-display">
-              {cart?.title || t("cart.defaultTitle")}
+              {translateCartTitle(t, cart?.title)}
             </h1>
             <p className="text-xs font-semibold text-[#5B6B61] mt-0.5 tabular-nums">
               {t("cart.summary", { pending: toBuyItems.length, percent: progressPercent })}
@@ -518,7 +511,7 @@ export function ShoppingCartView() {
                         {item.productTitle || item.customTitle}
                       </div>
                       <div className="text-xs font-semibold text-[#5B6B61] truncate mt-0.5">
-                        {translateLocation(item.targetLocation)}
+                        {translateLocation(t, item.targetLocation)}
                         {item.brand ? ` · ${item.brand}` : ""}
                         {unitPriceNum !== null && qtyNum > 1
                           ? ` · €${unitPriceNum.toFixed(2)}/${t("common.eachShort")}`
@@ -558,7 +551,7 @@ export function ShoppingCartView() {
                         {lineTotal !== null ? `€${lineTotal.toFixed(2)}` : "—"}
                       </div>
                       <div className="text-[11px] font-semibold text-[#5B6B61] truncate">
-                        {qtyNum} {item.unit}
+                        {qtyNum} {translateUnit(t, item.unit)}
                       </div>
                     </div>
 
@@ -670,12 +663,12 @@ export function ShoppingCartView() {
                         {item.productTitle || item.customTitle}
                       </span>
                       <div className="text-xs font-semibold text-[#475B4E]">
-                        {translateLocation(item.targetLocation)}
+                        {translateLocation(t, item.targetLocation)}
                       </div>
                     </div>
 
                     <div className="hidden sm:block w-[112px] text-center tabular-nums text-xs font-bold text-[#475B4E] shrink-0">
-                      {qtyNum} {item.unit}
+                      {qtyNum} {translateUnit(t, item.unit)}
                     </div>
 
                     <div className="text-right tabular-nums w-[68px] shrink-0">
@@ -683,7 +676,7 @@ export function ShoppingCartView() {
                         {lineTotal !== null ? `€${lineTotal.toFixed(2)}` : "—"}
                       </div>
                       <div className="sm:hidden text-[11px] font-semibold text-[#475B4E]">
-                        {qtyNum} {item.unit}
+                        {qtyNum} {translateUnit(t, item.unit)}
                       </div>
                     </div>
 
@@ -774,11 +767,11 @@ export function ShoppingCartView() {
                             {item.productTitle || item.customTitle}
                           </span>
                           <span className="text-[11px] text-[#5B6B61] tabular-nums">
-                            {item.quantity} {item.unit}
+                            {item.quantity} {translateUnit(t, item.unit)}
                           </span>
                         </div>
                         <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EEF7F0] text-[#15803D] font-bold">
-                          {translateLocation(item.targetLocation)}
+                          {translateLocation(t, item.targetLocation)}
                         </span>
                       </div>
                     );

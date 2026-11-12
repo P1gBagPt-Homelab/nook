@@ -17,6 +17,10 @@ import { ExpenseDrawer, FinanceCategory } from "../components/finance/ExpenseDra
 import { BudgetCapDrawer } from "../components/finance/BudgetCapDrawer";
 import { SubscriptionDrawer } from "../components/finance/SubscriptionDrawer";
 import { useTranslation } from "../i18n/I18nContext";
+import {
+  translateExpenseTitle,
+  translateFinanceCategory,
+} from "../i18n/helpers";
 import type { TranslationKey } from "../i18n/locales/en";
 
 interface FinanceOverview {
@@ -318,7 +322,9 @@ export function FinancePage() {
                     key={cat.id}
                     className="flex items-center justify-between text-xs font-semibold"
                   >
-                    <span className="text-[#475B4E]">{cat.name}</span>
+                    <span className="text-[#475B4E]">
+                      {translateFinanceCategory(t, cat.name)}
+                    </span>
                     <span className="text-[#14201A] font-bold tabular-nums">
                       €{cat.spentThisMonth.toFixed(2)}
                       {cat.monthlyBudget != null && (
@@ -392,7 +398,7 @@ export function FinancePage() {
                         : "bg-white text-[#5B6B61] border-[#E2ECE4] hover:text-[#14201A]"
                     }`}
                   >
-                    {cat.name}
+                    {translateFinanceCategory(t, cat.name)}
                   </button>
                 ))}
               </div>
@@ -424,11 +430,11 @@ export function FinancePage() {
                     <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-bold text-[#14201A] truncate">
-                          {exp.title}
+                          {translateExpenseTitle(t, exp.title)}
                         </span>
                         {exp.categoryName && (
                           <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#E0F2FE] text-[#0369A1]">
-                            {exp.categoryName}
+                            {translateFinanceCategory(t, exp.categoryName)}
                           </span>
                         )}
                         {exp.isSplit && (
@@ -463,7 +469,9 @@ export function FinancePage() {
                       <button
                         type="button"
                         onClick={() => handleDeleteExpense(exp.id)}
-                        aria-label={t("finance.deleteItemAria", { title: exp.title })}
+                        aria-label={t("finance.deleteItemAria", {
+                          title: translateExpenseTitle(t, exp.title),
+                        })}
                         className="w-9 h-9 rounded-full hover:bg-[#FEE2E2] text-[#5B6B61] hover:text-[#DC2626] flex items-center justify-center transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -600,7 +608,7 @@ export function FinancePage() {
                             exp.isSettled ? "text-[#475B4E] line-through" : "text-[#14201A]"
                           }`}
                         >
-                          {exp.title}
+                          {translateExpenseTitle(t, exp.title)}
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${

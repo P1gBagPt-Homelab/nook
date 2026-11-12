@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Check, Loader2, SlidersHorizontal } from "lucide-react";
 import type { FinanceCategory } from "./ExpenseDrawer";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateFinanceCategory } from "../../i18n/helpers";
 
 interface BudgetCapDrawerProps {
   isOpen: boolean;
@@ -116,7 +117,7 @@ export function BudgetCapDrawer({
                   {categories.map((cat) => (
                     <div key={cat.id}>
                       <label className="text-[11px] font-bold text-[#475B4E] block mb-1">
-                        {cat.name} (€)
+                        {translateFinanceCategory(t, cat.name)} (€)
                       </label>
                       <input
                         type="number"

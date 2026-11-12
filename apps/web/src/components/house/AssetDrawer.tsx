@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Check, FileText, Loader2, Upload } from "lucide-react";
 import { usePhotoUpload } from "../../hooks/usePhotoUpload";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 interface AssetDrawerProps {
@@ -52,7 +53,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
       setManualFileName(file.name);
       navigator.vibrate?.(25);
     } catch (err: any) {
-      setError(err.message || t("asset.pdfUploadFailed"));
+      setError(translateApiError(t, err?.message, "asset.pdfUploadFailed"));
     }
   }
 
@@ -81,7 +82,7 @@ export function AssetDrawer({ isOpen, onClose, onSaved }: AssetDrawerProps) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || t("asset.registerFailed"));
+        throw new Error(translateApiError(t, err.detail, "asset.registerFailed"));
       }
 
       navigator.vibrate?.(35);

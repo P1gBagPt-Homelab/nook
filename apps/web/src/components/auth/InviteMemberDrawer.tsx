@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Check, Copy, Loader2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import type { HouseholdMember } from "@nook/shared";
 import { useTranslation } from "../../i18n/I18nContext";
+import { translateApiError } from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 interface InviteMemberDrawerProps {
@@ -66,7 +67,7 @@ export function InviteMemberDrawer({ isOpen, onClose }: InviteMemberDrawerProps)
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.detail || t("invite.failedGenerate"));
+        throw new Error(translateApiError(t, data.detail, "invite.failedGenerate"));
       }
 
       const originUrl = data.inviteToken

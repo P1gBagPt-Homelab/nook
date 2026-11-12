@@ -8,6 +8,11 @@ import {
   X,
 } from "lucide-react";
 import { useTranslation } from "../../i18n/I18nContext";
+import {
+  translateLocation,
+  translateProductCategory,
+  translateUnit,
+} from "../../i18n/helpers";
 import type { TranslationKey } from "../../i18n/locales/en";
 
 export interface StockItem {
@@ -303,11 +308,6 @@ export function StockInventoryView() {
               badge: "bg-[#F4F9F5] text-[#14201A]",
             };
 
-            const translatedLocation =
-              ["Pantry", "Fridge", "Freezer", "Cleaning"].includes(item.location)
-                ? t(`location.${item.location}` as TranslationKey)
-                : item.location;
-
             return (
               <div
                 key={item.id}
@@ -318,7 +318,8 @@ export function StockInventoryView() {
                     {item.title}
                   </div>
                   <div className="text-xs font-semibold text-[#5B6B61] mt-0.5 truncate">
-                    {translatedLocation} · {item.category}
+                    {translateLocation(t, item.location)} ·{" "}
+                    {translateProductCategory(t, item.category)}
                     {item.brand ? ` · ${item.brand}` : ""}
                   </div>
                 </div>
@@ -357,7 +358,7 @@ export function StockInventoryView() {
                       </button>
                     </div>
                     <span className="text-xs font-semibold text-[#5B6B61]">
-                      {item.unit}
+                      {translateUnit(t, item.unit)}
                     </span>
                   </div>
 

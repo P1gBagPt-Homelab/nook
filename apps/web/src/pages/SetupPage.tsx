@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useTranslation } from "../i18n/I18nContext";
+import { translateApiError } from "../i18n/helpers";
 import { LanguageSwitcher } from "../components/common/LanguageSwitcher";
 
 interface SetupPageProps {
@@ -35,7 +36,7 @@ export function SetupPage({ onSetupComplete }: SetupPageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || t("auth.setup.failed"));
+        throw new Error(translateApiError(t, data.detail, "auth.setup.failed"));
       }
 
       navigator.vibrate?.(50);
