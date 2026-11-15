@@ -5,7 +5,6 @@ import {
   Sliders,
   CheckCircle2,
   AlertCircle,
-  RefreshCw,
 } from "lucide-react";
 import { PlanMeal, DailyPlanSummary, MacroProfile } from "@nook/shared";
 import { MealCard } from "./MealCard";
@@ -13,13 +12,13 @@ import { MealDetailDrawer } from "./MealDetailDrawer";
 import { MealSettingsDrawer } from "./MealSettingsDrawer";
 import { MealSwapDrawer } from "./MealSwapDrawer";
 import { SyncToCartModal } from "./SyncToCartModal";
+import { GeneratePlanDrawer } from "./GeneratePlanDrawer";
 
 export function MealPlanView() {
   const [days, setDays] = useState<DailyPlanSummary[]>([]);
   const [profile, setProfile] = useState<MacroProfile | null>(null);
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   // Drawers
   const [selectedMeal, setSelectedMeal] = useState<PlanMeal | null>(null);
@@ -27,6 +26,7 @@ export function MealPlanView() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSwapOpen, setIsSwapOpen] = useState(false);
   const [isSyncCartOpen, setIsSyncCartOpen] = useState(false);
+  const [isGenerateOpen, setIsGenerateOpen] = useState(false);
 
   async function fetchPlan() {
     try {
@@ -50,7 +50,6 @@ export function MealPlanView() {
   }, []);
 
   async function handleGeneratePlan() {
-    setIsGenerating(true);
     try {
       const today = new Date().toISOString().split("T")[0];
       const res = await fetch("/api/meals/generate", {
@@ -58,7 +57,7 @@ export function MealPlanView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           startDate: today,
-          batchRepetition: true,
+          repeatMode: "smart_repeats",
         }),
       });
 
@@ -69,8 +68,6 @@ export function MealPlanView() {
       }
     } catch {
       // error
-    } finally {
-      setIsGenerating(false);
     }
   }
 
@@ -126,12 +123,11 @@ export function MealPlanView() {
         <div className="flex items-center gap-2 pt-1 border-t border-[#E2ECE4]">
           <button
             type="button"
-            disabled={isGenerating}
-            onClick={handleGeneratePlan}
-            className="flex-1 min-h-[38px] py-1.5 px-3 rounded-full text-xs font-extrabold flex items-center justify-center gap-1.5 bg-[#F4F9F5] border border-[#E2ECE4] text-[#14201A] hover:bg-[#EEF7F0] cursor-pointer font-display transition-colors disabled:opacity-50"
+            onClick={() => setIsGenerateOpen(true)}
+            className="flex-1 min-h-[38px] py-1.5 px-3 rounded-full text-xs font-extrabold flex items-center justify-center gap-1.5 bg-[#F4F9F5] border border-[#E2ECE4] text-[#14201A] hover:bg-[#EEF7F0] cursor-pointer font-display transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-[#5B6B61] ${isGenerating ? "animate-spin" : ""}`} />
-            <span>{isGenerating ? "Optimizing..." : "New 7-Day Plan"}</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#15803D]" />
+            <span>New 7-Day Plan</span>
           </button>
 
           {activePlanId && (
@@ -310,6 +306,13 @@ export function MealPlanView() {
         onSwapConfirmed={() => {
           fetchPlan();
         }}
+      />
+
+      <GeneratePlanDrawer
+        isOpen={isGenerateOpen}
+        onClose={() => setIsGenerateOpen(false)}
+        profile={profile}
+        onPlanGenerated={fetchPlan}
       />
 
       {activePlanId && (

@@ -174,8 +174,12 @@ export const generatePlanSchema = z.object({
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // 'YYYY-MM-DD'
   targetCalories: z.number().int().min(1000).max(6000).optional(),
   targetProteinGrams: z.number().int().min(30).max(400).optional(),
-  cookSessionsPerWeek: z.number().int().min(1).max(7).optional(),
-  batchRepetition: z.boolean().default(true),
+  repeatMode: z.enum(["none", "smart_repeats"]).default("smart_repeats"),
+  cookSessionsPerWeek: z.number().int().min(1).max(7).default(4),
+  excludedIngredients: z.array(z.string()).default([]),
+  usePantryStock: z.boolean().default(true),
+  equipment: z.array(z.string()).optional(),
+  batchRepetition: z.boolean().optional(),
 });
 
 export const swapMealSchema = z.object({

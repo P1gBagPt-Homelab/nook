@@ -25,6 +25,7 @@ import { USDA_STAPLES, STARTER_RECIPES } from "./services/usda-staples";
 import { calculateRecipeNutrition } from "./services/nutrition-calculator";
 import { generateWeeklyPlan, RecipeWithMacros } from "./services/plan-generator";
 import { computeCartFromStock, NeededIngredient, StockInventoryItem } from "./services/stock-crosscheck";
+import { generateAndSaveDynamicPlan } from "./services/dynamic-plan-orchestrator";
 
 /**
  * Ensures USDA staples and starter recipes exist in the database.
@@ -393,13 +394,13 @@ export const mealsRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // 5. Generate New 7-Day Plan
+  // 5. Generate New Dynamic AI Plan
   fastify.post(
     "/generate",
     {
       preHandler: fastify.authenticate,
       schema: {
-        description: "Generate a new 7-day meal plan satisfying daily macro targets",
+        description: "Generate a new 7-day dynamic meal plan satisfying daily macro targets, repetition rules, and exclusions",
         tags: ["Meals"],
       },
     },
@@ -416,7 +417,13 @@ export const mealsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      const { startDate, batchRepetition } = parseResult.data;
+      const {
+        startDate,
+        repeatMode = "smart_repeats",
+        cookSessionsPerWeek = 4,
+        excludedIngredients = [],
+        usePantryStock = true,
+      } = parseResult.data;
 
       const [profile] = await db
         .select()
@@ -426,68 +433,27 @@ export const mealsRoutes: FastifyPluginAsync = async (fastify) => {
       const targetCalories = parseResult.data.targetCalories || profile?.dailyCalories || 2200;
       const targetProtein = parseResult.data.targetProteinGrams || profile?.dailyProteinGrams || 150;
 
-      // Get recipes with calculated nutrition
-      const allRecipes = await db
-        .select()
-        .from(recipes)
-        .where(eq(recipes.householdId, householdId));
+      const mergedExclusions = Array.from(
+        new Set([...(profile?.excludedIngredients || []), ...excludedIngredients])
+      );
+      const equipment = parseResult.data.equipment || profile?.equipment || ["stovetop", "oven", "air_fryer"];
 
-      const recipesWithMacros: RecipeWithMacros[] = [];
-
-      for (const r of allRecipes) {
-        const ingredients = await db
+      // Fetch pantry items if enabled
+      let pantryItems: string[] = [];
+      if (usePantryStock) {
+        const dbStock = await db
           .select({
-            amountGrams: recipeIngredients.amountGrams,
-            name: recipeIngredients.name,
-            usdaId: usdaFoodItems.id,
-            fdcId: usdaFoodItems.fdcId,
-            caloriesPer100g: usdaFoodItems.caloriesPer100g,
-            proteinPer100g: usdaFoodItems.proteinPer100g,
-            carbsPer100g: usdaFoodItems.carbsPer100g,
-            fatPer100g: usdaFoodItems.fatPer100g,
+            title: productCatalog.title,
           })
-          .from(recipeIngredients)
-          .leftJoin(usdaFoodItems, eq(recipeIngredients.usdaFoodId, usdaFoodItems.id))
-          .where(eq(recipeIngredients.recipeId, r.id));
+          .from(stockItems)
+          .leftJoin(productCatalog, eq(stockItems.productId, productCatalog.id))
+          .where(eq(stockItems.householdId, householdId));
 
-        const nutrition = calculateRecipeNutrition(
-          ingredients.map((ing) => ({
-            name: ing.name,
-            amountGrams: Number(ing.amountGrams),
-            usda: ing.usdaId
-              ? {
-                  fdcId: ing.fdcId || undefined,
-                  caloriesPer100g: ing.caloriesPer100g || 0,
-                  proteinPer100g: ing.proteinPer100g || 0,
-                  carbsPer100g: ing.carbsPer100g || 0,
-                  fatPer100g: ing.fatPer100g || 0,
-                }
-              : null,
-          })),
-          r.baseServings
-        );
-
-        recipesWithMacros.push({
-          id: r.id,
-          title: r.title,
-          mealType: r.mealType as any,
-          equipment: r.equipment,
-          baseServings: r.baseServings,
-          caloriesPerServing: nutrition.perServing.calories,
-          proteinPerServing: nutrition.perServing.proteinGrams,
-          carbsPerServing: nutrition.perServing.carbsGrams,
-          fatPerServing: nutrition.perServing.fatGrams,
-        });
+        pantryItems = dbStock.map((s) => s.title).filter(Boolean) as string[];
       }
 
-      // Generate 7-day schedule
-      const schedules = generateWeeklyPlan({
-        startDate,
-        targetCalories,
-        targetProteinGrams: targetProtein,
-        availableRecipes: recipesWithMacros,
-        batchRepetition,
-      });
+      // Fetch USDA catalog
+      const usdaCatalog = await db.select().from(usdaFoodItems);
 
       // Archive any existing active plans for this household
       await db
@@ -500,39 +466,22 @@ export const mealsRoutes: FastifyPluginAsync = async (fastify) => {
           )
         );
 
-      const endDate = schedules[schedules.length - 1].date;
+      // Generate dynamic plan (Ollama AI + USDA Arithmetic Engine)
+      const newPlan = await generateAndSaveDynamicPlan({
+        householdId,
+        profileId: profile?.id || null,
+        startDate,
+        targetCalories,
+        targetProteinGrams: targetProtein,
+        repeatMode: repeatMode as "none" | "smart_repeats",
+        cookSessions: cookSessionsPerWeek,
+        excludedIngredients: mergedExclusions,
+        equipment,
+        pantryItems,
+        usdaCatalog,
+      });
 
-      // Insert new plan
-      const [newPlan] = await db
-        .insert(mealPlans)
-        .values({
-          householdId,
-          profileId: profile?.id || null,
-          startDate,
-          endDate,
-          status: "active",
-        })
-        .returning();
-
-      // Insert plan meals
-      for (const day of schedules) {
-        for (const m of day.meals) {
-          await db.insert(planMeals).values({
-            planId: newPlan.id,
-            date: m.date,
-            mealType: m.mealType,
-            recipeId: m.recipeId,
-            servings: m.servings,
-            computedCalories: m.calories,
-            computedProteinGrams: m.proteinGrams.toString(),
-            computedCarbsGrams: m.carbsGrams.toString(),
-            computedFatGrams: m.fatGrams.toString(),
-            isBatchRepeat: m.isBatchRepeat,
-          });
-        }
-      }
-
-      return { plan: newPlan, schedules };
+      return { plan: newPlan };
     }
   );
 
