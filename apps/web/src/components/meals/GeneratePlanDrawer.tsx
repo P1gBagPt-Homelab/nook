@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { MacroProfile } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface GeneratePlanDrawerProps {
   isOpen: boolean;
@@ -20,14 +21,14 @@ interface GeneratePlanDrawerProps {
 }
 
 const COMMON_DISLIKES = [
-  "Mushrooms",
-  "Cilantro",
-  "Pork",
-  "Shellfish",
-  "Dairy",
-  "Peanuts",
-  "Bell Pepper",
-  "Onion",
+  { key: "food.mushrooms", fallback: "Mushrooms" },
+  { key: "food.cilantro", fallback: "Cilantro" },
+  { key: "food.pork", fallback: "Pork" },
+  { key: "food.shellfish", fallback: "Shellfish" },
+  { key: "food.dairy", fallback: "Dairy" },
+  { key: "food.peanuts", fallback: "Peanuts" },
+  { key: "food.bell_pepper", fallback: "Bell Pepper" },
+  { key: "food.onion", fallback: "Onion" },
 ];
 
 export function GeneratePlanDrawer({
@@ -36,6 +37,7 @@ export function GeneratePlanDrawer({
   profile,
   onPlanGenerated,
 }: GeneratePlanDrawerProps) {
+  const { t } = useTranslation();
   const [repeatMode, setRepeatMode] = useState<"smart_repeats" | "none">("smart_repeats");
   const [cookSessions, setCookSessions] = useState(profile?.cookSessionsPerWeek || 4);
   const [excludedList, setExcludedList] = useState<string[]>(profile?.excludedIngredients || []);
@@ -59,14 +61,14 @@ export function GeneratePlanDrawer({
 
   async function handleGenerate() {
     setIsGenerating(true);
-    setGenerationStep("AI Chef crafting dynamic recipes...");
+    setGenerationStep(t("meals.generate.stepAi"));
 
     try {
       const today = new Date().toISOString().split("T")[0];
 
       // Step transition
       const stepTimer = setTimeout(() => {
-        setGenerationStep("Auditing USDA FoodData Central nutrition...");
+        setGenerationStep(t("meals.generate.stepUsda"));
       }, 1200);
 
       const res = await fetch("/api/meals/generate", {
@@ -86,7 +88,7 @@ export function GeneratePlanDrawer({
       clearTimeout(stepTimer);
 
       if (res.ok) {
-        setGenerationStep("Balancing daily macros...");
+        setGenerationStep(t("meals.generate.stepMacros"));
         navigator.vibrate?.([20, 50, 20]);
         setTimeout(() => {
           onPlanGenerated();
@@ -113,10 +115,10 @@ export function GeneratePlanDrawer({
             <div>
               <Drawer.Title className="text-lg font-extrabold text-[#14201A] font-display flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#15803D]" />
-                <span>Generate Dynamic Week Plan</span>
+                <span>{t("meals.generate.title")}</span>
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] mt-0.5">
-                Infinite AI recipes + deterministic USDA macro balance
+                {t("meals.generate.subtitle")}
               </p>
             </div>
             {!isGenerating && (
@@ -136,7 +138,7 @@ export function GeneratePlanDrawer({
             <div className="bg-white p-4 rounded-[18px] border border-[#E2ECE4] space-y-3">
               <span className="text-xs font-extrabold uppercase tracking-wider text-[#14201A] font-display flex items-center gap-1.5">
                 <ChefHat className="w-4 h-4 text-[#15803D]" />
-                <span>Recipe Repetition & Cooking Style</span>
+                <span>{t("meals.generate.styleTitle")}</span>
               </span>
 
               <div className="grid grid-cols-2 gap-2">
@@ -157,10 +159,10 @@ export function GeneratePlanDrawer({
                     )}
                   </div>
                   <div className="text-xs font-bold text-[#14201A] font-display">
-                    Batch & Leftovers
+                    {t("meals.generate.batchTitle")}
                   </div>
                   <div className="text-[10px] text-[#5B6B61] mt-0.5 leading-snug">
-                    Cook dinner once, repeat for lunch. Saves time.
+                    {t("meals.generate.batchDesc")}
                   </div>
                 </button>
 
@@ -181,10 +183,10 @@ export function GeneratePlanDrawer({
                     )}
                   </div>
                   <div className="text-xs font-bold text-[#14201A] font-display">
-                    Fresh Every Day
+                    {t("meals.generate.freshTitle")}
                   </div>
                   <div className="text-[10px] text-[#5B6B61] mt-0.5 leading-snug">
-                    21 unique meals across the week. Zero repeats.
+                    {t("meals.generate.freshDesc")}
                   </div>
                 </button>
               </div>
@@ -193,8 +195,10 @@ export function GeneratePlanDrawer({
               {repeatMode === "smart_repeats" && (
                 <div className="pt-2 border-t border-[#E2ECE4] space-y-1.5">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="text-[#5B6B61]">Cooking Sessions per Week</span>
-                    <span className="text-[#15803D] font-mono">{cookSessions} dinners cooked</span>
+                    <span className="text-[#5B6B61]">{t("meals.generate.cookSessions")}</span>
+                    <span className="text-[#15803D] font-mono">
+                      {t("meals.generate.cookSessionsCount", { count: cookSessions })}
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -205,9 +209,9 @@ export function GeneratePlanDrawer({
                     className="w-full accent-[#15803D]"
                   />
                   <div className="flex justify-between text-[10px] text-[#5B6B61] font-semibold">
-                    <span>2 times</span>
-                    <span>4 times (standard)</span>
-                    <span>6 times</span>
+                    <span>2</span>
+                    <span>4</span>
+                    <span>6</span>
                   </div>
                 </div>
               )}
@@ -218,10 +222,10 @@ export function GeneratePlanDrawer({
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-[#14201A] font-display flex items-center gap-1.5">
                   <Ban className="w-4 h-4 text-[#FF6B4A]" />
-                  <span>Excluded Ingredients ("No-Go" List)</span>
+                  <span>{t("meals.generate.excludedTitle")}</span>
                 </span>
                 <span className="text-[11px] font-bold text-[#5B6B61]">
-                  {excludedList.length} excluded
+                  {t("meals.generate.excludedCount", { count: excludedList.length })}
                 </span>
               </div>
 
@@ -229,7 +233,7 @@ export function GeneratePlanDrawer({
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Type food to exclude (e.g. Cilantro)..."
+                  placeholder={t("meals.generate.excludePlaceholder")}
                   value={customExcludeInput}
                   onChange={(e) => setCustomExcludeInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -246,7 +250,7 @@ export function GeneratePlanDrawer({
                   className="h-[38px] px-3 rounded-full bg-[#15803D] text-white text-xs font-bold flex items-center gap-1 cursor-pointer hover:bg-[#166534]"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add</span>
+                  <span>{t("meals.generate.addExclude")}</span>
                 </button>
               </div>
 
@@ -274,21 +278,29 @@ export function GeneratePlanDrawer({
               {/* Quick Suggestion Chips */}
               <div className="pt-2 border-t border-[#E2ECE4] space-y-1.5">
                 <span className="text-[10px] font-bold text-[#5B6B61] uppercase tracking-wider">
-                  Quick Exclude:
+                  {t("meals.generate.quickExclude")}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {COMMON_DISLIKES.filter(
-                    (d) => !excludedList.some((ex) => ex.toLowerCase() === d.toLowerCase())
-                  ).map((dislike) => (
-                    <button
-                      key={dislike}
-                      type="button"
-                      onClick={() => handleAddExclude(dislike)}
-                      className="text-[11px] font-semibold text-[#5B6B61] bg-[#F4F9F5] border border-[#E2ECE4] px-2 py-0.5 rounded-full hover:border-[#FF6B4A] hover:text-[#FF6B4A] cursor-pointer transition-colors"
-                    >
-                      + {dislike}
-                    </button>
-                  ))}
+                    (d) =>
+                      !excludedList.some(
+                        (ex) =>
+                          ex.toLowerCase() === (t(d.key as any) || d.fallback).toLowerCase() ||
+                          ex.toLowerCase() === d.fallback.toLowerCase()
+                      )
+                  ).map((dislike) => {
+                    const label = t(dislike.key as any) || dislike.fallback;
+                    return (
+                      <button
+                        key={dislike.key}
+                        type="button"
+                        onClick={() => handleAddExclude(label)}
+                        className="text-[11px] font-semibold text-[#5B6B61] bg-[#F4F9F5] border border-[#E2ECE4] px-2 py-0.5 rounded-full hover:border-[#FF6B4A] hover:text-[#FF6B4A] cursor-pointer transition-colors"
+                      >
+                        + {label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -299,9 +311,11 @@ export function GeneratePlanDrawer({
                 <div className="flex items-center gap-2.5">
                   <Package className="w-4 h-4 text-[#15803D]" />
                   <div>
-                    <div className="text-xs font-bold text-[#14201A]">Pantry & Fridge Awareness</div>
+                    <div className="text-xs font-bold text-[#14201A]">
+                      {t("meals.generate.pantryStockTitle")}
+                    </div>
                     <div className="text-[11px] text-[#5B6B61]">
-                      Prioritize ingredients currently in stock
+                      {t("meals.generate.pantryStockDesc")}
                     </div>
                   </div>
                 </div>
@@ -324,7 +338,7 @@ export function GeneratePlanDrawer({
               className="w-full min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 bg-[#15803D] text-white hover:bg-[#166534] transition-colors cursor-pointer font-display disabled:opacity-50"
             >
               <Sparkles className={`w-4 h-4 ${isGenerating ? "animate-spin" : ""}`} />
-              <span>{isGenerating ? generationStep : "Generate 7-Day Plan"}</span>
+              <span>{isGenerating ? generationStep : t("meals.generate.btn")}</span>
             </button>
           </div>
         </Drawer.Content>

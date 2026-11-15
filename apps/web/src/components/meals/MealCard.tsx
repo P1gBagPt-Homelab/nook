@@ -1,5 +1,6 @@
 import { Flame, Dumbbell, Clock, Repeat, CheckCircle2, ChevronRight, Store } from "lucide-react";
 import { PlanMeal } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface MealCardProps {
   meal: PlanMeal;
@@ -8,17 +9,12 @@ interface MealCardProps {
 }
 
 export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
+  const { t } = useTranslation();
   const isCooked = meal.isCooked;
   const isDiningOut = meal.isDiningOut;
   const isBatch = meal.isBatchRepeat;
 
-  const mealTypeLabels: Record<string, string> = {
-    breakfast: "Breakfast",
-    lunch: "Lunch",
-    dinner: "Dinner",
-    snack: "Snack",
-  };
-
+  const mealTypeLabel = t(`meals.type.${meal.mealType}` as any) || meal.mealType;
   const title = meal.customName || meal.recipe?.title || (meal as any).recipeTitle || "Custom Meal";
   const cookMinutes = (meal as any).recipeCookMinutes ?? meal.recipe?.cookMinutes ?? 15;
   const prepMinutes = (meal as any).recipePrepMinutes ?? meal.recipe?.prepMinutes ?? 10;
@@ -37,7 +33,7 @@ export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             {/* Meal Type Tag */}
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#5B6B61] font-display">
-              {mealTypeLabels[meal.mealType] || meal.mealType}
+              {mealTypeLabel}
             </span>
 
             {/* Total Minutes Badge */}
@@ -52,7 +48,7 @@ export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
             {isBatch && (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#6D28D9] bg-[#EDE9FE] px-2 py-0.5 rounded-full border border-[#DDD6FE]">
                 <Repeat className="w-3 h-3 stroke-[2.5]" />
-                <span>Batch Repeat</span>
+                <span>{t("meals.batchRepeat")}</span>
               </span>
             )}
 
@@ -60,7 +56,7 @@ export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
             {isDiningOut && (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D97706] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
                 <Store className="w-3 h-3 stroke-[2.5]" />
-                <span>Dining Out</span>
+                <span>{t("meals.diningOut")}</span>
               </span>
             )}
           </div>
@@ -77,12 +73,12 @@ export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
           <div className="flex items-center gap-2 mt-2.5 flex-wrap">
             <span className="inline-flex items-center gap-1 text-xs font-bold text-[#14201A] bg-[#EEF7F0] px-2.5 py-1 rounded-full border border-[#CDE5D3]">
               <Flame className="w-3.5 h-3.5 text-[#15803D] fill-[#15803D]" />
-              <span>{meal.computedCalories} kcal</span>
+              <span>{meal.computedCalories} {t("meals.kcal")}</span>
             </span>
 
             <span className="inline-flex items-center gap-1 text-xs font-bold text-[#15803D] bg-[#DCFCE7] px-2.5 py-1 rounded-full border border-[#86EFAC]">
               <Dumbbell className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{meal.computedProteinGrams}g protein</span>
+              <span>{meal.computedProteinGrams}{t("meals.gProtein")}</span>
             </span>
 
             {Number(meal.computedCarbsGrams) > 0 && (
@@ -98,7 +94,7 @@ export function MealCard({ meal, onSelect, onToggleCooked }: MealCardProps) {
           <button
             type="button"
             onClick={() => onToggleCooked(meal.id)}
-            title={isCooked ? "Mark uncooked" : "Mark cooked"}
+            title={isCooked ? t("meals.markUncooked") : t("meals.markCooked")}
             className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors cursor-pointer ${
               isCooked
                 ? "bg-[#15803D] text-white border-[#15803D]"

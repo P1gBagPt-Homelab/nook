@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Drawer } from "vaul";
 import { X, ShoppingBag, CheckCircle, Package, ShieldCheck } from "lucide-react";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface SyncToCartModalProps {
   planId: string;
@@ -15,6 +16,7 @@ export function SyncToCartModal({
   onClose,
   onCartSynced,
 }: SyncToCartModalProps) {
+  const { t } = useTranslation();
   const [deductStock, setDeductStock] = useState(true);
   const [roundToPackage, setRoundToPackage] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -58,10 +60,10 @@ export function SyncToCartModal({
             <div>
               <Drawer.Title className="text-lg font-extrabold text-[#14201A] font-display flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#15803D]" />
-                <span>Sync Plan to Cart</span>
+                <span>{t("meals.sync.title")}</span>
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] mt-0.5">
-                Pantry cross-check & aisle-grouped packaging
+                {t("meals.sync.subtitle")}
               </p>
             </div>
             <button
@@ -81,10 +83,10 @@ export function SyncToCartModal({
                 <div className="bg-[#EEF7F0] p-4 rounded-[18px] border border-[#CDE5D3] space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-[#15803D] font-display">
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Zero Waste Domestic Feedback Loop</span>
+                    <span>{t("meals.sync.bannerTitle")}</span>
                   </div>
                   <p className="text-xs text-[#475B4E] leading-relaxed">
-                    Nook cross-checks your 7-day meal plan against existing <strong>Pantry, Fridge, and Freezer</strong> stock. Ingredients you already own are excluded so you don't overbuy.
+                    {t("meals.sync.bannerDesc")}
                   </p>
                 </div>
 
@@ -94,8 +96,12 @@ export function SyncToCartModal({
                     <div className="flex items-center gap-2.5">
                       <Package className="w-4 h-4 text-[#15803D]" />
                       <div>
-                        <div className="text-xs font-bold text-[#14201A]">Deduct Existing Stock</div>
-                        <div className="text-[11px] text-[#5B6B61]">Skip items already present in your pantry</div>
+                        <div className="text-xs font-bold text-[#14201A]">
+                          {t("meals.sync.deductStockTitle")}
+                        </div>
+                        <div className="text-[11px] text-[#5B6B61]">
+                          {t("meals.sync.deductStockDesc")}
+                        </div>
                       </div>
                     </div>
                     <input
@@ -112,8 +118,12 @@ export function SyncToCartModal({
                     <div className="flex items-center gap-2.5">
                       <ShoppingBag className="w-4 h-4 text-[#0284C7]" />
                       <div>
-                        <div className="text-xs font-bold text-[#14201A]">Round to Supermarket Packs</div>
-                        <div className="text-[11px] text-[#5B6B61]">Buy 1kg bag instead of loose grams</div>
+                        <div className="text-xs font-bold text-[#14201A]">
+                          {t("meals.sync.roundPackTitle")}
+                        </div>
+                        <div className="text-[11px] text-[#5B6B61]">
+                          {t("meals.sync.roundPackDesc")}
+                        </div>
                       </div>
                     </div>
                     <input
@@ -131,10 +141,10 @@ export function SyncToCartModal({
                 <div className="bg-[#DCFCE7] p-4 rounded-[18px] border border-[#86EFAC] text-center space-y-1">
                   <CheckCircle className="w-8 h-8 text-[#15803D] mx-auto mb-1 stroke-[2.2]" />
                   <h4 className="text-base font-extrabold text-[#14201A] font-display">
-                    {syncResult.itemsAdded} Items Added to Cart!
+                    {t("meals.sync.successTitle", { count: syncResult.itemsAdded })}
                   </h4>
                   <p className="text-xs text-[#15803D] font-semibold">
-                    Estimated total: €{syncResult.estimatedTotalCost}
+                    {t("meals.sync.successEst", { cost: syncResult.estimatedTotalCost })}
                   </p>
                 </div>
 
@@ -142,13 +152,13 @@ export function SyncToCartModal({
                 {syncResult.itemsCovered?.length > 0 && (
                   <div className="bg-white p-4 rounded-[18px] border border-[#E2ECE4] space-y-2">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-[#15803D] font-display">
-                      Already in Pantry Stock ({syncResult.itemsCovered.length})
+                      {t("meals.sync.coveredTitle", { count: syncResult.itemsCovered.length })}
                     </span>
                     <div className="divide-y divide-[#E2ECE4]/70">
                       {syncResult.itemsCovered.map((item: any, idx: number) => (
                         <div key={idx} className="py-1.5 flex justify-between text-xs text-[#5B6B61]">
                           <span>{item.name}</span>
-                          <span className="font-semibold text-[#15803D]">Covered</span>
+                          <span className="font-semibold text-[#15803D]">{t("meals.sync.covered")}</span>
                         </div>
                       ))}
                     </div>
@@ -168,7 +178,7 @@ export function SyncToCartModal({
                 className="w-full min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 bg-[#15803D] text-white hover:bg-[#166534] transition-colors cursor-pointer font-display disabled:opacity-50"
               >
                 <ShoppingBag className="w-4 h-4 stroke-[2.2]" />
-                <span>{isSyncing ? "Cross-checking Stock..." : "Generate Shopping Cart List"}</span>
+                <span>{isSyncing ? t("meals.sync.btnChecking") : t("meals.sync.btn")}</span>
               </button>
             ) : (
               <button
@@ -176,7 +186,7 @@ export function SyncToCartModal({
                 onClick={onClose}
                 className="w-full min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 bg-[#14201A] text-white hover:bg-[#2A3F33] transition-colors cursor-pointer font-display"
               >
-                <span>Done</span>
+                <span>{t("meals.sync.done")}</span>
               </button>
             )}
           </div>

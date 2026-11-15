@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { PlanMeal, Recipe } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface MealDetailDrawerProps {
   meal: PlanMeal | null;
@@ -27,6 +28,7 @@ export function MealDetailDrawer({
   onSwapClick,
   onToggleCooked,
 }: MealDetailDrawerProps) {
+  const { t } = useTranslation();
   const [recipeData, setRecipeData] = useState<Recipe | null>(null);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export function MealDetailDrawer({
           <div className="px-5 pb-3 border-b border-[#E2ECE4] flex items-start justify-between gap-3 bg-white">
             <div className="flex-1">
               <span className="text-xs font-extrabold uppercase tracking-wider text-[#15803D] font-display">
-                {meal.mealType} · {meal.date}
+                {t(`meals.type.${meal.mealType}` as any) || meal.mealType} · {meal.date}
               </span>
               <Drawer.Title className="text-lg md:text-xl font-extrabold text-[#14201A] font-display leading-tight mt-0.5">
                 {title}
@@ -90,7 +92,7 @@ export function MealDetailDrawer({
                   {meal.computedCalories}
                 </div>
                 <div className="text-[10px] font-bold text-[#5B6B61] uppercase tracking-wider">
-                  Calories
+                  {t("meals.calories")}
                 </div>
               </div>
 
@@ -102,7 +104,7 @@ export function MealDetailDrawer({
                   {meal.computedProteinGrams}g
                 </div>
                 <div className="text-[10px] font-bold text-[#15803D] uppercase tracking-wider">
-                  Protein
+                  {t("meals.protein")}
                 </div>
               </div>
 
@@ -112,7 +114,7 @@ export function MealDetailDrawer({
                   {meal.computedCarbsGrams}g
                 </div>
                 <div className="text-[10px] font-bold text-[#5B6B61] uppercase tracking-wider">
-                  Carbs
+                  {t("meals.carbs")}
                 </div>
               </div>
 
@@ -122,7 +124,7 @@ export function MealDetailDrawer({
                   {meal.computedFatGrams}g
                 </div>
                 <div className="text-[10px] font-bold text-[#5B6B61] uppercase tracking-wider">
-                  Fat
+                  {t("meals.fat")}
                 </div>
               </div>
             </div>
@@ -134,11 +136,11 @@ export function MealDetailDrawer({
                   <div className="flex items-center gap-2">
                     <Calculator className="w-4 h-4 text-[#15803D]" />
                     <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#14201A] font-display">
-                      USDA Line-by-Line Math
+                      {t("meals.details.usdaMath")}
                     </h4>
                   </div>
                   <span className="text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2 py-0.5 rounded-full border border-[#86EFAC]">
-                    Verified
+                    {t("meals.details.verified")}
                   </span>
                 </div>
 
@@ -148,7 +150,7 @@ export function MealDetailDrawer({
                       <div className="flex items-center justify-between font-bold text-[#14201A]">
                         <span>{ing.name}</span>
                         <span className="font-mono text-[#15803D]">
-                          {ing.amountGrams}g · {ing.calculation?.proteinGrams ?? 0}g protein
+                          {ing.amountGrams}g · {ing.calculation?.proteinGrams ?? 0}{t("meals.gProtein")}
                         </span>
                       </div>
                       {ing.calculation?.mathProof?.proteinFormula && (
@@ -168,23 +170,23 @@ export function MealDetailDrawer({
                 <div className="flex items-center gap-4 text-xs font-semibold text-[#5B6B61]">
                   <span className="inline-flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-[#15803D]" />
-                    <span>Prep: {recipeData.prepMinutes}m · Cook: {recipeData.cookMinutes}m</span>
+                    <span>{t("meals.details.prepCook", { prep: recipeData.prepMinutes, cook: recipeData.cookMinutes })}</span>
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <ChefHat className="w-4 h-4 text-[#15803D]" />
-                    <span>{recipeData.baseServings} Servings</span>
+                    <span>{t("meals.details.servings", { count: recipeData.baseServings })}</span>
                   </span>
                 </div>
 
                 {recipeData.equipment?.length > 0 && (
                   <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#E2ECE4]">
-                    <span className="text-[11px] font-bold text-[#5B6B61]">Equipment:</span>
+                    <span className="text-[11px] font-bold text-[#5B6B61]">{t("meals.details.equipment")}</span>
                     {recipeData.equipment.map((eq: string) => (
                       <span
                         key={eq}
-                        className="text-[11px] font-bold text-[#14201A] bg-[#F4F9F5] px-2 py-0.5 rounded-full border border-[#E2ECE4] uppercase"
+                        className="text-[11px] font-bold text-[#14201A] bg-[#F4F9F5] px-2 py-0.5 rounded-full border border-[#E2ECE4]"
                       >
-                        {eq.replace("_", " ")}
+                        {t(`equipment.${eq}` as any) || eq.replace("_", " ")}
                       </span>
                     ))}
                   </div>
@@ -196,7 +198,7 @@ export function MealDetailDrawer({
             {instructions.length > 0 && (
               <div className="bg-white rounded-[18px] border border-[#E2ECE4] p-4 space-y-2.5">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#14201A] font-display">
-                  Cooking Instructions
+                  {t("meals.details.instructions")}
                 </h4>
                 <ol className="space-y-2 list-decimal list-inside text-xs text-[#14201A] leading-relaxed">
                   {instructions.map((step: string, idx: number) => (
@@ -220,7 +222,7 @@ export function MealDetailDrawer({
               className="flex-1 min-h-[44px] py-2 px-3 rounded-full text-xs font-extrabold flex items-center justify-center gap-1.5 border border-[#E2ECE4] bg-white text-[#14201A] hover:bg-[#F4F9F5] cursor-pointer font-display"
             >
               <RefreshCw className="w-4 h-4 stroke-[2.2] text-[#5B6B61]" />
-              <span>Swap Recipe</span>
+              <span>{t("meals.details.swapRecipe")}</span>
             </button>
 
             <button
@@ -237,7 +239,7 @@ export function MealDetailDrawer({
               }`}
             >
               <CheckCircle2 className="w-4 h-4 stroke-[2.2]" />
-              <span>{isCooked ? "Mark Uncooked" : "Mark Cooked"}</span>
+              <span>{isCooked ? t("meals.markUncooked") : t("meals.markCooked")}</span>
             </button>
           </div>
         </Drawer.Content>

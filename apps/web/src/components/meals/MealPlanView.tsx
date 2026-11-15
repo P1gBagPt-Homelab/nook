@@ -7,6 +7,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { PlanMeal, DailyPlanSummary, MacroProfile } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 import { MealCard } from "./MealCard";
 import { MealDetailDrawer } from "./MealDetailDrawer";
 import { MealSettingsDrawer } from "./MealSettingsDrawer";
@@ -15,6 +16,7 @@ import { SyncToCartModal } from "./SyncToCartModal";
 import { GeneratePlanDrawer } from "./GeneratePlanDrawer";
 
 export function MealPlanView() {
+  const { t } = useTranslation();
   const [days, setDays] = useState<DailyPlanSummary[]>([]);
   const [profile, setProfile] = useState<MacroProfile | null>(null);
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
@@ -101,10 +103,10 @@ export function MealPlanView() {
           <div>
             <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#15803D] font-display">
               <Sparkles className="w-4 h-4" />
-              <span>Mealbird Engine · USDA Verified</span>
+              <span>{t("meals.engineTag")}</span>
             </div>
             <h2 className="text-lg font-extrabold text-[#14201A] font-display mt-0.5">
-              Weekly Macro Schedule
+              {t("meals.weeklySchedule")}
             </h2>
           </div>
 
@@ -115,7 +117,7 @@ export function MealPlanView() {
             className="h-9 px-3 rounded-full text-xs font-bold flex items-center gap-1.5 border border-[#E2ECE4] bg-[#F4F9F5] text-[#14201A] hover:bg-[#EEF7F0] cursor-pointer transition-colors"
           >
             <Sliders className="w-3.5 h-3.5 text-[#5B6B61]" />
-            <span className="hidden sm:inline">Goals</span>
+            <span className="hidden sm:inline">{t("meals.goalsBtn")}</span>
           </button>
         </div>
 
@@ -127,7 +129,7 @@ export function MealPlanView() {
             className="flex-1 min-h-[38px] py-1.5 px-3 rounded-full text-xs font-extrabold flex items-center justify-center gap-1.5 bg-[#F4F9F5] border border-[#E2ECE4] text-[#14201A] hover:bg-[#EEF7F0] cursor-pointer font-display transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#15803D]" />
-            <span>New 7-Day Plan</span>
+            <span>{t("meals.newPlanBtn")}</span>
           </button>
 
           {activePlanId && (
@@ -137,7 +139,7 @@ export function MealPlanView() {
               className="flex-1 min-h-[38px] py-1.5 px-3 rounded-full text-xs font-extrabold flex items-center justify-center gap-1.5 bg-[#15803D] text-white hover:bg-[#166534] cursor-pointer font-display transition-colors"
             >
               <ShoppingBag className="w-3.5 h-3.5 stroke-[2.2]" />
-              <span>Sync to Cart</span>
+              <span>{t("meals.syncCartBtn")}</span>
             </button>
           )}
         </div>
@@ -151,6 +153,7 @@ export function MealPlanView() {
             const dateObj = new Date(day.date + "T12:00:00Z");
             const shortDay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dateObj.getUTCDay()];
             const dayNum = dateObj.getUTCDate();
+            const translatedDay = t(`meals.day.${shortDay}` as any) || shortDay;
 
             return (
               <button
@@ -167,7 +170,7 @@ export function MealPlanView() {
                 }`}
               >
                 <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-80">
-                  {shortDay}
+                  {translatedDay}
                 </div>
                 <div className="text-base font-extrabold mt-0.5 leading-tight">
                   {dayNum}
@@ -198,10 +201,10 @@ export function MealPlanView() {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#5B6B61] font-display">
-                {activeDay.dayName}
+                {t(`meals.day.${activeDay.dayName}` as any) || activeDay.dayName}
               </span>
               <h3 className="text-sm font-extrabold text-[#14201A] font-display">
-                Daily Macro Balance
+                {t("meals.dailyBalance")}
               </h3>
             </div>
 
@@ -209,12 +212,12 @@ export function MealPlanView() {
             {activeDay.isCalorieCompliant && activeDay.isProteinCompliant ? (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2.5 py-1 rounded-full border border-[#86EFAC]">
                 <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Target Met</span>
+                <span>{t("meals.targetMet")}</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D97706] bg-[#FEF3C7] px-2.5 py-1 rounded-full border border-[#FDE68A]">
                 <AlertCircle className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Adjusting</span>
+                <span>{t("meals.adjusting")}</span>
               </span>
             )}
           </div>
@@ -224,7 +227,7 @@ export function MealPlanView() {
             {/* Calories Progress */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-[#5B6B61]">Calories</span>
+                <span className="text-[#5B6B61]">{t("meals.calories")}</span>
                 <span className="text-[#14201A] font-mono">
                   {activeDay.totalCalories} / {activeDay.targetCalories}
                 </span>
@@ -242,7 +245,7 @@ export function MealPlanView() {
             {/* Protein Progress */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-[#15803D]">Protein</span>
+                <span className="text-[#15803D]">{t("meals.protein")}</span>
                 <span className="text-[#15803D] font-mono">
                   {activeDay.totalProteinGrams}g / {activeDay.targetProteinGrams}g
                 </span>

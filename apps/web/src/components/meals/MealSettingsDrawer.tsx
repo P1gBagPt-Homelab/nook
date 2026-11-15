@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Drawer } from "vaul";
 import { X, Flame, Dumbbell, Wallet, Check, ChefHat } from "lucide-react";
 import { MacroProfile } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface MealSettingsDrawerProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function MealSettingsDrawer({
   profile,
   onProfileUpdated,
 }: MealSettingsDrawerProps) {
+  const { t } = useTranslation();
   const [calories, setCalories] = useState(2200);
   const [protein, setProtein] = useState(150);
   const [budget, setBudget] = useState(80);
@@ -90,10 +92,10 @@ export function MealSettingsDrawer({
           <div className="px-5 pb-3 border-b border-[#E2ECE4] flex items-center justify-between bg-white">
             <div>
               <Drawer.Title className="text-lg font-extrabold text-[#14201A] font-display">
-                Macro Goals & Kitchen Rules
+                {t("meals.settings.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] mt-0.5">
-                Mealbird per-day arithmetic constraints
+                {t("meals.settings.subtitle")}
               </p>
             </div>
             <button
@@ -112,10 +114,10 @@ export function MealSettingsDrawer({
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs font-bold text-[#14201A] font-display">
                   <Flame className="w-4 h-4 text-[#15803D]" />
-                  <span>Daily Calorie Target</span>
+                  <span>{t("meals.settings.dailyCalories")}</span>
                 </span>
                 <span className="text-base font-extrabold text-[#14201A] font-display">
-                  {calories} kcal
+                  {calories} {t("meals.kcal")}
                 </span>
               </div>
               <input
@@ -139,7 +141,7 @@ export function MealSettingsDrawer({
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs font-bold text-[#15803D] font-display">
                   <Dumbbell className="w-4 h-4" />
-                  <span>Daily Protein Target</span>
+                  <span>{t("meals.settings.dailyProtein")}</span>
                 </span>
                 <span className="text-base font-extrabold text-[#15803D] font-display">
                   {protein}g
@@ -166,7 +168,7 @@ export function MealSettingsDrawer({
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs font-bold text-[#14201A] font-display">
                   <Wallet className="w-4 h-4 text-[#0284C7]" />
-                  <span>Weekly Grocery Budget</span>
+                  <span>{t("meals.settings.weeklyBudget")}</span>
                 </span>
                 <span className="text-base font-extrabold text-[#0284C7] font-display">
                   €{budget}
@@ -187,7 +189,7 @@ export function MealSettingsDrawer({
             <div className="bg-white p-4 rounded-[18px] border border-[#E2ECE4] space-y-2.5">
               <span className="flex items-center gap-1.5 text-xs font-bold text-[#14201A] font-display">
                 <ChefHat className="w-4 h-4 text-[#15803D]" />
-                <span>Kitchen Equipment Owned</span>
+                <span>{t("meals.settings.equipment")}</span>
               </span>
               <div className="flex flex-wrap gap-2 pt-1">
                 {ALL_EQUIPMENT.map((eq) => {
@@ -204,7 +206,7 @@ export function MealSettingsDrawer({
                       }`}
                     >
                       {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      <span>{eq.label}</span>
+                      <span>{t(`equipment.${eq.id}` as any) || eq.label}</span>
                     </button>
                   );
                 })}
@@ -220,7 +222,7 @@ export function MealSettingsDrawer({
               onClick={handleSave}
               className="w-full min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 bg-[#15803D] text-white hover:bg-[#166534] transition-colors cursor-pointer font-display disabled:opacity-50"
             >
-              <span>{isSaving ? "Saving..." : "Save Preferences"}</span>
+              <span>{isSaving ? t("meals.settings.saving") : t("meals.settings.save")}</span>
             </button>
           </div>
         </Drawer.Content>

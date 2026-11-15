@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Drawer } from "vaul";
 import { X, RefreshCw, Flame, Dumbbell, Check } from "lucide-react";
 import { PlanMeal, Recipe } from "@nook/shared";
+import { useTranslation } from "../../i18n/I18nContext";
 
 interface MealSwapDrawerProps {
   meal: PlanMeal | null;
@@ -16,6 +17,7 @@ export function MealSwapDrawer({
   onClose,
   onSwapConfirmed,
 }: MealSwapDrawerProps) {
+  const { t } = useTranslation();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
   const [isSwapping, setIsSwapping] = useState(false);
@@ -80,10 +82,10 @@ export function MealSwapDrawer({
           <div className="px-5 pb-3 border-b border-[#E2ECE4] flex items-center justify-between bg-white">
             <div>
               <Drawer.Title className="text-lg font-extrabold text-[#14201A] font-display">
-                Swap Meal Recipe
+                {t("meals.swap.title")}
               </Drawer.Title>
               <p className="text-xs text-[#5B6B61] mt-0.5">
-                Select an alternative with real-time macro delta preview
+                {t("meals.swap.subtitle")}
               </p>
             </div>
             <button
@@ -98,13 +100,13 @@ export function MealSwapDrawer({
           {/* Delta Preview Bar if a recipe is selected */}
           {selectedRecipe && (
             <div className="bg-[#EEF7F0] px-5 py-2.5 border-b border-[#CDE5D3] flex items-center justify-between text-xs">
-              <span className="font-bold text-[#14201A]">Macro Delta:</span>
+              <span className="font-bold text-[#14201A]">{t("meals.swap.delta")}</span>
               <div className="flex items-center gap-3 font-mono font-bold">
                 <span className={deltaCal >= 0 ? "text-[#15803D]" : "text-[#FF6B4A]"}>
-                  {deltaCal >= 0 ? `+${deltaCal}` : deltaCal} kcal
+                  {deltaCal >= 0 ? `+${deltaCal}` : deltaCal} {t("meals.kcal")}
                 </span>
                 <span className={deltaProt >= 0 ? "text-[#15803D]" : "text-[#FF6B4A]"}>
-                  {deltaProt >= 0 ? `+${deltaProt}` : deltaProt}g protein
+                  {deltaProt >= 0 ? `+${deltaProt}` : deltaProt}{t("meals.gProtein")}
                 </span>
               </div>
             </div>
@@ -160,7 +162,7 @@ export function MealSwapDrawer({
               className="w-full min-h-[44px] py-2.5 px-4 rounded-full text-xs font-extrabold flex items-center justify-center gap-2 bg-[#15803D] text-white hover:bg-[#166534] transition-colors cursor-pointer font-display disabled:opacity-50"
             >
               <RefreshCw className="w-4 h-4 stroke-[2.2]" />
-              <span>{isSwapping ? "Applying..." : "Apply Swap"}</span>
+              <span>{isSwapping ? t("meals.swap.applying") : t("meals.swap.apply")}</span>
             </button>
           </div>
         </Drawer.Content>
