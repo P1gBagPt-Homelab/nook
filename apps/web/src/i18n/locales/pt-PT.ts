@@ -148,6 +148,7 @@ export const ptPT: Translations = {
   "location.Cleaning": "Limpeza",
 
   // Grocery Page & Cart
+  "grocery.tab.meals": "Plano de Refeições",
   "grocery.tab.cart": "Carrinho de Compras",
   "grocery.tab.stock": "O Meu Stock",
   "cart.defaultTitle": "Ida ao Supermercado",

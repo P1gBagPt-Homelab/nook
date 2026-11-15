@@ -23,6 +23,12 @@ import {
   updateMaintenanceTaskSchema,
   createChoreSchema,
   updateChoreSchema,
+  updateMacroProfileSchema,
+  generatePlanSchema,
+  swapMealSchema,
+  logDiningOutSchema,
+  syncPlanToCartSchema,
+  createRecipeSchema,
 } from "./schemas";
 
 export type SetupAdminInput = z.infer<typeof setupAdminSchema>;
@@ -72,4 +78,123 @@ export interface HouseholdMember {
   role: "admin" | "member" | "viewer";
   mustSetPassword: boolean;
   createdAt: string;
+}
+
+// Mealbird-Inspired Macro Meal Planning Types
+export type UpdateMacroProfileInput = z.infer<typeof updateMacroProfileSchema>;
+export type GeneratePlanInput = z.infer<typeof generatePlanSchema>;
+export type SwapMealInput = z.infer<typeof swapMealSchema>;
+export type LogDiningOutInput = z.infer<typeof logDiningOutSchema>;
+export type SyncPlanToCartInput = z.infer<typeof syncPlanToCartSchema>;
+export type CreateRecipeInput = z.infer<typeof createRecipeSchema>;
+
+export interface MacroProfile {
+  id: string;
+  householdId: string;
+  title: string;
+  dailyCalories: number;
+  dailyProteinGrams: number;
+  dailyCarbsGrams: number;
+  dailyFatGrams: number;
+  weeklyGroceryBudget: number | null;
+  equipment: string[];
+  excludedIngredients: string[];
+  householdHeadcount: number;
+  cookSessionsPerWeek: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UsdaFoodItem {
+  id: string;
+  fdcId: string;
+  name: string;
+  category: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  carbsPer100g: number;
+  fatPer100g: number;
+  defaultAisle: string;
+}
+
+export interface RecipeIngredient {
+  id: string;
+  recipeId: string;
+  name: string;
+  amountGrams: number;
+  usdaFoodId?: string | null;
+  catalogProductId?: string | null;
+  packageUnitSizeGrams?: number | null;
+  estimatedPackagePrice?: number | null;
+  aisle: string;
+  sortOrder: number;
+  // Computed fields when joined with USDA item
+  usdaFood?: UsdaFoodItem | null;
+  computedCalories?: number;
+  computedProteinGrams?: number;
+  computedCarbsGrams?: number;
+  computedFatGrams?: number;
+}
+
+export interface Recipe {
+  id: string;
+  householdId?: string | null;
+  title: string;
+  description?: string | null;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  prepMinutes: number;
+  cookMinutes: number;
+  baseServings: number;
+  equipment: string[];
+  instructions: string[];
+  isBuiltin: boolean;
+  ingredients?: RecipeIngredient[];
+  // Summary macros per serving
+  caloriesPerServing: number;
+  proteinPerServing: number;
+  carbsPerServing: number;
+  fatPerServing: number;
+}
+
+export interface PlanMeal {
+  id: string;
+  planId: string;
+  date: string; // 'YYYY-MM-DD'
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  recipeId?: string | null;
+  customName?: string | null;
+  servings: number;
+  computedCalories: number;
+  computedProteinGrams: number;
+  computedCarbsGrams: number;
+  computedFatGrams: number;
+  isBatchRepeat: boolean;
+  isDiningOut: boolean;
+  isCooked: boolean;
+  notes?: string | null;
+  recipe?: Recipe | null;
+}
+
+export interface DailyPlanSummary {
+  date: string;
+  dayName: string;
+  meals: PlanMeal[];
+  totalCalories: number;
+  totalProteinGrams: number;
+  totalCarbsGrams: number;
+  totalFatGrams: number;
+  targetCalories: number;
+  targetProteinGrams: number;
+  isCalorieCompliant: boolean;
+  isProteinCompliant: boolean;
+}
+
+export interface MealPlanDetails {
+  id: string;
+  householdId: string;
+  startDate: string;
+  endDate: string;
+  status: "active" | "archived";
+  profile?: MacroProfile;
+  days: DailyPlanSummary[];
 }

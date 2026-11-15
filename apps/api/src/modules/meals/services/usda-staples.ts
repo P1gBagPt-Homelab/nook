@@ -1,0 +1,382 @@
+export interface UsdaSeedItem {
+  fdcId: string;
+  name: string;
+  category: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  carbsPer100g: number;
+  fatPer100g: number;
+  defaultAisle: string;
+}
+
+export const USDA_STAPLES: UsdaSeedItem[] = [
+  {
+    fdcId: "171077",
+    name: "Chicken Breast (Boneless, Skinless, Raw)",
+    category: "Poultry Products",
+    caloriesPer100g: 120.0,
+    proteinPer100g: 22.5,
+    carbsPer100g: 0.0,
+    fatPer100g: 2.6,
+    defaultAisle: "Meat & Seafood",
+  },
+  {
+    fdcId: "174036",
+    name: "Ground Beef (93% Lean / 7% Fat, Raw)",
+    category: "Beef Products",
+    caloriesPer100g: 172.0,
+    proteinPer100g: 21.0,
+    carbsPer100g: 0.0,
+    fatPer100g: 9.2,
+    defaultAisle: "Meat & Seafood",
+  },
+  {
+    fdcId: "175167",
+    name: "Atlantic Salmon Fillet (Raw)",
+    category: "Finfish and Shellfish Products",
+    caloriesPer100g: 208.0,
+    proteinPer100g: 20.4,
+    carbsPer100g: 0.0,
+    fatPer100g: 13.4,
+    defaultAisle: "Meat & Seafood",
+  },
+  {
+    fdcId: "171287",
+    name: "Whole Large Egg",
+    category: "Dairy and Egg Products",
+    caloriesPer100g: 143.0,
+    proteinPer100g: 12.6,
+    carbsPer100g: 0.7,
+    fatPer100g: 9.5,
+    defaultAisle: "Dairy & Eggs",
+  },
+  {
+    fdcId: "172183",
+    name: "Liquid Egg Whites",
+    category: "Dairy and Egg Products",
+    caloriesPer100g: 52.0,
+    proteinPer100g: 10.9,
+    carbsPer100g: 0.7,
+    fatPer100g: 0.2,
+    defaultAisle: "Dairy & Eggs",
+  },
+  {
+    fdcId: "170903",
+    name: "Greek Yogurt (Nonfat, Plain)",
+    category: "Dairy and Egg Products",
+    caloriesPer100g: 59.0,
+    proteinPer100g: 10.2,
+    carbsPer100g: 3.6,
+    fatPer100g: 0.4,
+    defaultAisle: "Dairy & Eggs",
+  },
+  {
+    fdcId: "170688",
+    name: "Rolled Oats (Dry)",
+    category: "Cereal Grains and Pastas",
+    caloriesPer100g: 389.0,
+    proteinPer100g: 16.9,
+    carbsPer100g: 66.3,
+    fatPer100g: 6.9,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "168878",
+    name: "Jasmine White Rice (Dry)",
+    category: "Cereal Grains and Pastas",
+    caloriesPer100g: 365.0,
+    proteinPer100g: 7.1,
+    carbsPer100g: 80.0,
+    fatPer100g: 0.7,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "168917",
+    name: "Quinoa (Dry)",
+    category: "Cereal Grains and Pastas",
+    caloriesPer100g: 368.0,
+    proteinPer100g: 14.1,
+    carbsPer100g: 64.2,
+    fatPer100g: 6.1,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "168482",
+    name: "Sweet Potato (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 86.0,
+    proteinPer100g: 1.6,
+    carbsPer100g: 20.1,
+    fatPer100g: 0.1,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "170026",
+    name: "Russet Potato (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 79.0,
+    proteinPer100g: 2.1,
+    carbsPer100g: 18.1,
+    fatPer100g: 0.1,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "170379",
+    name: "Broccoli (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 34.0,
+    proteinPer100g: 2.8,
+    carbsPer100g: 6.6,
+    fatPer100g: 0.4,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "1999633",
+    name: "Baby Spinach (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 23.0,
+    proteinPer100g: 2.9,
+    carbsPer100g: 3.6,
+    fatPer100g: 0.4,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "170108",
+    name: "Bell Pepper (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 31.0,
+    proteinPer100g: 1.0,
+    carbsPer100g: 6.0,
+    fatPer100g: 0.3,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "170000",
+    name: "Yellow Onion (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 40.0,
+    proteinPer100g: 1.1,
+    carbsPer100g: 9.3,
+    fatPer100g: 0.1,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "169230",
+    name: "Garlic (Raw)",
+    category: "Vegetables and Vegetable Products",
+    caloriesPer100g: 149.0,
+    proteinPer100g: 6.4,
+    carbsPer100g: 33.1,
+    fatPer100g: 0.5,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "171413",
+    name: "Extra Virgin Olive Oil",
+    category: "Fats and Oils",
+    caloriesPer100g: 884.0,
+    proteinPer100g: 0.0,
+    carbsPer100g: 0.0,
+    fatPer100g: 100.0,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "171705",
+    name: "Avocado",
+    category: "Fruits and Fruit Juices",
+    caloriesPer100g: 160.0,
+    proteinPer100g: 2.0,
+    carbsPer100g: 8.5,
+    fatPer100g: 14.7,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "171711",
+    name: "Blueberries (Fresh)",
+    category: "Fruits and Fruit Juices",
+    caloriesPer100g: 57.0,
+    proteinPer100g: 0.7,
+    carbsPer100g: 14.5,
+    fatPer100g: 0.3,
+    defaultAisle: "Produce",
+  },
+  {
+    fdcId: "173177",
+    name: "Whey Protein Isolate",
+    category: "Legumes and Legume Products",
+    caloriesPer100g: 370.0,
+    proteinPer100g: 75.0,
+    carbsPer100g: 8.0,
+    fatPer100g: 4.0,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "173735",
+    name: "Black Beans (Canned, Drained)",
+    category: "Legumes and Legume Products",
+    caloriesPer100g: 91.0,
+    proteinPer100g: 6.0,
+    carbsPer100g: 16.6,
+    fatPer100g: 0.5,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+  {
+    fdcId: "172471",
+    name: "Peanut Butter (All Natural)",
+    category: "Nut and Seed Products",
+    caloriesPer100g: 588.0,
+    proteinPer100g: 25.1,
+    carbsPer100g: 20.0,
+    fatPer100g: 50.4,
+    defaultAisle: "Pantry & Dry Goods",
+  },
+];
+
+export interface StarterRecipeDef {
+  title: string;
+  description: string;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  prepMinutes: number;
+  cookMinutes: number;
+  baseServings: number;
+  equipment: string[];
+  instructions: string[];
+  ingredients: {
+    name: string;
+    amountGrams: number;
+    fdcId: string;
+    packageUnitSizeGrams?: number;
+    estimatedPackagePrice?: number;
+    aisle: string;
+  }[];
+}
+
+export const STARTER_RECIPES: StarterRecipeDef[] = [
+  {
+    title: "Crispy Air-Fried Garlic Herb Chicken & Sweet Potato Wedges",
+    description: "High protein, clean staple featuring tender seasoned chicken breast paired with crispy roasted sweet potato wedges.",
+    mealType: "dinner",
+    prepMinutes: 10,
+    cookMinutes: 20,
+    baseServings: 2,
+    equipment: ["air_fryer", "oven"],
+    instructions: [
+      "Cut sweet potatoes into wedges; toss with 5g olive oil, salt, garlic powder, and paprika.",
+      "Place sweet potato wedges in air fryer at 200°C (400°F) for 15-18 minutes shaking halfway.",
+      "Season chicken breast with garlic, herbs, and remaining 5g olive oil.",
+      "Add chicken to air fryer or skillet and cook for 12-14 minutes until internal temperature hits 75°C (165°F).",
+      "Serve warm garnished with fresh herbs.",
+    ],
+    ingredients: [
+      { name: "Chicken Breast", amountGrams: 400, fdcId: "171077", packageUnitSizeGrams: 1000, estimatedPackagePrice: 7.5, aisle: "Meat & Seafood" },
+      { name: "Sweet Potato", amountGrams: 350, fdcId: "168482", packageUnitSizeGrams: 1000, estimatedPackagePrice: 1.8, aisle: "Produce" },
+      { name: "Olive Oil", amountGrams: 10, fdcId: "171413", packageUnitSizeGrams: 500, estimatedPackagePrice: 4.5, aisle: "Pantry & Dry Goods" },
+      { name: "Broccoli", amountGrams: 200, fdcId: "170379", packageUnitSizeGrams: 500, estimatedPackagePrice: 1.6, aisle: "Produce" },
+    ],
+  },
+  {
+    title: "High-Protein Blueberry Power Oatmeal Bowl",
+    description: "Fast morning fuel packed with complex carbs, antioxidants, and whey protein isolate.",
+    mealType: "breakfast",
+    prepMinutes: 5,
+    cookMinutes: 5,
+    baseServings: 1,
+    equipment: ["stovetop", "microwave"],
+    instructions: [
+      "Combine rolled oats and 200ml water or milk in a pot or microwave-safe bowl.",
+      "Cook on medium for 3-4 minutes until oats soften and thicken.",
+      "Remove from heat and let rest 1 minute before stirring in whey protein isolate thoroughly.",
+      "Top with fresh blueberries and natural peanut butter.",
+    ],
+    ingredients: [
+      { name: "Rolled Oats", amountGrams: 60, fdcId: "170688", packageUnitSizeGrams: 500, estimatedPackagePrice: 1.2, aisle: "Pantry & Dry Goods" },
+      { name: "Whey Protein Isolate", amountGrams: 30, fdcId: "173177", packageUnitSizeGrams: 1000, estimatedPackagePrice: 28.0, aisle: "Pantry & Dry Goods" },
+      { name: "Blueberries", amountGrams: 80, fdcId: "171711", packageUnitSizeGrams: 250, estimatedPackagePrice: 2.2, aisle: "Produce" },
+      { name: "Peanut Butter", amountGrams: 15, fdcId: "172471", packageUnitSizeGrams: 350, estimatedPackagePrice: 2.5, aisle: "Pantry & Dry Goods" },
+    ],
+  },
+  {
+    title: "Lean Beef & Broccoli Skillet with Jasmine Rice",
+    description: "Savory meal-prep staple combining 93/7 lean ground beef, tender broccoli florets, and fluffy jasmine rice.",
+    mealType: "lunch",
+    prepMinutes: 10,
+    cookMinutes: 15,
+    baseServings: 2,
+    equipment: ["stovetop"],
+    instructions: [
+      "Cook jasmine rice according to package directions or rice cooker.",
+      "Brown 93/7 lean beef in a large skillet over medium-high heat with minced garlic and onion.",
+      "Add broccoli florets with a splash of water and cover for 3 minutes to steam through.",
+      "Season with soy sauce, salt, and black pepper. Divide between meal prep bowls over rice.",
+    ],
+    ingredients: [
+      { name: "Ground Beef 93/7", amountGrams: 350, fdcId: "174036", packageUnitSizeGrams: 500, estimatedPackagePrice: 5.5, aisle: "Meat & Seafood" },
+      { name: "Jasmine White Rice", amountGrams: 140, fdcId: "168878", packageUnitSizeGrams: 1000, estimatedPackagePrice: 2.1, aisle: "Pantry & Dry Goods" },
+      { name: "Broccoli", amountGrams: 250, fdcId: "170379", packageUnitSizeGrams: 500, estimatedPackagePrice: 1.6, aisle: "Produce" },
+      { name: "Yellow Onion", amountGrams: 80, fdcId: "170000", packageUnitSizeGrams: 1000, estimatedPackagePrice: 1.1, aisle: "Produce" },
+    ],
+  },
+  {
+    title: "Atlantic Salmon with Fluffy Quinoa & Baby Spinach",
+    description: "Rich in omega-3s and clean micronutrients, pan-seared or air-fried to perfection.",
+    mealType: "dinner",
+    prepMinutes: 10,
+    cookMinutes: 18,
+    baseServings: 2,
+    equipment: ["air_fryer", "stovetop"],
+    instructions: [
+      "Rinse quinoa and simmer in 2x water for 15 minutes until light and fluffy.",
+      "Pat salmon fillets dry, brush with olive oil, and season with sea salt and cracked pepper.",
+      "Air fry at 190°C (375°F) for 10-12 minutes or pan-sear skin-side down for 5 minutes per side.",
+      "Wilt fresh baby spinach in warm skillet for 60 seconds with garlic.",
+      "Plate quinoa bed, layer spinach, and rest salmon fillet on top.",
+    ],
+    ingredients: [
+      { name: "Atlantic Salmon Fillet", amountGrams: 340, fdcId: "175167", packageUnitSizeGrams: 400, estimatedPackagePrice: 8.0, aisle: "Meat & Seafood" },
+      { name: "Quinoa", amountGrams: 120, fdcId: "168917", packageUnitSizeGrams: 500, estimatedPackagePrice: 3.2, aisle: "Pantry & Dry Goods" },
+      { name: "Baby Spinach", amountGrams: 150, fdcId: "1999633", packageUnitSizeGrams: 200, estimatedPackagePrice: 1.5, aisle: "Produce" },
+      { name: "Olive Oil", amountGrams: 10, fdcId: "171413", packageUnitSizeGrams: 500, estimatedPackagePrice: 4.5, aisle: "Pantry & Dry Goods" },
+    ],
+  },
+  {
+    title: "Greek Yogurt Berry Crunch Parfait",
+    description: "Zero-cook high protein breakfast or snack with 30g+ protein.",
+    mealType: "breakfast",
+    prepMinutes: 3,
+    cookMinutes: 0,
+    baseServings: 1,
+    equipment: [],
+    instructions: [
+      "Spoon Greek yogurt into a bowl or jar.",
+      "Layer fresh blueberries and a dash of cinnamon.",
+      "Top with natural peanut butter and a sprinkle of raw oats for crunch.",
+    ],
+    ingredients: [
+      { name: "Greek Yogurt Nonfat", amountGrams: 250, fdcId: "170903", packageUnitSizeGrams: 500, estimatedPackagePrice: 2.2, aisle: "Dairy & Eggs" },
+      { name: "Blueberries", amountGrams: 100, fdcId: "171711", packageUnitSizeGrams: 250, estimatedPackagePrice: 2.2, aisle: "Produce" },
+      { name: "Peanut Butter", amountGrams: 20, fdcId: "172471", packageUnitSizeGrams: 350, estimatedPackagePrice: 2.5, aisle: "Pantry & Dry Goods" },
+    ],
+  },
+  {
+    title: "Scrambled Egg White & Black Bean Breakfast Hash",
+    description: "Satiating Mexican-inspired morning hash with peppers, black beans, avocado, and eggs.",
+    mealType: "breakfast",
+    prepMinutes: 8,
+    cookMinutes: 10,
+    baseServings: 2,
+    equipment: ["stovetop"],
+    instructions: [
+      "Saute diced bell pepper and onion in a non-stick skillet with 5g olive oil until soft.",
+      "Add black beans and warm through for 2 minutes.",
+      "Whisk whole eggs and egg whites together; pour into skillet and gently fold until softly set.",
+      "Serve hot topped with fresh sliced avocado.",
+    ],
+    ingredients: [
+      { name: "Whole Large Egg", amountGrams: 100, fdcId: "171287", packageUnitSizeGrams: 600, estimatedPackagePrice: 2.8, aisle: "Dairy & Eggs" },
+      { name: "Liquid Egg Whites", amountGrams: 200, fdcId: "172183", packageUnitSizeGrams: 500, estimatedPackagePrice: 2.6, aisle: "Dairy & Eggs" },
+      { name: "Black Beans", amountGrams: 160, fdcId: "173735", packageUnitSizeGrams: 400, estimatedPackagePrice: 1.1, aisle: "Pantry & Dry Goods" },
+      { name: "Bell Pepper", amountGrams: 100, fdcId: "170108", packageUnitSizeGrams: 500, estimatedPackagePrice: 1.8, aisle: "Produce" },
+      { name: "Avocado", amountGrams: 80, fdcId: "171705", packageUnitSizeGrams: 400, estimatedPackagePrice: 2.0, aisle: "Produce" },
+    ],
+  },
+];
