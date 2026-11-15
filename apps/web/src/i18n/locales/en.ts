@@ -143,6 +143,7 @@ export const en = {
   "location.Cleaning": "Cleaning",
 
   // Grocery Page & Cart
+  "grocery.tab.meals": "Meal Plan",
   "grocery.tab.cart": "Shopping Cart",
   "grocery.tab.stock": "My Stock",
   "cart.defaultTitle": "Supermarket Run",

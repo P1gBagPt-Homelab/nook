@@ -19,6 +19,7 @@ import { cartRoutes } from "./modules/cart";
 import { stockRoutes } from "./modules/stock";
 import { financeRoutes } from "./modules/finance";
 import { houseRoutes } from "./modules/house";
+import { mealsRoutes } from "./modules/meals";
 
 for (const envPath of [
   path.resolve(process.cwd(), ".env"),
@@ -126,6 +127,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   await app.register(stockRoutes, { prefix: "/api/stock" });
   await app.register(financeRoutes, { prefix: "/api/finance" });
   await app.register(houseRoutes, { prefix: "/api/house" });
+  await app.register(mealsRoutes, { prefix: "/api/meals" });
 
   // 1. Golden Endpoint: GET /healthz (Liveness)
   app.get(

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, boolean, numeric, integer, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, boolean, numeric, integer, jsonb, index, uniqueIndex } from "drizzle-orm/pg-core";
 
 // 1. Households & Multi-User Identity
 export const households = pgTable("households", {
@@ -244,4 +244,111 @@ export const chores = pgTable("chores", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [
   index("idx_chores_household").on(t.householdId),
+]);
+
+// 7. Mealbird-Inspired Macro Meal Planning & USDA Nutrition
+export const macroProfiles = pgTable("macro_profiles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  title: text("title").default("Default Goal").notNull(),
+  dailyCalories: integer("daily_calories").default(2200).notNull(),
+  dailyProteinGrams: integer("daily_protein_grams").default(150).notNull(),
+  dailyCarbsGrams: integer("daily_carbs_grams").default(220).notNull(),
+  dailyFatGrams: integer("daily_fat_grams").default(70).notNull(),
+  weeklyGroceryBudget: numeric("weekly_grocery_budget", { precision: 10, scale: 2 }).default("80.00"),
+  equipment: jsonb("equipment").$type<string[]>().default(["stovetop", "oven"]).notNull(),
+  excludedIngredients: jsonb("excluded_ingredients").$type<string[]>().default([]).notNull(),
+  householdHeadcount: integer("household_headcount").default(2).notNull(),
+  cookSessionsPerWeek: integer("cook_sessions_per_week").default(4).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_macro_profiles_household").on(t.householdId),
+]);
+
+export const usdaFoodItems = pgTable("usda_food_items", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  fdcId: text("fdc_id").notNull().unique(),
+  name: text("name").notNull(),
+  category: text("category").notNull(), // 'Poultry Products', 'Vegetables', 'Grains', etc.
+  caloriesPer100g: numeric("calories_per_100g", { precision: 6, scale: 1 }).notNull(),
+  proteinPer100g: numeric("protein_per_100g", { precision: 5, scale: 1 }).notNull(),
+  carbsPer100g: numeric("carbs_per_100g", { precision: 5, scale: 1 }).notNull(),
+  fatPer100g: numeric("fat_per_100g", { precision: 5, scale: 1 }).notNull(),
+  defaultAisle: text("default_aisle").default("Pantry").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_usda_name").on(t.name),
+  index("idx_usda_category").on(t.category),
+]);
+
+export const recipes = pgTable("recipes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  mealType: text("meal_type", { enum: ["breakfast", "lunch", "dinner", "snack"] }).default("dinner").notNull(),
+  prepMinutes: integer("prep_minutes").default(10).notNull(),
+  cookMinutes: integer("cook_minutes").default(20).notNull(),
+  baseServings: integer("base_servings").default(2).notNull(),
+  equipment: jsonb("equipment").$type<string[]>().default([]).notNull(),
+  instructions: jsonb("instructions").$type<string[]>().default([]).notNull(),
+  isBuiltin: boolean("is_builtin").default(false).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_recipes_meal_type").on(t.mealType),
+  index("idx_recipes_household").on(t.householdId),
+]);
+
+export const recipeIngredients = pgTable("recipe_ingredients", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  recipeId: uuid("recipe_id").references(() => recipes.id, { onDelete: "cascade" }).notNull(),
+  name: text("name").notNull(),
+  amountGrams: numeric("amount_grams", { precision: 7, scale: 2 }).notNull(),
+  usdaFoodId: uuid("usda_food_id").references(() => usdaFoodItems.id, { onDelete: "set null" }),
+  catalogProductId: uuid("catalog_product_id").references(() => productCatalog.id, { onDelete: "set null" }),
+  packageUnitSizeGrams: numeric("package_unit_size_grams", { precision: 7, scale: 2 }),
+  estimatedPackagePrice: numeric("estimated_package_price", { precision: 10, scale: 2 }),
+  aisle: text("aisle").default("Pantry").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+}, (t) => [
+  index("idx_recipe_ingredients_recipe").on(t.recipeId),
+]);
+
+export const mealPlans = pgTable("meal_plans", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "cascade" }).notNull(),
+  profileId: uuid("profile_id").references(() => macroProfiles.id, { onDelete: "set null" }),
+  startDate: text("start_date").notNull(), // 'YYYY-MM-DD'
+  endDate: text("end_date").notNull(), // 'YYYY-MM-DD'
+  status: text("status", { enum: ["active", "archived"] }).default("active").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_meal_plans_household").on(t.householdId),
+  index("idx_meal_plans_dates").on(t.householdId, t.startDate, t.status),
+]);
+
+export const planMeals = pgTable("plan_meals", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  planId: uuid("plan_id").references(() => mealPlans.id, { onDelete: "cascade" }).notNull(),
+  date: text("date").notNull(), // 'YYYY-MM-DD'
+  mealType: text("meal_type", { enum: ["breakfast", "lunch", "dinner", "snack"] }).notNull(),
+  recipeId: uuid("recipe_id").references(() => recipes.id, { onDelete: "set null" }),
+  customName: text("custom_name"),
+  servings: integer("servings").default(1).notNull(),
+  computedCalories: integer("computed_calories").notNull(),
+  computedProteinGrams: numeric("computed_protein_grams", { precision: 5, scale: 1 }).notNull(),
+  computedCarbsGrams: numeric("computed_carbs_grams", { precision: 5, scale: 1 }).default("0.0").notNull(),
+  computedFatGrams: numeric("computed_fat_grams", { precision: 5, scale: 1 }).default("0.0").notNull(),
+  isBatchRepeat: boolean("is_batch_repeat").default(false).notNull(),
+  isDiningOut: boolean("is_dining_out").default(false).notNull(),
+  isCooked: boolean("is_cooked").default(false).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [
+  index("idx_plan_meals_plan").on(t.planId),
+  index("idx_plan_meals_date").on(t.planId, t.date),
 ]);

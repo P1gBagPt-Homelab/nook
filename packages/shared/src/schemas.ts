@@ -156,3 +156,64 @@ export const updateChoreSchema = z.object({
   dueDate: z.string().nullable().optional(),
   isCompleted: z.boolean().optional(),
 });
+
+// Mealbird-Inspired Macro Meal Planning Schemas
+export const updateMacroProfileSchema = z.object({
+  dailyCalories: z.number().int().min(1000).max(6000),
+  dailyProteinGrams: z.number().int().min(30).max(400),
+  dailyCarbsGrams: z.number().int().min(0).max(800).optional(),
+  dailyFatGrams: z.number().int().min(0).max(300).optional(),
+  weeklyGroceryBudget: z.number().nonnegative().optional(),
+  equipment: z.array(z.string()).default(["stovetop", "oven"]),
+  excludedIngredients: z.array(z.string()).default([]),
+  householdHeadcount: z.number().int().min(1).max(12).default(2),
+  cookSessionsPerWeek: z.number().int().min(1).max(7).default(4),
+});
+
+export const generatePlanSchema = z.object({
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // 'YYYY-MM-DD'
+  targetCalories: z.number().int().min(1000).max(6000).optional(),
+  targetProteinGrams: z.number().int().min(30).max(400).optional(),
+  cookSessionsPerWeek: z.number().int().min(1).max(7).optional(),
+  batchRepetition: z.boolean().default(true),
+});
+
+export const swapMealSchema = z.object({
+  planMealId: z.string().uuid(),
+  newRecipeId: z.string().uuid(),
+});
+
+export const logDiningOutSchema = z.object({
+  planMealId: z.string().uuid(),
+  customName: z.string().min(1).max(128).default("Dining Out"),
+  estimatedCalories: z.number().int().min(0).max(4000),
+  estimatedProteinGrams: z.number().min(0).max(300),
+});
+
+export const syncPlanToCartSchema = z.object({
+  planId: z.string().uuid(),
+  targetListId: z.string().uuid().optional(),
+  deductStock: z.boolean().default(true),
+  roundToPackageUnit: z.boolean().default(true),
+});
+
+export const createRecipeSchema = z.object({
+  title: z.string().min(1).max(128),
+  description: z.string().max(500).optional(),
+  mealType: z.enum(["breakfast", "lunch", "dinner", "snack"]).default("dinner"),
+  prepMinutes: z.number().int().min(0).max(360).default(10),
+  cookMinutes: z.number().int().min(0).max(360).default(20),
+  baseServings: z.number().int().min(1).max(12).default(2),
+  equipment: z.array(z.string()).default([]),
+  instructions: z.array(z.string()).default([]),
+  ingredients: z.array(
+    z.object({
+      name: z.string().min(1),
+      amountGrams: z.number().positive(),
+      usdaFoodId: z.string().uuid().optional(),
+      packageUnitSizeGrams: z.number().positive().optional(),
+      estimatedPackagePrice: z.number().positive().optional(),
+      aisle: z.string().default("Pantry"),
+    })
+  ).min(1),
+});

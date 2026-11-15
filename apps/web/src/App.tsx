@@ -16,11 +16,14 @@ import { getSearchParam, updateSearchParams } from "./utils/urlParams";
 
 function parseInitialTabState(): {
   activeTab: "grocery" | "finance" | "house";
-  grocerySubTab: "cart" | "stock";
+  grocerySubTab: "meals" | "cart" | "stock";
 } {
   const tab = getSearchParam("tab");
   if (tab === "finance" || tab === "house") {
     return { activeTab: tab, grocerySubTab: "cart" };
+  }
+  if (tab === "meals") {
+    return { activeTab: "grocery", grocerySubTab: "meals" };
   }
   if (tab === "stock") {
     return { activeTab: "grocery", grocerySubTab: "stock" };
@@ -37,7 +40,7 @@ export function App() {
 
   const initialTabs = parseInitialTabState();
   const [activeTab, setActiveTab] = useState<NavTab>(initialTabs.activeTab);
-  const [grocerySubTab, setGrocerySubTab] = useState<"cart" | "stock">(initialTabs.grocerySubTab);
+  const [grocerySubTab, setGrocerySubTab] = useState<"meals" | "cart" | "stock">(initialTabs.grocerySubTab);
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isDigitalizeOpen, setIsDigitalizeOpen] = useState(false);
@@ -110,9 +113,9 @@ export function App() {
     }
   }
 
-  function handleGrocerySubTabChange(sub: "cart" | "stock") {
+  function handleGrocerySubTabChange(sub: "meals" | "cart" | "stock") {
     setGrocerySubTab(sub);
-    updateSearchParams({ tab: sub === "stock" ? "stock" : "grocery", sub: null });
+    updateSearchParams({ tab: sub === "stock" ? "stock" : sub === "meals" ? "meals" : "grocery", sub: null });
   }
 
   function handleProductDetected(barcode: string, productData?: any) {
